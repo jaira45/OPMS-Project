@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
+import Navbar from '../components/Navbar';
+import BottomNav from '../components/BottomNav';
 
 export default function UserDashboard() {
     const navigate = useNavigate();
@@ -10,11 +12,8 @@ export default function UserDashboard() {
     const [inquiryCount, setInquiryCount] = useState(0);
 
     useEffect(() => {
-        // Count saved favorites from localStorage
         const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
         setSavedCount(favs.length);
-
-        // Fetch live inquiry count using authenticated request
         fetchUserInquiries();
     }, []);
 
@@ -23,7 +22,6 @@ export default function UserDashboard() {
             const res = await authFetch(`${API_URL}/api/inquiries`);
             if (res.ok) {
                 const data = await res.json();
-                // Admins see all; regular users see only their own
                 const filtered = user?.email === 'admin@opms.com'
                     ? data.inquiries
                     : data.inquiries.filter(inq => inq.buyerEmail === user?.email);
@@ -34,137 +32,94 @@ export default function UserDashboard() {
         }
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
-    
     return (
-        <div className="bg-surface text-on-surface min-h-screen">
-            {/* TopAppBar */}
-            <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl z-50 border-b border-white/20">
-                <div 
-                    className="flex items-center gap-2 group cursor-pointer" 
-                    onClick={() => navigate('/home')}
-                >
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
-                        <span className="material-symbols-outlined text-white text-sm">apartment</span>
-                    </div>
-                    <span className="font-['Manrope'] font-black text-xl text-primary tracking-tighter">OPMS</span>
+        <div className="bg-background text-on-surface min-h-screen pb-24">
+            <Navbar />
+
+            <main className="pt-20 sm:pt-32 container-responsive">
+                <div className="max-w-4xl mx-auto space-y-10 sm:space-y-16">
+                    
+                    {/* Profile Section */}
+                    <section className="flex flex-col items-center text-center space-y-6">
+                        <div className="relative group">
+                            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-[2.5rem] sm:rounded-[3.5rem] border-4 border-primary/10 p-1 group-hover:border-primary transition-all duration-500 overflow-hidden shadow-2xl">
+                                <img 
+                                    className="w-full h-full object-cover rounded-[2rem] sm:rounded-[3rem]" 
+                                    src={profileImage || 'https://via.placeholder.com/150'} 
+                                    alt="Profile" 
+                                />
+                            </div>
+                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-secondary text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg border-2 border-white">
+                                {user?.email === 'admin@opms.com' ? 'Administrator' : 'Premium Buyer'}
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user?.fullName || 'User Name'}</h2>
+                            <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user?.email}</p>
+                        </div>
+                    </section>
+
+                    {/* Stats Grid */}
+                    <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {[
+                            { label: 'Saved Items', value: savedCount, icon: 'favorite', color: 'text-error bg-error/5' },
+                            { label: 'Sent Inquiries', value: inquiryCount, icon: 'send', color: 'text-secondary bg-secondary/5' },
+                            { label: 'Active Alerts', value: '4', icon: 'notifications', color: 'text-primary bg-primary/5' },
+                            { label: 'Verified Status', value: 'Prime', icon: 'verified', color: 'text-secondary bg-secondary/5' }
+                        ].map((stat, i) => (
+                            <div key={i} className="glass p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 text-center transition-all hover:scale-105 hover:shadow-2xl active:scale-95 cursor-pointer">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stat.color}`}>
+                                    <span className="material-symbols-outlined text-2xl">{stat.icon}</span>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-2xl font-black text-primary transition-all">{stat.value}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">{stat.label}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </section>
+
+                    {/* Menu Options */}
+                    <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                            { title: 'Personal Information', icon: 'person', desc: 'Manage your profile and contact details' },
+                            { title: 'Security Settings', icon: 'security', desc: 'Password, 2FA, and session management' },
+                            { title: 'Application Settings', icon: 'settings', desc: 'Notification preferences and display' },
+                            { title: 'Support & Feedback', icon: 'contact_support', desc: 'Get help or report an issue' }
+                        ].map((item, i) => (
+                            <button key={i} className="flex items-center gap-6 p-6 bg-surface border border-surface-variant hover:border-primary/20 rounded-[2.5rem] transition-all hover:shadow-xl group text-left">
+                                <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-black text-primary text-lg">{item.title}</p>
+                                    <p className="text-xs font-bold text-on-surface-variant">{item.desc}</p>
+                                </div>
+                                <span className="material-symbols-outlined text-primary/20 group-hover:text-primary transition-colors">chevron_right</span>
+                            </button>
+                        ))}
+                    </section>
+
+                    {/* Danger Zone */}
+                    <section>
+                        <button onClick={logout} className="w-full flex items-center justify-between p-6 bg-error/5 border-2 border-error/10 rounded-[2.5rem] hover:bg-error/10 transition-all group">
+                            <div className="flex items-center gap-6">
+                                <div className="w-14 h-14 rounded-2xl bg-error/10 flex items-center justify-center text-error group-hover:rotate-12 transition-transform">
+                                    <span className="material-symbols-outlined">logout</span>
+                                </div>
+                                <div>
+                                    <p className="font-black text-error text-lg uppercase tracking-widest">Logout Account</p>
+                                    <p className="text-xs font-black text-error/60 uppercase tracking-widest">End active session securely</p>
+                                </div>
+                            </div>
+                            <span className="material-symbols-outlined text-error/30">lock_open</span>
+                        </button>
+                    </section>
                 </div>
-                <div className="flex items-center gap-4">
-                    <button className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100/50 transition-transform active:scale-90">
-                        <span className="material-symbols-outlined">notifications</span>
-                    </button>
-                    <div className="w-10 h-10 rounded-full border-2 border-primary/10 p-0.5 overflow-hidden">
-                        <img className="w-full h-full object-cover rounded-full" src={profileImage} alt="Profile" />
-                    </div>
-                </div>
-            </header>
-
-            {/* Main Content Canvas */}
-            <main className="pt-24 pb-32 px-6 max-w-md mx-auto min-h-screen">
-                {/* Profile Header Section */}
-                <section className="mb-10 text-center">
-                    <div className="relative inline-block mb-6">
-                        <div className="w-28 h-28 rounded-full border-[3px] border-[#1a1a1a] shadow-2xl overflow-hidden mx-auto">
-                            <img className="w-full h-full object-cover" src={profileImage} alt="User Avatar" />
-                        </div>
-                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-[#FFF0E5] text-[#FF6B00] px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-wider shadow-sm border border-[#FFDAB9] min-w-[70px]">
-                            {user?.email === 'admin@opms.com' ? 'Admin' : 'Buyer'}
-                        </div>
-                    </div>
-                    <h2 className="font-['Manrope'] font-bold text-3xl text-[#1a1a1a] tracking-tight">{user?.fullName || 'Jyoti Gupta'}</h2>
-                    <p className="font-body text-sm text-gray-500 mt-1 font-medium">{user?.email || 'jyotigupta85188@gmail.com'}</p>
-                </section>
-
-                {/* Stats Bento Grid */}
-                <section className="grid grid-cols-2 gap-4 mb-10">
-                    <div className="bg-white p-5 rounded-xl border border-outline-variant/15 flex flex-col items-center justify-center gap-2 transition-transform active:scale-95">
-                        <span className="material-symbols-outlined text-secondary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                        <div className="text-center">
-                            <p className="text-2xl font-headline font-extrabold text-primary leading-none">{savedCount}</p>
-                            <p className="text-[11px] font-semibold text-outline uppercase tracking-wider mt-1">Saved Properties</p>
-                        </div>
-                    </div>
-                    <div className="bg-white p-5 rounded-xl border border-outline-variant/15 flex flex-col items-center justify-center gap-2 transition-transform active:scale-95">
-                        <span className="material-symbols-outlined text-orange-500 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
-                        <div className="text-center relative">
-                            <p className="text-2xl font-headline font-extrabold text-primary leading-none">{inquiryCount}</p>
-                            <p className="text-[11px] font-semibold text-outline uppercase tracking-wider mt-1">Sent Inquiry</p>
-                            <span className="absolute -top-1 -right-4 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-                            </span>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Dashboard Menu List */}
-                <section className="space-y-3">
-                    <h3 className="text-[12px] font-bold text-outline uppercase tracking-[0.2em] mb-4 ml-2">General Settings</h3>
-                    <button className="w-full flex items-center justify-between p-5 bg-[#F8F9FB] rounded-[2rem] hover:bg-gray-100 transition-all group">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-[#E8F0FE] flex items-center justify-center text-[#1A73E8]">
-                                <span className="material-symbols-outlined">person</span>
-                            </div>
-                            <span className="font-bold text-lg text-[#1a1a1a]">My Profile</span>
-                        </div>
-                        <span className="material-symbols-outlined text-[#1a1a1a] font-bold">chevron_right</span>
-                    </button>
-                    <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-secondary">
-                                <span className="material-symbols-outlined">settings</span>
-                            </div>
-                            <span className="font-semibold text-on-surface">Account Settings</span>
-                        </div>
-                        <span className="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
-                    </button>
-                    <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-                                <span className="material-symbols-outlined">contact_support</span>
-                            </div>
-                            <span className="font-semibold text-on-surface">Help & Support</span>
-                        </div>
-                        <span className="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
-                    </button>
-                    <button onClick={handleLogout} className="w-full flex items-center justify-between p-4 bg-red-50 rounded-xl hover:bg-red-100 transition-colors group mt-6 border border-red-100">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                                <span className="material-symbols-outlined">logout</span>
-                            </div>
-                            <span className="font-semibold text-red-600">Logout</span>
-                        </div>
-                        <span className="material-symbols-outlined text-red-300">power_settings_new</span>
-                    </button>
-                </section>
             </main>
 
-            {/* BottomNavBar */}
-            <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg docked full-width rounded-t-3xl border-t border-slate-100/10 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-                <button onClick={() => navigate('/home')} className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-[#1B3A6B] transition-all duration-300 ease-out">
-                    <span className="material-symbols-outlined">home</span>
-                    <span className="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold uppercase tracking-widest mt-1">Home</span>
-                </button>
-                <button onClick={() => navigate('/properties')} className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-[#1B3A6B] transition-all duration-300 ease-out">
-                    <span className="material-symbols-outlined">search</span>
-                    <span className="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold uppercase tracking-widest mt-1">Search</span>
-                </button>
-                <button onClick={() => navigate('/add-property')} className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-[#1B3A6B] transition-all duration-300 ease-out cursor-pointer">
-                    <span className="material-symbols-outlined text-3xl">add_circle</span>
-                </button>
-                <button onClick={() => navigate('/favorites')} className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-[#1B3A6B] transition-all duration-300 ease-out">
-                    <span className="material-symbols-outlined">favorite</span>
-                    <span className="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold uppercase tracking-widest mt-1">Saved</span>
-                </button>
-                {/* ACTIVE DESTINATION: Admin/Dashboard */}
-                <button onClick={() => navigate('/dashboard')} className="flex flex-col items-center justify-center text-[#006a63] dark:text-[#4db6ac] bg-[#ffddb8]/20 rounded-xl px-3 py-1 scale-110 transition-all duration-300 ease-out">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
-                    <span className="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold uppercase tracking-widest mt-1">Admin</span>
-                </button>
-            </nav>
+            <BottomNav />
         </div>
     );
 }

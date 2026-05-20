@@ -1,19 +1,93 @@
 @import "tailwindcss";
 
 @theme {
+  /* Core Colors */
   --color-primary: #002452;
+  --color-primary-container: #d6e3ff;
+  --color-on-primary-container: #001b3e;
   --color-secondary: #006a63;
+  --color-secondary-container: #72f7e9;
+  --color-on-secondary-container: #00201d;
   --color-tertiary: #372000;
   --color-background: #faf9fe;
   --color-surface: #ffffff;
+  --color-surface-variant: #e1e2ec;
   --color-on-surface: #1a1b1f;
+  --color-on-surface-variant: #44474f;
   --color-outline: #747780;
+  --color-error: #ba1a1a;
 
+  /* Typography */
   --font-headline: "Manrope", sans-serif;
   --font-body: "Plus Jakarta Sans", sans-serif;
 
+  /* Fluid Spacing & Sizing */
   --radius-3xl: 1.5rem;
   --radius-4xl: 2rem;
+  --radius-5xl: 3rem;
+  
+  /* Animations */
+  --animate-fade-in-up: fade-in-up 0.6s ease-out forwards;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer base {
+  :root {
+    /* Fluid Font Sizes using clamp */
+    --text-xs: clamp(0.7rem, 0.6rem + 0.5vw, 0.75rem);
+    --text-sm: clamp(0.8rem, 0.7rem + 0.5vw, 0.875rem);
+    --text-base: clamp(0.9rem, 0.8rem + 0.5vw, 1rem);
+    --text-lg: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+    --text-xl: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+    --text-2xl: clamp(1.3rem, 1.2rem + 1vw, 1.5rem);
+    --text-3xl: clamp(1.6rem, 1.4rem + 1.5vw, 2rem);
+    --text-4xl: clamp(2rem, 1.8rem + 2vw, 2.5rem);
+    --text-5xl: clamp(2.5rem, 2rem + 3vw, 3.5rem);
+    --text-6xl: clamp(3rem, 2.5rem + 5vw, 5rem);
+  }
+
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .responsive-padding {
+    @apply px-4 sm:px-8 md:px-12 lg:px-24;
+  }
+
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 }
 
 @layer base {

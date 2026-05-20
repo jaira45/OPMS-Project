@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_URL } from '../config';
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import BottomNav from '../components/BottomNav';
 
 export default function Property() {
     const navigate = useNavigate();
-    const { profileImage } = useAuth();
     const [properties, setProperties] = useState([]);
     const [filteredProperties, setFilteredProperties] = useState([]);
     const [favorites, setFavorites] = useState(() => {
@@ -13,7 +13,9 @@ export default function Property() {
     });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCity, setSelectedCity] = useState('Indore');
+    const [selectedCity, setSelectedCity] = useState('All');
+
+    const cities = ['All', 'Indore', 'Bhopal', 'Gwalior', 'Rewa', 'Jabalpur', 'Ujjain'];
 
     useEffect(() => {
         fetchProperties();
@@ -24,23 +26,25 @@ export default function Property() {
             const res = await fetch(`${API_URL}/api/properties`);
             if (res.ok) {
                 const data = await res.json();
-                // Filter only approved properties or fallback if empty
-                const approvedOnly = data.properties.filter(p => p.status === 'Approved');
-                setProperties(data.properties); // Keep all for references
-                setFilteredProperties(approvedOnly.length > 0 ? approvedOnly : data.properties);
+                setProperties(data.properties);
+                setFilteredProperties(data.properties.filter(p => p.status === 'Approved' || p.status === 'Pending'));
             }
         } catch (err) {
             console.error('Error fetching properties:', err);
-            // Fallback mock properties if API fails
-            const mock = [
-                { _id: '1', title: '2BHK Flat in Vijay Nagar', price: '45,00,000', bhk: '2BHK', builtupArea: '1050 sq.ft', location: 'Vijay Nagar, Indore', status: 'Approved', coverImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCzSO4vGYQ8jvPNOwqXF7TjHUcoy8XAM4LkRFmvfW8D_vcuYpDmdYkggSk_IY2VmOwS1vDUi_MeChJP9CyFITX-PJ_Ed1TwaCrutbnyt2ehVi7J_5x8v6aVkJKCK1W9rHlwdZMSY432X4v2S2KKNrDXPP5BWjC-udFCR3qDat9fx3g6PwT1qPU46gM-JvSNv3BxOgO6E5bZwWlTa5QCv8yxP_vJ7tKZopTUC8iT1hTorVNA21Md5K3SuHWrbGesYUeE_QqdI8Gtcg' },
-                { _id: '2', title: 'Emerald Heights Residency', price: '58,75,000', bhk: '3BHK', builtupArea: '1180 sq.ft', location: 'Bypass Road, Indore', status: 'Approved', coverImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDGdlbMHbnvdXuFjfwxR5fdSY-Lht5o5ECbTBYuw3yViehH8JeewEMddn-E1_F7Bisowv_fxnMMhPZ39aofUF82g3mtJr6qbW7RM7afCMkNOIMikA7PKPpyZjyJskpUr6KDCtqyBKLSJFfNvlOPzYSvHLwAUTKVRzL0DjZM6kJgNyh5wH3wovlPiPniVyk0jcQeDMg24vnizud4TfTxDCHDH8d4JVfFdPLGq1E5PD-Fn1kdTe3KjCYW0oNdJZJoNBqnC_OG2qDp0w' }
-            ];
-            setProperties(mock);
-            setFilteredProperties(mock);
+            getFallbackProperties();
         } finally {
             setLoading(false);
         }
+    };
+
+    const getFallbackProperties = () => {
+        const mock = [
+            { _id: '1', title: 'The Sapphire Manor', price: '₹ 2.4 Crore', bhk: '3 BHK', location: 'Vijay Nagar, Indore', coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop' },
+            { _id: '2', title: 'Lakeview Residency', price: '₹ 85 Lakh', bhk: '2 BHK', location: 'Arera Colony, Bhopal', coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop' },
+            { _id: '3', title: 'Heritage Greens', price: '₹ 1.2 Crore', bhk: '4 BHK', location: 'City Center, Gwalior', coverImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop' }
+        ];
+        setProperties(mock);
+        setFilteredProperties(mock);
     };
 
     const toggleFavorite = (id, e) => {
@@ -64,17 +68,13 @@ export default function Property() {
 
     const filterResults = (search, city) => {
         let results = properties;
-        // Filter by approved
-        const approved = results.filter(p => p.status === 'Approved');
-        if (approved.length > 0) results = approved;
-
         if (search) {
             results = results.filter(p => 
                 p.title.toLowerCase().includes(search.toLowerCase()) ||
                 p.location.toLowerCase().includes(search.toLowerCase())
             );
         }
-        if (city) {
+        if (city !== 'All') {
             results = results.filter(p => p.location.toLowerCase().includes(city.toLowerCase()));
         }
         setFilteredProperties(results);
@@ -86,47 +86,38 @@ export default function Property() {
     };
 
     return (
-        <div className="bg-surface font-body text-on-surface min-h-screen pb-32">
-            {/* TopAppBar */}
-            <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl z-50 border-b border-white/20">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => navigate('/dashboard')} className="w-10 h-10 rounded-full border-2 border-primary/10 p-0.5 overflow-hidden hover:border-primary transition-all shadow-sm">
-                        <img alt="User Profile" className="w-full h-full object-cover rounded-full" src={profileImage} />
-                    </button>
-                    <span className="font-['Manrope'] font-black text-xl text-primary tracking-tighter">Properties</span>
-                </div>
-                <button onClick={() => navigate('/home')} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100/50 transition-transform active:scale-90 text-primary">
-                    <span className="material-symbols-outlined">notifications</span>
-                </button>
-            </header>
+        <div className="bg-background text-on-surface min-h-screen pb-24 overflow-x-hidden">
+            <Navbar />
 
-            <main className="pt-20 px-4 space-y-6">
-                {/* Search Section */}
-                <section className="mt-4">
-                    <div className="relative group">
-                        <div className="bg-[#eeedf2] rounded-full px-6 py-4 flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-[#002452]/20">
-                            <span className="material-symbols-outlined text-outline">search</span>
+            <main className="pt-20 sm:pt-28 container-responsive space-y-8 sm:space-y-12">
+                {/* Search & Filters */}
+                <section className="space-y-6">
+                    <div className="max-w-2xl mx-auto">
+                        <div className="glass rounded-2xl sm:rounded-full px-6 py-4 sm:py-5 flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-primary/20 shadow-xl">
+                            <span className="material-symbols-outlined text-on-surface-variant">search</span>
                             <input 
-                                className="bg-transparent border-none focus:ring-0 w-full text-on-surface placeholder:text-outline font-medium" 
+                                className="bg-transparent border-none focus:ring-0 w-full text-on-surface placeholder:text-on-surface-variant font-bold text-base sm:text-lg" 
                                 placeholder="Search premium estates..." 
                                 type="text"
                                 value={searchTerm}
                                 onChange={handleSearch}
                             />
-                            <span className="material-symbols-outlined text-primary">tune</span>
+                            <button className="hidden sm:flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-full text-sm font-bold">
+                                <span className="material-symbols-outlined text-sm">tune</span>
+                                Filter
+                            </button>
                         </div>
                     </div>
 
-                    {/* Filter Chips */}
-                    <div className="flex gap-2 overflow-x-auto py-4 scrollbar-none">
-                        {['Indore', 'Bhopal', 'Gwalior', 'Rewa'].map((city) => (
+                    <div className="flex gap-2 sm:gap-3 overflow-x-auto py-2 scroll-smooth no-scrollbar">
+                        {cities.map((city) => (
                             <button 
                                 key={city} 
                                 onClick={() => selectCityFilter(city)}
-                                className={`px-5 py-2 rounded-full font-semibold text-sm whitespace-nowrap transition-colors ${
+                                className={`px-6 py-2.5 rounded-full font-black text-xs sm:text-sm whitespace-nowrap transition-all border-2 ${
                                     selectedCity === city 
-                                    ? 'bg-[#ffddb8] text-[#2a1700] border border-[#ffb95f]/20 shadow-sm' 
-                                    : 'bg-[#eeedf2] text-on-surface-variant'
+                                    ? 'bg-primary text-white border-primary shadow-lg' 
+                                    : 'bg-surface border-surface-variant text-on-surface-variant hover:border-primary/30'
                                 }`}
                             >
                                 {city}
@@ -135,78 +126,84 @@ export default function Property() {
                     </div>
                 </section>
 
-                {/* Listings Section */}
+                {/* Listings Grid */}
                 <section className="space-y-8">
-                    <div className="flex justify-between items-end">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
                         <div>
-                            <h2 className="font-headline font-bold text-2xl text-primary tracking-tight">Curated Estates</h2>
-                            <p className="text-on-surface-variant text-sm">{filteredProperties.length} properties found</p>
+                            <h2 className="font-headline font-black text-2xl sm:text-3xl text-primary tracking-tight">Curated Estates</h2>
+                            <p className="text-on-surface-variant text-sm font-bold">{filteredProperties.length} active listings</p>
                         </div>
-                        <button className="text-secondary font-bold text-sm flex items-center gap-1">
-                            Sort by <span className="material-symbols-outlined text-base">keyboard_arrow_down</span>
-                        </button>
+                        <div className="flex items-center gap-2 text-sm font-black text-primary uppercase tracking-widest cursor-pointer group">
+                            <span>Sort By Default</span>
+                            <span className="material-symbols-outlined group-hover:translate-y-0.5 transition-transform">expand_more</span>
+                        </div>
                     </div>
 
                     {loading ? (
-                        <div className="flex justify-center items-center py-20">
-                            <span className="material-symbols-outlined animate-spin text-primary text-4xl">sync</span>
+                        <div className="flex flex-col justify-center items-center py-32 gap-4">
+                            <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+                            <span className="text-sm font-black text-primary uppercase tracking-tighter">Fetching Properties...</span>
                         </div>
                     ) : filteredProperties.length === 0 ? (
-                        <div className="text-center py-20">
-                            <p className="text-on-surface-variant">No matching properties found.</p>
+                        <div className="text-center py-32 space-y-4 glass rounded-[2rem]">
+                            <span className="material-symbols-outlined text-6xl text-primary/20">search_off</span>
+                            <p className="text-on-surface-variant font-bold text-lg">No properties found in this location.</p>
+                            <button onClick={() => selectCityFilter('All')} className="text-primary font-black underline uppercase tracking-widest text-sm">Clear Filters</button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
                             {filteredProperties.map((prop) => (
                                 <Link 
                                     key={prop._id} 
                                     to={`/property/${prop._id}`} 
-                                    className="group relative bg-[#ffffff] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 block"
+                                    className="group flex flex-col bg-surface rounded-[2.5rem] overflow-hidden border border-surface-variant hover:border-primary/20 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                                 >
-                                    <div className="relative h-64 w-full">
+                                    <div className="relative aspect-[4/3] overflow-hidden">
                                         <img 
                                             alt={prop.title} 
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                                             src={prop.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
                                         />
-                                        {/* Floating Price */}
-                                        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg transform -rotate-1">
-                                            <span className="font-headline font-extrabold text-secondary text-lg tracking-tight">
-                                                ₹ {prop.price.includes('Crore') || prop.price.includes('Lakh') || prop.price.startsWith('₹') ? prop.price.replace('₹', '').trim() : parseInt(prop.price).toLocaleString('en-IN')}
-                                            </span>
+                                        <div className="absolute top-5 left-5 glass px-4 py-2 rounded-2xl flex items-center gap-1.5 shadow-lg">
+                                            <span className="text-primary font-black text-sm">₹ {prop.price.replace('₹', '').trim()}</span>
                                         </div>
-                                        {/* Verified Badge */}
-                                        <div className="absolute top-4 right-4 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1">
-                                            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                                            Verified
-                                        </div>
+                                        <button 
+                                            onClick={(e) => toggleFavorite(prop._id, e)} 
+                                            className={`absolute top-5 right-5 w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-lg ${
+                                                favorites.includes(prop._id) 
+                                                ? 'bg-red-500 text-white' 
+                                                : 'glass text-white hover:scale-110'
+                                            }`}
+                                        >
+                                            <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: favorites.includes(prop._id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                                        </button>
                                     </div>
 
-                                    <div className="p-6 pt-8">
-                                        <h3 className="font-headline font-bold text-xl text-primary leading-tight mb-2">{prop.title}</h3>
-                                        <div className="flex items-center gap-4 text-on-surface-variant text-sm font-medium">
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-lg">square_foot</span>
-                                                {prop.builtupArea || prop.carpetArea || '1200 sq.ft'}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-lg">location_on</span>
-                                                {prop.location}
+                                    <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
+                                        <div className="space-y-3">
+                                            <h3 className="font-headline font-black text-xl sm:text-2xl text-primary leading-tight group-hover:text-secondary transition-colors line-clamp-1">{prop.title}</h3>
+                                            <div className="flex items-center gap-2 text-on-surface-variant">
+                                                <span className="material-symbols-outlined text-secondary text-lg">location_on</span>
+                                                <span className="text-sm font-bold truncate">{prop.location}</span>
                                             </div>
                                         </div>
-                                        <div className="mt-6 flex gap-2">
-                                            <button className="flex-1 bg-primary text-white py-3 rounded-xl font-bold transition-transform active:scale-95">Contact Seller</button>
-                                            <button 
-                                                onClick={(e) => toggleFavorite(prop._id, e)} 
-                                                className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all ${
-                                                    favorites.includes(prop._id) 
-                                                    ? 'bg-red-50 text-red-500 shadow-sm border border-red-100' 
-                                                    : 'bg-[#eeedf2] text-primary'
-                                                }`}
-                                            >
-                                                <span className="material-symbols-outlined" style={{ fontVariationSettings: favorites.includes(prop._id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                                            </button>
+
+                                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-surface-variant/50">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                                    <span className="material-symbols-outlined text-lg">bed</span>
+                                                </div>
+                                                <span className="text-xs font-black text-primary uppercase">{prop.bhk || '3 BHK'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                                    <span className="material-symbols-outlined text-lg">square_foot</span>
+                                                </div>
+                                                <span className="text-xs font-black text-primary uppercase">{prop.carpetArea || prop.builtupArea || '1200 sqft'}</span>
+                                            </div>
                                         </div>
+                                        
+                                        <button className="w-full bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95">View Details</button>
                                     </div>
                                 </Link>
                             ))}
@@ -215,30 +212,7 @@ export default function Property() {
                 </section>
             </main>
 
-            {/* BottomNavBar */}
-            <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg rounded-t-3xl border-t border-slate-100/10 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/home">
-                    <span className="material-symbols-outlined">home</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Home</span>
-                </Link>
-                <Link className="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 scale-110 transition-all duration-300" to="/properties">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>search</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Search</span>
-                </Link>
-                <div className="relative -top-8">
-                    <Link to="/add-property" className="bg-secondary text-white p-4 rounded-full shadow-lg scale-110 active:scale-95 transition-transform flex items-center justify-center">
-                        <span className="material-symbols-outlined">add_circle</span>
-                    </Link>
-                </div>
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/favorites">
-                    <span className="material-symbols-outlined">favorite</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Saved</span>
-                </Link>
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/admin">
-                    <span className="material-symbols-outlined">dashboard</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Admin</span>
-                </Link>
-            </nav>
+            <BottomNav />
         </div>
     );
 }

@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_URL } from '../config';
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import BottomNav from '../components/BottomNav';
 
 export default function Favorites() {
     const navigate = useNavigate();
-    const { profileImage } = useAuth();
     const [properties, setProperties] = useState([]);
     const [savedProperties, setSavedProperties] = useState([]);
     const [favorites, setFavorites] = useState(() => {
         return JSON.parse(localStorage.getItem('favorites') || '[]');
     });
     const [loading, setLoading] = useState(true);
-    const [sortOption, setSortOption] = useState('Recently Added');
 
     useEffect(() => {
         fetchProperties();
@@ -36,23 +35,19 @@ export default function Favorites() {
             }
         } catch (err) {
             console.error('Error fetching properties for favorites:', err);
-            // Fallback mock properties
-            const mock = [
-                { _id: '1', title: 'The Glass Pavilion', price: '₹4.25 Crore', bhk: '4 BHK', builtupArea: '4200 ft²', location: 'Arera Colony, Bhopal', coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800' },
-                { _id: '2', title: 'Skyline Heights', price: '₹1.85 Crore', bhk: '3 BHK', builtupArea: '2100 ft²', location: 'Vijay Nagar, Indore', coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800' },
-                { _id: '3', title: 'Oakwood Manor', price: '₹95.00 Lakh', bhk: '3 BHK', builtupArea: '1850 ft²', location: 'Civil Lines, Jabalpur', coverImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800' }
-            ];
-            setProperties(mock);
-            const initialFavs = favorites.length > 0 ? favorites : ['1', '2'];
-            if (favorites.length === 0) {
-                setFavorites(initialFavs);
-                localStorage.setItem('favorites', JSON.stringify(initialFavs));
-            }
-            const saved = mock.filter(p => initialFavs.includes(p._id));
-            setSavedProperties(saved);
+            getFallbackFavorites();
         } finally {
             setLoading(false);
         }
+    };
+
+    const getFallbackFavorites = () => {
+        const mock = [
+            { _id: '1', title: 'The Glass Pavilion', price: '₹ 4.25 Crore', bhk: '4 BHK', location: 'Arera Colony, Bhopal', coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800' },
+            { _id: '2', title: 'Skyline Heights', price: '₹ 1.85 Crore', bhk: '3 BHK', location: 'Vijay Nagar, Indore', coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800' }
+        ];
+        setProperties(mock);
+        setSavedProperties(mock);
     };
 
     const removeFavorite = (id, e) => {
@@ -63,148 +58,77 @@ export default function Favorites() {
         localStorage.setItem('favorites', JSON.stringify(updated));
     };
 
-    const handleSort = (e) => {
-        const value = e.target.value;
-        setSortOption(value);
-        let sorted = [...savedProperties];
-        if (value === 'Price: Low to High') {
-            sorted.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-        } else if (value === 'Price: High to Low') {
-            sorted.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-        }
-        setSavedProperties(sorted);
-    };
-
-    const parsePrice = (priceStr) => {
-        if (!priceStr) return 0;
-        let clean = priceStr.toLowerCase();
-        let multiplier = 1;
-        if (clean.includes('crore')) {
-            multiplier = 10000000;
-        } else if (clean.includes('lakh')) {
-            multiplier = 100000;
-        }
-        const numeric = parseFloat(clean.replace(/[^\d.]/g, ''));
-        return isNaN(numeric) ? 0 : numeric * multiplier;
-    };
-
     return (
-        <div className="bg-surface font-body text-on-surface min-h-screen pb-32">
-            <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl z-50 border-b border-white/20">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => navigate('/dashboard')} className="w-10 h-10 rounded-full border-2 border-primary/10 p-0.5 overflow-hidden hover:border-primary transition-all shadow-sm">
-                        <img className="w-full h-full object-cover rounded-full" src={profileImage} alt="User" />
-                    </button>
-                    <span className="font-['Manrope'] font-black text-xl text-primary tracking-tighter">The Editorial Estate</span>
-                </div>
-                <button onClick={() => navigate('/home')} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100/50 transition-transform active:scale-90 text-primary">
-                    <span className="material-symbols-outlined">notifications</span>
-                </button>
-            </header>
+        <div className="bg-background text-on-surface min-h-screen pb-32">
+            <Navbar />
 
-            <main className="mt-20 px-6">
-                <section className="py-8">
-                    <div className="flex justify-between items-end mb-6">
-                        <div className="text-left">
-                            <span className="text-secondary font-bold text-sm tracking-widest uppercase mb-1 block">Curated Collection</span>
-                            <h2 className="font-['Manrope'] font-black text-3xl text-primary tracking-tight">My Favorites</h2>
-                        </div>
-                        <div className="flex items-center gap-2 bg-[#eeedf2] px-4 py-2 rounded-full">
-                            <span className="material-symbols-outlined text-sm text-on-surface-variant">sort</span>
-                            <select 
-                                className="bg-transparent border-none text-xs font-bold font-label text-on-surface-variant focus:ring-0 p-0 pr-6 appearance-none cursor-pointer"
-                                value={sortOption}
-                                onChange={handleSort}
-                            >
-                                <option>Recently Added</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                            </select>
-                        </div>
+            <main className="pt-20 sm:pt-32 container-responsive space-y-12">
+                <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-surface-variant pb-8">
+                    <div className="space-y-1">
+                        <h1 className="font-headline font-black text-4xl text-primary tracking-tight">Curated Collection</h1>
+                        <p className="text-on-surface-variant font-bold text-sm uppercase tracking-widest">Your Private Selection of Premium Estates</p>
                     </div>
-
-                    {loading ? (
-                        <div className="flex justify-center items-center py-20">
-                            <span className="material-symbols-outlined animate-spin text-primary text-4xl">sync</span>
-                        </div>
-                    ) : savedProperties.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <div className="w-24 h-24 bg-[#eeedf2] rounded-full flex items-center justify-center mb-6">
-                                <span className="material-symbols-outlined text-5xl text-outline-variant">heart_broken</span>
-                            </div>
-                            <h3 className="font-headline font-bold text-xl text-primary mb-2">No saved properties yet</h3>
-                            <p className="text-on-surface-variant max-w-[240px] mb-8 text-sm">Start exploring the finest estates in Madhya Pradesh and save your top choices here.</p>
-                            <button onClick={() => navigate('/properties')} className="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-lg active:scale-95 transition-transform text-sm">
-                                Start Exploring
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {savedProperties.map((prop) => (
-                                <Link key={prop._id} to={`/property/${prop._id}`} className="relative group block">
-                                    <div className="aspect-[16/10] rounded-xl overflow-hidden shadow-xl bg-[#f4f3f8]">
-                                        <img 
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                                            src={prop.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
-                                            alt={prop.title} 
-                                        />
-                                    </div>
-                                    <div className="absolute -bottom-4 right-4 left-4 bg-white p-5 rounded-xl shadow-2xl border border-blue-50/20 text-left">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="font-headline font-bold text-lg text-primary leading-tight truncate max-w-[150px]">{prop.title}</h3>
-                                                <p className="text-on-surface-variant text-[10px] flex items-center gap-1 mt-1 font-bold">
-                                                    <span className="material-symbols-outlined text-xs">location_on</span>
-                                                    {prop.location}
-                                                </p>
-                                            </div>
-                                            <button 
-                                                onClick={(e) => removeFavorite(prop._id, e)} 
-                                                className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center transition-all active:scale-90"
-                                            >
-                                                <span className="material-symbols-outlined text-red-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                                            </button>
-                                        </div>
-                                        <div className="mt-4 flex justify-between items-center pt-2 border-t border-gray-50">
-                                            <span className="font-headline font-black text-sm text-secondary">
-                                                ₹ {prop.price.includes('Crore') || prop.price.includes('Lakh') || prop.price.startsWith('₹') ? prop.price.replace('₹', '').trim() : parseInt(prop.price).toLocaleString('en-IN')}
-                                            </span>
-                                            <div className="flex gap-2 text-on-surface-variant text-[9px] font-black uppercase tracking-tighter">
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs text-primary">bed</span> {prop.bhk || '3BHK'}</span>
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs text-primary">aspect_ratio</span> {prop.builtupArea || prop.carpetArea || '1800'}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    )}
+                    <div className="flex items-center gap-2 text-primary font-black uppercase tracking-widest text-[10px]">
+                        <span>{savedProperties.length} Properties Saved</span>
+                    </div>
                 </section>
+
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 gap-4">
+                        <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+                        <span className="text-[10px] font-black uppercase text-primary/40">Synchronizing...</span>
+                    </div>
+                ) : savedProperties.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-center space-y-8 glass rounded-[3rem]">
+                        <div className="w-24 h-24 bg-primary/5 rounded-[2rem] flex items-center justify-center animate-float">
+                            <span className="material-symbols-outlined text-5xl text-primary/20">favorite_border</span>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="font-headline font-black text-2xl text-primary">Nothing saved yet</h3>
+                            <p className="text-on-surface-variant font-bold max-w-xs mx-auto text-balance transition-all">Start exploring our curated list of exclusive properties in Madhya Pradesh.</p>
+                        </div>
+                        <button onClick={() => navigate('/properties')} className="bg-primary text-white px-10 py-4 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 active:scale-95 transition-all">Start Exploring</button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
+                        {savedProperties.map((prop) => (
+                            <Link key={prop._id} to={`/property/${prop._id}`} className="group relative block transition-all hover:-translate-y-2">
+                                <div className="aspect-[16/11] rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+                                    <img 
+                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                        src={prop.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
+                                        alt={prop.title} 
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <button 
+                                        onClick={(e) => removeFavorite(prop._id, e)} 
+                                        className="absolute top-6 right-6 w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center text-red-500 shadow-xl active:scale-95 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                                    </button>
+                                </div>
+                                
+                                <div className="mt-6 space-y-3 px-4">
+                                    <div className="flex justify-between items-start gap-4">
+                                        <h3 className="font-headline font-black text-xl text-primary leading-tight line-clamp-1 group-hover:text-secondary transition-colors">{prop.title}</h3>
+                                        <span className="font-black text-secondary whitespace-nowrap">₹ {prop.price.replace('₹', '').trim()}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">
+                                        <span className="material-symbols-outlined text-sm">location_on</span>
+                                        <span className="truncate">{prop.location}</span>
+                                    </div>
+                                    <div className="pt-4 flex gap-4 text-[10px] font-black uppercase tracking-widest text-primary/40 border-t border-surface-variant">
+                                        <span className="flex items-center gap-1"><span className="material-symbols-outlined text-base">bed</span> {prop.bhk}</span>
+                                        <span className="flex items-center gap-1"><span className="material-symbols-outlined text-base">square_foot</span> {prop.builtupArea || '2000 ft'}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </main>
 
-            <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg rounded-t-3xl border-t border-slate-100/10 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/home">
-                    <span className="material-symbols-outlined">home</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Home</span>
-                </Link>
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/properties">
-                    <span className="material-symbols-outlined">search</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Search</span>
-                </Link>
-                <div className="relative -top-8">
-                    <Link to="/add-property" className="bg-secondary text-white p-4 rounded-full shadow-lg scale-110 active:scale-95 transition-transform flex items-center justify-center">
-                        <span className="material-symbols-outlined">add_circle</span>
-                    </Link>
-                </div>
-                <Link className="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 scale-110 transition-all duration-300" to="/favorites">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Saved</span>
-                </Link>
-                <Link className="flex flex-col items-center justify-center text-gray-400" to="/dashboard">
-                    <span className="material-symbols-outlined">dashboard</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Admin</span>
-                </Link>
-            </nav>
+            <BottomNav />
         </div>
     );
 }

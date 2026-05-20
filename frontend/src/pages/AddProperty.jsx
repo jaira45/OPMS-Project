@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
+import Navbar from '../components/Navbar';
+import BottomNav from '../components/BottomNav';
 
 export default function AddProperty() {
     const navigate = useNavigate();
-    const { authFetch, profileImage } = useAuth();
+    const { authFetch } = useAuth();
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
     const [location, setLocation] = useState('');
@@ -44,8 +46,7 @@ export default function AddProperty() {
             });
 
             if (res.ok) {
-                alert('Property submitted for review successfully!');
-                navigate('/admin'); // Redirect to admin panel to see pending list
+                navigate('/admin');
             } else {
                 const data = await res.json();
                 setError(data.message || 'Failed to submit property.');
@@ -58,216 +59,161 @@ export default function AddProperty() {
     };
 
     return (
-        <div className="bg-surface font-body text-on-surface min-h-screen pb-32">
-            {/* TopAppBar Shell */}
-            <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl z-50 border-b border-white/20">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => navigate('/admin')} className="w-10 h-10 rounded-full border-2 border-primary/10 p-0.5 overflow-hidden hover:border-primary transition-all shadow-sm">
-                        <img alt="Profile" className="w-full h-full object-cover rounded-full" src={profileImage} />
-                    </button>
-                    <span className="font-['Manrope'] font-black text-xl text-primary tracking-tighter">List Property</span>
-                </div>
-                <button className="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100/50 rounded-full transition-transform active:scale-90">
-                    <span className="material-symbols-outlined">notifications</span>
-                </button>
-            </header>
+        <div className="bg-background text-on-surface min-h-screen pb-32">
+            <Navbar />
 
-            <main className="pt-24 px-6 max-w-md mx-auto">
-                {/* Progress Stepper */}
-                <div className="flex justify-between items-center mb-10 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 -translate-y-1/2"></div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold ring-4 ring-white">1</div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Info</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold ring-4 ring-white">2</div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Specs</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold ring-4 ring-white">3</div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Valuation</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold ring-4 ring-white">4</div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Media</span>
-                    </div>
-                </div>
-
-                <div className="space-y-8">
+            <main className="pt-20 sm:pt-32 container-responsive">
+                <div className="max-w-3xl mx-auto space-y-12 animate-fade-in-up">
+                    
                     {/* Header Section */}
-                    <section>
-                        <h1 className="font-headline text-3xl font-extrabold text-primary tracking-tight mb-2">List Your Property</h1>
-                        <p className="text-outline text-sm leading-relaxed">Showcase your estate in Madhya Pradesh's premier curated marketplace.</p>
-                    </section>
+                    <div className="space-y-4 text-center">
+                        <h1 className="font-headline font-black text-4xl sm:text-5xl text-primary tracking-tight">List Your Estate</h1>
+                        <p className="text-on-surface-variant font-bold text-base sm:text-lg max-w-xl mx-auto text-balance">
+                            Join Madhya Pradesh's most exclusive real estate network. Your property will be reviewed by our curators before going live.
+                        </p>
+                    </div>
 
-                    {/* Form Step: Dynamic Form */}
-                    <form className="space-y-6" onSubmit={submitProperty}>
-                        {/* Title Input */}
-                        <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Property Title</label>
-                            <input
+                    <form onSubmit={submitProperty} className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-surface p-8 sm:p-12 rounded-[3rem] border border-surface-variant shadow-2xl relative overflow-hidden">
+                        {/* Background Decoration */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16" />
+                        
+                        <div className="col-span-1 md:col-span-2 space-y-2">
+                             <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Property Highlight Title</label>
+                             <input
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-4 py-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
-                                placeholder="e.g. Shyamala Hills Heritage Suite"
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="e.g. Maharana Suite at Shyamala Hills"
                                 type="text"
                                 required
                             />
                         </div>
 
-                        {/* Location Input */}
                         <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Location</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Location Details</label>
                             <input
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
-                                className="w-full px-4 py-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
                                 placeholder="e.g. Arera Colony, Bhopal"
                                 type="text"
                                 required
                             />
                         </div>
 
-                        {/* Valuation */}
                         <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Expected Price</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Expected Valuation</label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-semibold">₹</span>
+                                <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-primary">₹</span>
                                 <input
                                     value={price}
                                     onChange={(e) => setPrice(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
-                                    placeholder="e.g. 1.2 Cr or 85 L"
+                                    className="w-full pl-10 pr-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                    placeholder="e.g. 2.4 Cr"
                                     type="text"
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Area Details */}
                         <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Area Details (Optional)</label>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-outline uppercase">Carpet Area</span>
-                                    <div className="relative">
-                                        <input
-                                            value={carpetArea}
-                                            onChange={(e) => setCarpetArea(e.target.value)}
-                                            className="w-full p-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
-                                            placeholder="1450"
-                                            type="number"
-                                        />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">SQFT</span>
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-outline uppercase">Built-up Area</span>
-                                    <div className="relative">
-                                        <input
-                                            value={builtupArea}
-                                            onChange={(e) => setBuiltupArea(e.target.value)}
-                                            className="w-full p-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
-                                            placeholder="1800"
-                                            type="number"
-                                        />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">SQFT</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Structure Type</label>
+                            <select
+                                value={bhk}
+                                onChange={(e) => setBhk(e.target.value)}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
+                            >
+                                <option>1 BHK</option>
+                                <option>2 BHK</option>
+                                <option>3 BHK</option>
+                                <option>4 BHK</option>
+                                <option>5 BHK+</option>
+                                <option>Penthouse</option>
+                                <option>Villa</option>
+                            </select>
                         </div>
 
-                        {/* Specifications */}
                         <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Specifications</label>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-gray-100 rounded-xl flex items-center justify-between">
-                                    <span className="text-xs font-semibold">BHK Type</span>
-                                    <select
-                                        value={bhk}
-                                        onChange={(e) => setBhk(e.target.value)}
-                                        className="bg-transparent border-none text-xs font-bold text-primary focus:ring-0 text-right cursor-pointer"
-                                    >
-                                        <option value="1 BHK">1 BHK</option>
-                                        <option value="2 BHK">2 BHK</option>
-                                        <option value="3 BHK">3 BHK</option>
-                                        <option value="4 BHK">4 BHK</option>
-                                        <option value="5 BHK">5 BHK</option>
-                                        <option value="Penthouse">Penthouse</option>
-                                    </select>
-                                </div>
-                                <div className="p-4 bg-gray-100 rounded-xl flex items-center justify-between">
-                                    <span className="text-xs font-semibold">Floor</span>
-                                    <select
-                                        value={floor}
-                                        onChange={(e) => setFloor(e.target.value)}
-                                        className="bg-transparent border-none text-xs font-bold text-primary focus:ring-0 text-right cursor-pointer"
-                                    >
-                                        <option value="Ground Floor">Ground</option>
-                                        <option value="1st Floor">1st</option>
-                                        <option value="2nd Floor">2nd</option>
-                                        <option value="3rd Floor">3rd</option>
-                                        <option value="4th Floor">4th</option>
-                                        <option value="5th Floor">5th</option>
-                                        <option value="6th Floor">6th</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Floor Level</label>
+                            <select
+                                value={floor}
+                                onChange={(e) => setFloor(e.target.value)}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
+                            >
+                                <option>Ground Floor</option>
+                                <option>1st Floor</option>
+                                <option>2nd Floor</option>
+                                <option>3rd Floor</option>
+                                <option>4th Floor+</option>
+                                <option>Top Floor</option>
+                            </select>
                         </div>
 
-                        {/* Cover Image Input */}
                         <div className="space-y-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-secondary">Cover Image URL (Optional)</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Carpet Space (SQFT)</label>
                             <input
-                                value={coverImage}
-                                onChange={(e) => setCoverImage(e.target.value)}
-                                className="w-full px-4 py-4 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all font-semibold text-sm"
-                                placeholder="Paste image link, or leave blank for a default"
-                                type="url"
+                                value={carpetArea}
+                                onChange={(e) => setCarpetArea(e.target.value)}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="1250"
+                                type="number"
                             />
                         </div>
 
-                        {error && <p className="text-red-500 text-xs font-semibold">{error}</p>}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Built-up Space (SQFT)</label>
+                            <input
+                                value={builtupArea}
+                                onChange={(e) => setBuiltupArea(e.target.value)}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="1500"
+                                type="number"
+                            />
+                        </div>
 
-                        {/* Submit Action */}
-                        <div className="pt-4">
+                        <div className="col-span-1 md:col-span-2 space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Cover Showcase Image URL</label>
+                            <input
+                                value={coverImage}
+                                onChange={(e) => setCoverImage(e.target.value)}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="https://images.unsplash.com/your-image-url"
+                                type="url"
+                            />
+                            <p className="text-[10px] font-bold text-on-surface-variant/40 px-1 uppercase tracking-widest">High-resolution photography increases appraisal value.</p>
+                        </div>
+
+                        {error && (
+                            <div className="col-span-1 md:col-span-2 bg-error/10 border border-error/20 p-4 rounded-xl flex items-center gap-3 text-error">
+                                <span className="material-symbols-outlined">error</span>
+                                <span className="text-xs font-black uppercase tracking-widest">{error}</span>
+                            </div>
+                        )}
+
+                        <div className="col-span-1 md:col-span-2 pt-6">
                             <button
                                 disabled={isSubmitting}
-                                className="w-full py-5 bg-gradient-to-r from-primary to-blue-900 text-white rounded-full font-bold shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 cursor-pointer"
+                                className="w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
                                 type="submit"
                             >
-                                <span>{isSubmitting ? 'Submitting...' : 'Submit for Review'}</span>
-                                <span className="material-symbols-outlined text-sm">send</span>
+                                {isSubmitting ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                        <span>Dispatching...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Submit for Appraisal</span>
+                                        <span className="material-symbols-outlined text-sm">send</span>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </form>
                 </div>
             </main>
 
-            {/* BottomNavBar Shell */}
-            <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg rounded-t-3xl border-t border-slate-100/10 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-                <Link to="/home" className="flex flex-col items-center justify-center text-slate-400">
-                    <span className="material-symbols-outlined transition-all duration-300 ease-out">home</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Home</span>
-                </Link>
-                <Link to="/properties" className="flex flex-col items-center justify-center text-slate-400">
-                    <span className="material-symbols-outlined transition-all duration-300 ease-out">search</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Search</span>
-                </Link>
-                <Link to="/add-property" className="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 scale-110 transition-all duration-300 ease-out">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Add</span>
-                </Link>
-                <Link to="/favorites" className="flex flex-col items-center justify-center text-slate-400">
-                    <span className="material-symbols-outlined transition-all duration-300 ease-out">favorite</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Saved</span>
-                </Link>
-                <Link to="/admin" className="flex flex-col items-center justify-center text-slate-400">
-                    <span className="material-symbols-outlined transition-all duration-300 ease-out">dashboard</span>
-                    <span className="font-bold text-[10px] uppercase tracking-widest mt-1">Admin</span>
-                </Link>
-            </nav>
+            <BottomNav />
         </div>
     );
 }
