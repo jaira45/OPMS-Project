@@ -1,0 +1,37 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import PrivateRoute from './components/PrivateRoute'
+import SplashScreen from './pages/SplashScreen'
+import LoginSignup from './pages/LoginSignup'
+import HomeScreen from './pages/HomeScreen'
+import UserDashboard from './pages/UserDashboard'
+import AddProperty from './pages/AddProperty'
+import Property from './pages/Property'
+import PropertyProfile from './pages/PropertyProfile'
+import Favorites from './pages/Favorites'
+import Inquiry from './pages/Inquiry'
+import Admin from './pages/Admin'
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<SplashScreen />} />
+          <Route path="/login" element={<LoginSignup />} />
+
+          {/* Protected routes — require valid JWT */}
+          <Route path="/home" element={<PrivateRoute><HomeScreen /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
+          <Route path="/add-property" element={<PrivateRoute><AddProperty /></PrivateRoute>} />
+          <Route path="/properties" element={<PrivateRoute><Property /></PrivateRoute>} />
+          <Route path="/property/:id" element={<PrivateRoute><PropertyProfile /></PrivateRoute>} />
+          <Route path="/favorites" element={<PrivateRoute><Favorites /></PrivateRoute>} />
+          <Route path="/inquiries" element={<PrivateRoute><Inquiry /></PrivateRoute>} />
+          <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  )
+}

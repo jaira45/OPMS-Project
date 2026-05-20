@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #002452;
+  --color-secondary: #006a63;
+  --color-tertiary: #372000;
+  --color-background: #faf9fe;
+  --color-surface: #ffffff;
+  --color-on-surface: #1a1b1f;
+  --color-outline: #747780;
+
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-body;
+  }
+}
