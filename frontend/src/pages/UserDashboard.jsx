@@ -12,22 +12,24 @@ export default function UserDashboard() {
     const [savedCount, setSavedCount] = useState(0);
     const [inquiryCount, setInquiryCount] = useState(0);
 
-    // Modal Form State - Initialized from Context
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    
+    // EXACT IMPLEMENTATION REQUESTED
     const [formData, setFormData] = useState({
-        fullName: '',
-        gender: '',
-        profileImage: ''
+        fullName: user?.fullName || "",
+        gender: user?.gender || "other",
+        profileImage: user?.profileImage || ""
     });
+
     const [updateLoading, setUpdateLoading] = useState(false);
 
     // Sync form when modal opens
     useEffect(() => {
         if (isEditModalOpen && user) {
             setFormData({
-                fullName: user.fullName || '',
-                gender: user.gender || 'Other',
-                profileImage: user.profileImage || ''
+                fullName: user.fullName || "",
+                gender: user.gender || "other",
+                profileImage: user.profileImage || ""
             });
         }
     }, [isEditModalOpen, user]);
@@ -63,7 +65,7 @@ export default function UserDashboard() {
             });
             if (res.ok) {
                 const data = await res.json();
-                // UPDATE GLOBAL SOURCE OF TRUTH
+                // UPDATE GLOBAL SOURCE OF TRUTH (Also updates localStorage via updateUserProfile)
                 updateUserProfile(data.user);
                 setIsEditModalOpen(false);
             }
@@ -208,15 +210,17 @@ export default function UserDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender Identity</label>
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
+                                    
+                                    {/* EXACT HTML SELECT IMPLEMENTATION REQUESTED */}
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
                                         value={formData.gender}
                                         onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
                                         required
                                     >
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
                                     </select>
                                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
                                 </div>
@@ -230,7 +234,7 @@ export default function UserDashboard() {
                                         type="url"
                                         placeholder="https://example.com/avatar.jpg"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-xs"
-                                        value={formData.profileImage}
+                                        value={formData.profileImage || ""}
                                         onChange={(e) => setFormData(prev => ({ ...prev, profileImage: e.target.value }))}
                                     />
                                 </div>

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 
 const AuthContext = createContext(null);
 
-const STORAGE_KEY = 'opmsUser';
+const STORAGE_KEY = 'user';
 const TOKEN_KEY = 'opmsToken';
 
 /**
