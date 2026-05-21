@@ -6,7 +6,15 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const JWT_SECRET = process.env.JWT_SECRET || 'opms-super-secret-key-12345';
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+    console.error('❌ ERROR: MONGO_URI is not defined in .env file!');
+    process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,80 +24,26 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Fallback status indicator
-let useInMemoryDb = false;
-
-// Connect to MongoDB using 3-Level Robust Connection with background spin-up
+// Connect to MongoDB Atlas
 const connectDb = async () => {
     try {
-        console.log('Connecting to local MongoDB on port 27017...');
-        // Try Level 1: Standard local MongoDB
-        await mongoose.connect('mongodb://127.0.0.1:27017/odms', {
-            serverSelectionTimeoutMS: 2000
-        });
-        console.log('Connected to local MongoDB successfully!');
+        console.log('Connecting to MongoDB Atlas...');
+        await mongoose.connect(MONGO_URI);
+        console.log('✅ Connected to MongoDB Atlas successfully!');
     } catch (err) {
-        console.log('⚠️ Local MongoDB not found on port 27017.');
-        console.log('⚡ Temporary Fallback Activated: Running OPMS with in-memory JS database.');
-        useInMemoryDb = true;
-
-        // Spin up MongoMemoryServer in the background so we do not block server startup!
-        setTimeout(async () => {
+        if (err.message.includes('querySrv ECONNREFUSED')) {
+            console.log('⚠️ SRV DNS Block detected. Attempting direct node connection...');
+            const directUri = 'mongodb://jyotigupta85188_db_user:I5uRMY9SUE4ti7Wd@cluster0-shard-00-00.3edaqfz.mongodb.net:27017,cluster0-shard-00-01.3edaqfz.mongodb.net:27017,cluster0-shard-00-02.3edaqfz.mongodb.net:27017/odms?ssl=true&replicaSet=atlas-vt8v3o-shard-0&authSource=admin&appName=Cluster0';
             try {
-                console.log('\n🔄 [Background] Starting download/spin-up of local in-memory MongoDB Server...');
-                const { MongoMemoryServer } = require('mongodb-memory-server');
-
-                const mongoServer = await MongoMemoryServer.create({
-                    binary: {
-                        version: '4.4.24'
-                    },
-                    instance: {
-                        dbName: 'odms'
-                    }
-                });
-                const mongoUri = mongoServer.getUri();
-                console.log(`\n🚀 [Background] In-memory MongoDB Server ready at: ${mongoUri}`);
-
-                await mongoose.connect(mongoUri);
-                console.log('✅ [Background] Connected to in-memory MongoDB successfully!');
-
-                // Migrate data from in-memory JS arrays to the real MongoDB in-memory database!
-                console.log('📦 [Background] Migrating temporary data to real MongoDB database...');
-
-                // Migrate Users
-                for (const user of inMemoryUsers) {
-                    const exists = await User.findOne({ email: user.email });
-                    if (!exists) {
-                        const newU = new User(user);
-                        newU._id = user._id;
-                        await newU.save();
-                    }
-                }
-
-                // Migrate Properties
-                for (const prop of inMemoryProperties) {
-                    const exists = await Property.findOne({ title: prop.title });
-                    if (!exists) {
-                        const newP = new Property(prop);
-                        newP._id = prop._id;
-                        await newP.save();
-                    }
-                }
-
-                // Migrate Inquiries
-                for (const inq of inMemoryInquiries) {
-                    const newI = new Inquiry(inq);
-                    newI._id = inq._id;
-                    await newI.save();
-                }
-
-                console.log('🎉 [Background] Data migration complete. Upgraded seamlessly to real MongoDB!');
-                useInMemoryDb = false; // Switch to use real MongoDB now!
-            } catch (memErr) {
-                console.log('❌ [Background] Failed to launch MongoDB Memory Server:', memErr.message);
-                console.log('⚡ Permanent Fallback Activated: Staying on in-memory JS database.');
+                await mongoose.connect(directUri);
+                console.log('✅ Connected to MongoDB Atlas successfully (via direct nodes)!');
+                return;
+            } catch (directErr) {
+                console.error('❌ Direct Connection Error:', directErr.message);
             }
-        }, 100);
+        }
+        console.error('❌ MongoDB Connection Error:', err.message);
+        process.exit(1);
     }
 };
 
@@ -139,209 +93,28 @@ const userToJSON = (user) => {
     return userObj;
 };
 
-// In-Memory Fallback Stores with Initial Hydrated Mock Data
-const inMemoryUsers = [
-    {
-        _id: 'u1',
-        fullName: 'Admin User',
-        email: 'admin@opms.com',
-        phone: '9876543210',
-        password: bcrypt.hashSync('admin', 10),
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        _id: 'u2',
-        fullName: 'John Doe',
-        email: 'john@example.com',
-        phone: '1234567890',
-        password: bcrypt.hashSync('password123', 10),
-        createdAt: new Date(),
-        updatedAt: new Date()
-    }
-];
-
-const inMemoryProperties = [
-    {
-        _id: 'p1',
-        title: 'Shyamala Hills Heritage Suite',
-        price: '₹ 1.2 Cr',
-        location: 'Bhopal, Madhya Pradesh',
-        bhk: '3 BHK',
-        floor: '2nd Floor',
-        carpetArea: '1450 sqft',
-        builtupArea: '1800 sqft',
-        coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&auto=format&fit=crop&q=60',
-        status: 'Pending',
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        _id: 'p2',
-        title: 'Indore Premium Sky-Residences',
-        price: '₹ 85.5 L',
-        location: 'Vijay Nagar, Indore',
-        bhk: '2 BHK',
-        floor: '8th Floor',
-        carpetArea: '1050 sqft',
-        builtupArea: '1300 sqft',
-        coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&auto=format&fit=crop&q=60',
-        status: 'Pending',
-        createdAt: new Date(),
-        updatedAt: new Date()
-    },
-    {
-        _id: 'p3',
-        title: 'Aura Premium Bungalow',
-        price: '₹ 2.4 Cr',
-        location: 'Arera Colony, Bhopal',
-        bhk: '4 BHK',
-        floor: 'Ground + 1',
-        carpetArea: '2600 sqft',
-        builtupArea: '3200 sqft',
-        coverImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&auto=format&fit=crop&q=60',
-        status: 'Approved',
-        createdAt: new Date(),
-        updatedAt: new Date()
-    }
-];
-
-const inMemoryInquiries = [
-    {
-        _id: 'i1',
-        propertyId: 'p3',
-        propertyName: 'Aura Premium Bungalow',
-        buyerName: 'Rahul Verma',
-        buyerEmail: 'rahul@example.com',
-        message: 'I am interested in viewing this bungalow this weekend.',
-        price: '₹ 2.3 Cr',
-        status: 'Sent',
-        createdAt: new Date(),
-        updatedAt: new Date()
-    }
-];
-
-// Helper helper functions to abstract DB vs In-Memory
-const isDbConnected = () => {
-    return mongoose.connection.readyState === 1 && !useInMemoryDb;
-};
-
-const getProperties = async () => {
-    if (isDbConnected()) {
-        return await Property.find();
-    }
-    return inMemoryProperties;
-};
-
-const getPropertyById = async (id) => {
-    if (isDbConnected()) {
-        return await Property.findById(id);
-    }
-    return inMemoryProperties.find(p => p._id.toString() === id.toString());
-};
-
+// Database Helper Functions
+const getProperties = async () => await Property.find();
+const getPropertyById = async (id) => await Property.findById(id);
 const addProperty = async (data) => {
-    if (isDbConnected()) {
-        const newProperty = new Property(data);
-        return await newProperty.save();
-    }
-    const newProperty = {
-        _id: 'p_' + Math.random().toString(36).substr(2, 9),
-        status: 'Pending',
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
-    inMemoryProperties.push(newProperty);
-    return newProperty;
+    const newProperty = new Property(data);
+    return await newProperty.save();
 };
-
-const updatePropertyStatus = async (id, status) => {
-    if (isDbConnected()) {
-        return await Property.findByIdAndUpdate(id, { status }, { new: true });
-    }
-    const property = inMemoryProperties.find(p => p._id.toString() === id.toString());
-    if (property) {
-        property.status = status;
-        property.updatedAt = new Date();
-    }
-    return property;
-};
-
-const deleteProperty = async (id) => {
-    if (isDbConnected()) {
-        return await Property.findByIdAndDelete(id);
-    }
-    const index = inMemoryProperties.findIndex(p => p._id.toString() === id.toString());
-    if (index !== -1) {
-        return inMemoryProperties.splice(index, 1)[0];
-    }
-    return null;
-};
-
-const getUsers = async () => {
-    if (isDbConnected()) {
-        return await User.find();
-    }
-    return inMemoryUsers;
-};
-
-const getUserByEmail = async (email) => {
-    if (isDbConnected()) {
-        return await User.findOne({ email });
-    }
-    return inMemoryUsers.find(u => u.email === email);
-};
-
+const updatePropertyStatus = async (id, status) => await Property.findByIdAndUpdate(id, { status }, { new: true });
+const deleteProperty = async (id) => await Property.findByIdAndDelete(id);
+const getUsers = async () => await User.find();
+const getUserByEmail = async (email) => await User.findOne({ email });
 const addUser = async (data) => {
-    if (isDbConnected()) {
-        const newUser = new User(data);
-        return await newUser.save();
-    }
-    const newUser = {
-        _id: 'u_' + Math.random().toString(36).substr(2, 9),
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
-    inMemoryUsers.push(newUser);
-    return newUser;
+    const newUser = new User(data);
+    return await newUser.save();
 };
-
-const getInquiries = async () => {
-    if (isDbConnected()) {
-        return await Inquiry.find().sort({ createdAt: -1 });
-    }
-    return [...inMemoryInquiries].sort((a, b) => b.createdAt - a.createdAt);
-};
-
+const getInquiries = async () => await Inquiry.find().sort({ createdAt: -1 });
 const addInquiry = async (data) => {
-    if (isDbConnected()) {
-        const newInquiry = new Inquiry(data);
-        return await newInquiry.save();
-    }
-    const newInquiry = {
-        _id: 'i_' + Math.random().toString(36).substr(2, 9),
-        status: 'Sent',
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
-    inMemoryInquiries.push(newInquiry);
-    return newInquiry;
+    const newInquiry = new Inquiry(data);
+    return await newInquiry.save();
 };
+const updateInquiryStatus = async (id, status) => await Inquiry.findByIdAndUpdate(id, { status }, { new: true });
 
-const updateInquiryStatus = async (id, status) => {
-    if (isDbConnected()) {
-        return await Inquiry.findByIdAndUpdate(id, { status }, { new: true });
-    }
-    const inquiry = inMemoryInquiries.find(i => i._id.toString() === id.toString());
-    if (inquiry) {
-        inquiry.status = status;
-        inquiry.updatedAt = new Date();
-    }
-    return inquiry;
-};
 
 // Serve static files from the parent directory (React build logic could go here later)
 app.use(express.static(path.join(__dirname, '../')));
@@ -526,7 +299,7 @@ app.use((req, res, next) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ message: 'API endpoint not found' });
     }
-    
+
     // Check if frontend/dist/index.html exists (production)
     const distPath = path.join(__dirname, '../frontend/dist/index.html');
     if (require('fs').existsSync(distPath)) {
