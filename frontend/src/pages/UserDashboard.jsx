@@ -14,21 +14,21 @@ export default function UserDashboard() {
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
-    // EXACT IMPLEMENTATION REQUESTED
-    const [formData, setFormData] = useState({
-        fullName: user?.fullName || "",
-        gender: user?.gender || "other",
-        profileImage: user?.profileImage || ""
+    // REQUESTED STATE HANDLING
+    const [editData, setEditData] = useState({
+        fullName: "",
+        gender: "other",
+        profileImage: ""
     });
 
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    // Sync form when modal opens
+    // Sync form state when modal opens
     useEffect(() => {
         if (isEditModalOpen && user) {
-            setFormData({
+            setEditData({
                 fullName: user.fullName || "",
-                gender: user.gender || "other",
+                gender: (user.gender || "other").toLowerCase(),
                 profileImage: user.profileImage || ""
             });
         }
@@ -61,11 +61,11 @@ export default function UserDashboard() {
         try {
             const res = await authFetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
-                body: JSON.stringify(formData)
+                body: JSON.stringify(editData)
             });
             if (res.ok) {
                 const data = await res.json();
-                // UPDATE GLOBAL SOURCE OF TRUTH (Also updates localStorage via updateUserProfile)
+                // Update context and localStorage (handled by updateUserProfile)
                 updateUserProfile(data.user);
                 setIsEditModalOpen(false);
             }
@@ -107,7 +107,7 @@ export default function UserDashboard() {
                         </div>
 
                         <div className="space-y-2">
-                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user.fullName}</h2>
+                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user.fullName || 'User Name'}</h2>
                             <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user.email}</p>
                             <button 
                                 onClick={() => setIsEditModalOpen(true)}
@@ -199,8 +199,8 @@ export default function UserDashboard() {
                                     <input
                                         type="text"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={formData.fullName}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                                        value={editData.fullName}
+                                        onChange={(e) => setEditData(prev => ({ ...prev, fullName: e.target.value }))}
                                         required
                                     />
                                 </div>
@@ -211,11 +211,11 @@ export default function UserDashboard() {
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
                                     
-                                    {/* EXACT HTML SELECT IMPLEMENTATION REQUESTED */}
+                                    {/* REQUESTED DROPDOWN IMPLEMENTATION */}
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
-                                        value={formData.gender}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                                        value={editData.gender}
+                                        onChange={(e) => setEditData({ ...editData, gender: e.target.value.toLowerCase() })}
                                         required
                                     >
                                         <option value="male">Male</option>
@@ -234,8 +234,8 @@ export default function UserDashboard() {
                                         type="url"
                                         placeholder="https://example.com/avatar.jpg"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-xs"
-                                        value={formData.profileImage || ""}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, profileImage: e.target.value }))}
+                                        value={editData.profileImage || ""}
+                                        onChange={(e) => setEditData(prev => ({ ...prev, profileImage: e.target.value }))}
                                     />
                                 </div>
                             </div>
