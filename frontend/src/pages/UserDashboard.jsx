@@ -24,6 +24,15 @@ export default function UserDashboard() {
         fetchUserInquiries();
     }, []);
 
+    // Sync form states when modal opens or user updates
+    useEffect(() => {
+        if (isEditModalOpen) {
+            setEditName(user?.fullName || '');
+            setEditGender(user?.gender || 'Other');
+            setEditImage(user?.profileImage || '');
+        }
+    }, [isEditModalOpen, user]);
+
     const fetchUserInquiries = async () => {
         try {
             const res = await authFetch(`${API_URL}/api/inquiries`);
@@ -42,6 +51,7 @@ export default function UserDashboard() {
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setUpdateLoading(true);
+        console.log("Avatar Debug - Saving Profile with Gender:", editGender);
         try {
             const res = await authFetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
