@@ -10,8 +10,8 @@ const TOKEN_KEY = 'opmsToken';
  */
 const ICONS = {
     male: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
-    female: 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png',
-    neutral: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+    female: 'https://cdn-icons-png.flaticon.com/512/3135/3135823.png',
+    neutral: 'https://cdn-icons-png.flaticon.com/512/847/847969.png'
 };
 
 function parseJwt(token) {
@@ -72,6 +72,7 @@ export function AuthProvider({ children }) {
         setUser(prevUser => {
             const updated = { ...prevUser, ...updates };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+            console.log("Client Sync - Updated Gender in Context:", updated.gender);
             return updated;
         });
     }, []);
