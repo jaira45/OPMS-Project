@@ -7,14 +7,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
+const dns = require('dns');
+
+// Automatically bypass local DNS blocks by using Google DNS for SRV lookups
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const JWT_SECRET = process.env.JWT_SECRET || 'opms-super-secret-key-12345';
 const MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-    console.error('❌ ERROR: MONGO_URI is not defined in .env file!');
-    process.exit(1);
-}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,17 +30,6 @@ const connectDb = async () => {
         await mongoose.connect(MONGO_URI);
         console.log('✅ Connected to MongoDB Atlas successfully!');
     } catch (err) {
-        if (err.message.includes('querySrv ECONNREFUSED')) {
-            console.log('⚠️ SRV DNS Block detected. Attempting direct node connection...');
-            const directUri = 'mongodb://jyotigupta85188_db_user:I5uRMY9SUE4ti7Wd@cluster0-shard-00-00.3edaqfz.mongodb.net:27017,cluster0-shard-00-01.3edaqfz.mongodb.net:27017,cluster0-shard-00-02.3edaqfz.mongodb.net:27017/odms?ssl=true&replicaSet=atlas-vt8v3o-shard-0&authSource=admin&appName=Cluster0';
-            try {
-                await mongoose.connect(directUri);
-                console.log('✅ Connected to MongoDB Atlas successfully (via direct nodes)!');
-                return;
-            } catch (directErr) {
-                console.error('❌ Direct Connection Error:', directErr.message);
-            }
-        }
         console.error('❌ MongoDB Connection Error:', err.message);
         process.exit(1);
     }

@@ -11,6 +11,9 @@ import PropertyProfile from './pages/PropertyProfile'
 import Favorites from './pages/Favorites'
 import Inquiry from './pages/Inquiry'
 import Admin from './pages/Admin'
+import About from './pages/About'
+import Agents from './pages/Agents'
+import Contact from './pages/Contact'
 
 export default function App() {
   return (
@@ -20,6 +23,9 @@ export default function App() {
           {/* Public routes */}
           <Route path="/" element={<SplashScreen />} />
           <Route path="/login" element={<LoginSignup />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/agents" element={<Agents />} />
+          <Route path="/contact" element={<Contact />} />
 
           {/* Protected routes — require valid JWT */}
           <Route path="/home" element={<PrivateRoute><HomeScreen /></PrivateRoute>} />

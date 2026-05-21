@@ -2,16 +2,16 @@
 
 @theme {
   /* Core Colors */
-  --color-primary: #002452;
-  --color-primary-container: #d6e3ff;
-  --color-on-primary-container: #001b3e;
-  --color-secondary: #006a63;
-  --color-secondary-container: #72f7e9;
-  --color-on-secondary-container: #00201d;
-  --color-tertiary: #372000;
-  --color-background: #faf9fe;
+  /* Luxury Navy Palette */
+  --color-primary: #001e3c; /* Deep Professional Navy */
+  --color-primary-container: #003366;
+  --color-on-primary-container: #e1f0ff;
+  --color-secondary: #0056b3; /* Vibrant Executive Blue */
+  --color-secondary-container: #3b82f6; /* High-Contrast Accent */
+  --color-on-secondary-container: #ffffff;
+  --color-background: #f8fafc;
   --color-surface: #ffffff;
-  --color-surface-variant: #e1e2ec;
+  --color-surface-variant: #e2e8f0;
   --color-on-surface: #1a1b1f;
   --color-on-surface-variant: #44474f;
   --color-outline: #747780;

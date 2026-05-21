@@ -8,6 +8,7 @@ import BottomNav from '../components/BottomNav';
 export default function HomeScreen() {
     const navigate = useNavigate();
     const [featured, setFeatured] = useState([]);
+    const [activeTab, setActiveTab] = useState('BUY');
     const [favorites, setFavorites] = useState(() => {
         return JSON.parse(localStorage.getItem('favorites') || '[]');
     });
@@ -62,63 +63,95 @@ export default function HomeScreen() {
             <Navbar />
 
             <main className="pt-16 sm:pt-20 space-y-12 sm:space-y-24">
-                {/* Immersive Hero Section */}
-                <section className="relative h-[60vh] sm:h-[85vh] min-h-[400px] flex flex-col items-center justify-center text-center px-4 sm:px-6 overflow-hidden">
+                {/* Modern Hero Section */}
+                <section className="relative h-[70vh] sm:h-[90vh] min-h-[500px] flex flex-col items-center justify-center text-center px-4 sm:px-6 overflow-hidden">
                     {/* Background Layer */}
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1920&auto=format&fit=crop"
-                            className="w-full h-full object-cover scale-105"
-                            alt="Luxury Real Estate"
+                            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop"
+                            className="w-full h-full object-cover"
+                            alt="Modern Luxury Home"
                         />
-                        <div className="absolute inset-0 bg-black/50 sm:bg-black/40"></div>
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-background/90"></div>
+                        <div className="absolute inset-0 bg-black/40"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-background/100"></div>
                     </div>
 
                     {/* Content Layer */}
-                    <div className="relative z-10 w-full max-w-6xl flex flex-col items-center space-y-6 sm:space-y-10 animate-fade-in-up">
+                    <div className="relative z-10 w-full max-w-5xl flex flex-col items-center space-y-8 animate-fade-in-up">
                         <div className="space-y-4">
-                            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight tracking-tighter drop-shadow-2xl">
-                                Properties to <span className="text-secondary-container">call home</span>
+                            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-white leading-none tracking-tighter drop-shadow-2xl">
+                                Properties to <span className="text-secondary underline decoration-secondary/40 italic">call home</span>
                             </h1>
-                            <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-md text-balance">
-                                Discover Madhya Pradesh's most exclusive estates and heritage residences.
+                            <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-md text-balance">
+                                Discover Madhya Pradesh's most exclusive estates and heritage residences with ease.
                             </p>
                         </div>
 
-                        {/* Search Container */}
-                        <div className="w-full max-w-4xl glass p-1.5 sm:p-2 rounded-2xl sm:rounded-full flex flex-col md:flex-row items-stretch gap-2 shadow-2xl">
-                            <div className="flex-1 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-white/10">
-                                <div className="flex-1 px-4 py-3 flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-white/60">location_on</span>
-                                    <div className="flex flex-col items-start w-full">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Location</span>
-                                        <input
-                                            type="text"
-                                            placeholder="Indore, Bhopal..."
-                                            className="bg-transparent border-none p-0 text-sm font-bold text-white placeholder:text-white/30 focus:ring-0 w-full"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex-1 px-4 py-3 flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-white/60">home_work</span>
-                                    <div className="flex flex-col items-start w-full">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Type</span>
-                                        <select className="bg-transparent border-none p-0 text-sm font-bold text-white focus:ring-0 w-full appearance-none cursor-pointer">
-                                            <option className="text-black">All Properties</option>
-                                            <option className="text-black">Luxury Villa</option>
-                                            <option className="text-black">Modern Flat</option>
-                                        </select>
-                                    </div>
+                        {/* Search Component Container */}
+                        <div className="w-full max-w-4xl space-y-5">
+                            {/* Tabs Row */}
+                            <div className="flex justify-center">
+                                <div className="bg-white/95 backdrop-blur-md p-1.5 rounded-full flex gap-1 shadow-2xl border border-white/20">
+                                    {['BUY', 'RENT', 'SOLD', 'AGENTS'].map((tab) => (
+                                        <button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            className={`px-6 sm:px-8 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all duration-300 tracking-widest ${
+                                                activeTab === tab 
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/40' 
+                                                : 'text-primary hover:bg-primary/5'
+                                            }`}
+                                        >
+                                            {tab}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                            <button
-                                onClick={() => navigate('/properties')}
-                                className="bg-primary text-white px-8 py-4 sm:py-0 rounded-xl sm:rounded-full font-bold hover:bg-secondary transition-all flex items-center justify-center gap-2"
-                            >
-                                <span className="material-symbols-outlined">search</span>
-                                <span>Find Property</span>
-                            </button>
+
+                            {/* Search Bar Row */}
+                            <div className="bg-white rounded-3xl sm:rounded-full p-2.5 sm:p-3 shadow-2xl flex flex-col md:flex-row items-stretch gap-3 border border-surface-variant/50">
+                                <div className="flex-1 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-surface-variant">
+                                    {/* Location Input */}
+                                    <div className="flex-1 px-6 py-3 flex items-center gap-4 group">
+                                        <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                                            <span className="material-symbols-outlined text-xl">location_on</span>
+                                        </div>
+                                        <div className="flex flex-col items-start w-full">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Location</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Where are you looking?"
+                                                className="bg-transparent border-none p-0 text-sm sm:text-base font-bold text-primary placeholder:text-on-surface-variant/20 focus:ring-0 w-full"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Type Dropdown */}
+                                    <div className="flex-1 px-6 py-3 flex items-center gap-4 group">
+                                        <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                                            <span className="material-symbols-outlined text-xl">home_work</span>
+                                        </div>
+                                        <div className="flex flex-col items-start w-full">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Property Type</span>
+                                            <select className="bg-transparent border-none p-0 text-sm sm:text-base font-bold text-primary focus:ring-0 w-full appearance-none cursor-pointer">
+                                                <option>All Properties</option>
+                                                <option>Luxury Villa</option>
+                                                <option>Modern Flat</option>
+                                                <option>Commercial</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Find Now Button */}
+                                <button
+                                    onClick={() => navigate(activeTab === 'AGENTS' ? '/agents' : '/properties')}
+                                    className="bg-secondary hover:bg-primary text-white px-10 py-5 sm:py-0 rounded-2xl sm:rounded-full font-black text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-secondary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-95"
+                                >
+                                    <span className="material-symbols-outlined font-bold">search</span>
+                                    <span>Find Now</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -132,12 +165,12 @@ export default function HomeScreen() {
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 px-4">
                             {[
-                                { name: 'Indore', img: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=500&h=500&fit=crop' },
-                                { name: 'Bhopal', img: 'https://images.unsplash.com/photo-1615569424368-8a8927ae293b?w=500&h=500&fit=crop' },
-                                { name: 'Rewa', img: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c2f1?w=500&h=500&fit=crop' },
-                                { name: 'Jabalpur', img: 'https://images.unsplash.com/photo-1626014303757-6bc9277f722e?w=500&h=500&fit=crop' },
-                                { name: 'Ujjain', img: 'https://images.unsplash.com/photo-1627844718626-4c6b9636402b?w=500&h=500&fit=crop' },
-                                { name: 'Gwalior', img: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a4c7?w=500&h=500&fit=crop' }
+                                { name: 'Indore', img: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=500&auto=format&fit=crop' },
+                                { name: 'Bhopal', img: 'https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=500&auto=format&fit=crop' },
+                                { name: 'Rewa', img: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c2f1?w=500&auto=format&fit=crop' },
+                                { name: 'Jabalpur', img: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&auto=format&fit=crop' },
+                                { name: 'Ujjain', img: 'https://images.unsplash.com/photo-1627844718626-4c6b9636402b?w=500&auto=format&fit=crop' },
+                                { name: 'Gwalior', img: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a4c7?w=500&auto=format&fit=crop' }
                             ].map((city) => (
                                 <div key={city.name} onClick={() => navigate('/properties')} className="flex flex-col items-center gap-3 group cursor-pointer">
                                     <div className="w-full aspect-square rounded-3xl overflow-hidden border border-surface-variant shadow-sm group-hover:shadow-xl transition-all duration-500 group-hover:-translate-y-2">
@@ -188,18 +221,44 @@ export default function HomeScreen() {
                         </div>
                     </section>
 
-                    {/* New Launch Banner */}
-                    <section className="px-4">
-                        <div className="bg-primary/5 rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-16 relative overflow-hidden flex flex-col md:flex-row items-center gap-10">
-                            <div className="relative z-10 flex-1 space-y-6">
-                                <span className="inline-block bg-secondary/10 text-secondary text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-secondary/20">New Launch</span>
-                                <h2 className="text-primary font-headline font-black text-3xl sm:text-5xl leading-tight">The Oasis Heights</h2>
-                                <p className="text-on-surface-variant text-base sm:text-lg max-w-lg">Smart living starts at ₹45 Lakh in the heart of the city's new commercial district.</p>
-                                <button onClick={() => navigate('/properties')} className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-secondary transition-all">Explore Project</button>
+                    {/* Trust Section */}
+                    <section className="bg-primary text-white rounded-[3rem] p-8 sm:p-20 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div className="space-y-8">
+                                <h2 className="text-3xl sm:text-6xl font-black leading-tight tracking-tighter text-balance">The most trusted name in MP Real Estate.</h2>
+                                <div className="grid grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <div className="text-3xl sm:text-4xl font-black text-secondary-container">100%</div>
+                                        <p className="text-white/60 text-xs sm:text-sm font-bold uppercase tracking-widest">Verified Listings</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="text-3xl sm:text-4xl font-black text-secondary-container">24/7</div>
+                                        <p className="text-white/60 text-xs sm:text-sm font-bold uppercase tracking-widest">Agent Support</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="relative flex-1 w-full aspect-video md:aspect-square rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl">
-                                <img alt="Modern Architecture" className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&fit=crop" />
+                            <div className="space-y-6 lg:pl-12 border-l border-white/10">
+                                <p className="text-lg sm:text-xl text-white/80 leading-relaxed">
+                                    We don't just sell houses; we build communities. Our platform is designed to give you peace of mind throughout the entire buying or renting process.
+                                </p>
+                                <button onClick={() => navigate('/about')} className="flex items-center gap-3 text-secondary-container font-black hover:gap-5 transition-all">
+                                    <span>Learn more about our mission</span>
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </button>
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Final Contact CTA */}
+                    <section className="text-center space-y-10 pb-12">
+                        <div className="max-w-2xl mx-auto space-y-4">
+                            <h2 className="text-3xl sm:text-5xl font-black text-primary tracking-tighter">Ready to find your dream home?</h2>
+                            <p className="text-on-surface-variant font-medium text-base sm:text-lg">Our experts are standing by to help you find the perfect property in Madhya Pradesh.</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <button onClick={() => navigate('/properties')} className="w-full sm:w-auto bg-primary text-white px-10 py-5 rounded-full font-black text-lg hover:bg-secondary transition-all shadow-xl shadow-primary/20">Browse Properties</button>
+                            <button onClick={() => navigate('/contact')} className="w-full sm:w-auto glass text-primary px-10 py-5 rounded-full font-black text-lg hover:border-primary transition-all">Contact Us</button>
                         </div>
                     </section>
                 </div>
