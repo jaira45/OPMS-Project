@@ -59,19 +59,26 @@ export function AuthProvider({ children }) {
     }, []);
 
     const getEffectiveProfileImage = useCallback((u) => {
-        const normalizedGender = (u?.gender || "").toLowerCase().trim();
+        if (!u) return 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
-        if (u?.profileImage && u.profileImage.trim() !== '') {
+        // 1. If user has a custom image, use it
+        if (u.profileImage && typeof u.profileImage === 'string' && u.profileImage.trim() !== '') {
             return u.profileImage;
         }
 
-        if (normalizedGender === "female") {
-            return 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&q=80';
-        } else if (normalizedGender === "male") {
-            return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=80';
-        } else {
-            return 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        // 2. Derive from gender (Normalize: lowercase + trim)
+        const gender = String(u.gender || '').toLowerCase().trim();
+        
+        if (gender === 'female') {
+            return 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png'; // Professional Female Icon
         }
+        
+        if (gender === 'male') {
+            return 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // Professional Male Icon
+        }
+
+        // 3. Neutral professional fallback
+        return 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Neutral User Icon
     }, []);
 
     const currentProfileImage = user ? getEffectiveProfileImage(user) : null;
