@@ -60,8 +60,9 @@ export function AuthProvider({ children }) {
 
     const getEffectiveProfileImage = useCallback((u) => {
         if (u?.profileImage) return u.profileImage;
-        if (u?.gender === 'Male') return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=80';
-        if (u?.gender === 'Female') return 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&q=80';
+        const gender = u?.gender?.toLowerCase();
+        if (gender === 'male') return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=80';
+        if (gender === 'female') return 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&q=80';
         return 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // Professional Neutral Human Icon
     }, []);
 
