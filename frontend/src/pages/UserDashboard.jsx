@@ -7,14 +7,14 @@ import BottomNav from '../components/BottomNav';
 
 export default function UserDashboard() {
     const navigate = useNavigate();
-    const { user, logout, authFetch, profileImage, updateUserProfile } = useAuth();
+    const { user, setUser, logout, authFetch, profileImage, updateUserProfile } = useAuth();
     
     const [savedCount, setSavedCount] = useState(0);
     const [inquiryCount, setInquiryCount] = useState(0);
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
-    // REQUESTED STATE HANDLING
+    // RE-SYNCED FORM STATE
     const [editData, setEditData] = useState({
         fullName: "",
         gender: "other",
@@ -65,8 +65,21 @@ export default function UserDashboard() {
             });
             if (res.ok) {
                 const data = await res.json();
-                // Update context and localStorage (handled by updateUserProfile)
-                updateUserProfile(data.user);
+                
+                // EXACT IMPLEMENTATION REQUESTED
+                const updatedUser = {
+                    ...user,
+                    fullName: editData.fullName,
+                    gender: editData.gender,
+                    profileImage: editData.profileImage
+                };
+
+                // Update Context
+                setUser(updatedUser);
+
+                // Update LocalStorage
+                localStorage.setItem("user", JSON.stringify(updatedUser));
+
                 setIsEditModalOpen(false);
             }
         } catch (err) {
@@ -210,8 +223,6 @@ export default function UserDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender Identity</label>
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
-                                    
-                                    {/* REQUESTED DROPDOWN IMPLEMENTATION */}
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
                                         value={editData.gender}
