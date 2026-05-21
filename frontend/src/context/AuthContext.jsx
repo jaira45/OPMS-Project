@@ -60,8 +60,6 @@ export function AuthProvider({ children }) {
 
     const getEffectiveProfileImage = useCallback((u) => {
         const normalizedGender = (u?.gender || "").toLowerCase().trim();
-        console.log("Avatar Debug - User Gender Raw:", u?.gender);
-        console.log("Avatar Debug - Gender Normalized:", normalizedGender);
 
         if (u?.profileImage && u.profileImage.trim() !== '') {
             return u.profileImage;
@@ -76,22 +74,9 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
-    const [profileImage, setProfileImage] = useState(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-        return getEffectiveProfileImage(storedUser);
-    });
-
-    // Sync profile image when user changes
-    useEffect(() => {
-        if (user) {
-            const nextAvatar = getEffectiveProfileImage(user);
-            console.log("Avatar Debug - Syncing Image URL:", nextAvatar);
-            setProfileImage(nextAvatar);
-        }
-    }, [user, getEffectiveProfileImage]);
+    const currentProfileImage = user ? getEffectiveProfileImage(user) : null;
 
     const updateUser = useCallback((updatedUser) => {
-        console.log("Avatar Debug - Updating User Context State:", updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser({ ...updatedUser }); // Force shadow copy to trigger effect
     }, []);
@@ -126,7 +111,7 @@ export function AuthProvider({ children }) {
     }, [token, logout]);
 
     return (
-        <AuthContext.Provider value={{ token, user, profileImage, updateUser, isAuthenticated, login, logout, authFetch }}>
+        <AuthContext.Provider value={{ token, user, profileImage: currentProfileImage, updateUser, isAuthenticated, login, logout, authFetch }}>
             {children}
         </AuthContext.Provider>
     );

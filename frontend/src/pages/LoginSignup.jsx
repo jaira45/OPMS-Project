@@ -59,7 +59,6 @@ export default function LoginSignup() {
         }
         setLoading(true);
         setError('');
-        console.log("Avatar Debug - Signing up with gender:", gender);
         try {
             const res = await fetch(`${API_URL}/api/signup`, {
                 method: 'POST',
