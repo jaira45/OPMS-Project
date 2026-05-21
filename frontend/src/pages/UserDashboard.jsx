@@ -14,7 +14,7 @@ export default function UserDashboard() {
 
     // Modal Form State - Initialized from Context
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editForm, setEditForm] = useState({
+    const [formData, setFormData] = useState({
         fullName: '',
         gender: '',
         profileImage: ''
@@ -24,7 +24,7 @@ export default function UserDashboard() {
     // Sync form when modal opens
     useEffect(() => {
         if (isEditModalOpen && user) {
-            setEditForm({
+            setFormData({
                 fullName: user.fullName || '',
                 gender: user.gender || 'Other',
                 profileImage: user.profileImage || ''
@@ -59,7 +59,7 @@ export default function UserDashboard() {
         try {
             const res = await authFetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
-                body: JSON.stringify(editForm)
+                body: JSON.stringify(formData)
             });
             if (res.ok) {
                 const data = await res.json();
@@ -197,8 +197,8 @@ export default function UserDashboard() {
                                     <input
                                         type="text"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={editForm.fullName}
-                                        onChange={(e) => setEditForm(prev => ({ ...prev, fullName: e.target.value }))}
+                                        value={formData.fullName}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
                                         required
                                     />
                                 </div>
@@ -210,8 +210,8 @@ export default function UserDashboard() {
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
-                                        value={editForm.gender}
-                                        onChange={(e) => setEditForm(prev => ({ ...prev, gender: e.target.value }))}
+                                        value={formData.gender}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
                                         required
                                     >
                                         <option value="Male">Male</option>
@@ -230,8 +230,8 @@ export default function UserDashboard() {
                                         type="url"
                                         placeholder="https://example.com/avatar.jpg"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-xs"
-                                        value={editForm.profileImage}
-                                        onChange={(e) => setEditForm(prev => ({ ...prev, profileImage: e.target.value }))}
+                                        value={formData.profileImage}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, profileImage: e.target.value }))}
                                     />
                                 </div>
                             </div>
