@@ -1,11 +1,19 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const AuthContext = createContext(null);
 
+const STORAGE_KEY = 'opmsUser';
+const TOKEN_KEY = 'opmsToken';
+
 /**
- * Decode JWT payload without a library (base64url decode).
- * Returns null if token is invalid / expired.
+ * Clean professional icons for the profile system
  */
+const ICONS = {
+    male: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+    female: 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png',
+    neutral: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+};
+
 function parseJwt(token) {
     try {
         const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -25,84 +33,68 @@ function isTokenValid(token) {
     if (!token) return false;
     const payload = parseJwt(token);
     if (!payload || !payload.exp) return false;
-    // exp is in seconds; Date.now() is ms
     return payload.exp * 1000 > Date.now();
 }
 
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+    const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || null);
     const [user, setUser] = useState(() => {
         try {
-            return JSON.parse(localStorage.getItem('user')) || null;
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : null;
         } catch {
             return null;
         }
     });
 
-    // On mount, validate stored token — clear if expired
+    // Clean up expired tokens on mount
     useEffect(() => {
-        const stored = localStorage.getItem('token');
-        if (stored && !isTokenValid(stored)) {
+        if (token && !isTokenValid(token)) {
             logout();
         }
-    }, []);
-
-    // Periodic expiry check every 60 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const stored = localStorage.getItem('token');
-            if (stored && !isTokenValid(stored)) {
-                logout();
-            }
-        }, 60_000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const getEffectiveProfileImage = useCallback((u) => {
-        if (!u) return 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
-        // 1. If user has a custom image, use it
-        if (u.profileImage && typeof u.profileImage === 'string' && u.profileImage.trim() !== '') {
-            return u.profileImage;
-        }
-
-        // 2. Derive from gender (Normalize: lowercase + trim)
-        const gender = String(u.gender || '').toLowerCase().trim();
-        
-        if (gender === 'female') {
-            return 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png'; // Professional Female Icon
-        }
-        
-        if (gender === 'male') {
-            return 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // Professional Male Icon
-        }
-
-        // 3. Neutral professional fallback
-        return 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Neutral User Icon
-    }, []);
-
-    const currentProfileImage = user ? getEffectiveProfileImage(user) : null;
-
-    const updateUser = useCallback((updatedUser) => {
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setUser({ ...updatedUser }); // Force shadow copy to trigger effect
-    }, []);
-
-    const login = useCallback((newToken, newUser) => {
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('user', JSON.stringify(newUser));
-        setToken(newToken);
-        setUser(newUser);
-    }, []);
+    }, [token]);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(STORAGE_KEY);
         setToken(null);
         setUser(null);
     }, []);
 
-    const isAuthenticated = !!token && isTokenValid(token);
+    const login = useCallback((newToken, newUser) => {
+        localStorage.setItem(TOKEN_KEY, newToken);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+        setToken(newToken);
+        setUser(newUser);
+    }, []);
+
+    const updateUserProfile = useCallback((updates) => {
+        setUser(prevUser => {
+            const updated = { ...prevUser, ...updates };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+            return updated;
+        });
+    }, []);
+
+    // Derived Profile Image - THE SINGLE SOURCE OF TRUTH FOR AVATARS
+    const profileImage = useMemo(() => {
+        if (!user) return ICONS.neutral;
+        
+        // 1. Custom profile image (if provided and not empty)
+        if (user.profileImage && typeof user.profileImage === 'string' && user.profileImage.trim() !== '') {
+            return user.profileImage;
+        }
+
+        // 2. Gender-based icon
+        const g = (user.gender || '').toLowerCase().trim();
+        if (g === 'female') return ICONS.female;
+        if (g === 'male') return ICONS.male;
+
+        // 3. Fallback to neutral
+        return ICONS.neutral;
+    }, [user]);
+
+    const isAuthenticated = useMemo(() => !!token && isTokenValid(token), [token]);
 
     const authFetch = useCallback(async (url, options = {}) => {
         const headers = {
@@ -111,14 +103,23 @@ export function AuthProvider({ children }) {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
         const res = await fetch(url, { ...options, headers });
-        if (res.status === 401) {
-            logout();
-        }
+        if (res.status === 401) logout();
         return res;
     }, [token, logout]);
 
+    const value = {
+        token,
+        user,
+        profileImage,
+        isAuthenticated,
+        login,
+        logout,
+        updateUserProfile,
+        authFetch
+    };
+
     return (
-        <AuthContext.Provider value={{ token, user, profileImage: currentProfileImage, updateUser, isAuthenticated, login, logout, authFetch }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

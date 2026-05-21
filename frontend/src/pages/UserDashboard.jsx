@@ -7,31 +7,36 @@ import BottomNav from '../components/BottomNav';
 
 export default function UserDashboard() {
     const navigate = useNavigate();
-    const { user, logout, authFetch, profileImage, updateUser } = useAuth();
+    const { user, logout, authFetch, profileImage, updateUserProfile } = useAuth();
+    
     const [savedCount, setSavedCount] = useState(0);
     const [inquiryCount, setInquiryCount] = useState(0);
 
-    // Edit Profile States
+    // Modal Form State - Initialized from Context
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editName, setEditName] = useState(user?.fullName || '');
-    const [editGender, setEditGender] = useState(user?.gender || 'Other');
-    const [editImage, setEditImage] = useState(user?.profileImage || '');
+    const [editForm, setEditForm] = useState({
+        fullName: '',
+        gender: '',
+        profileImage: ''
+    });
     const [updateLoading, setUpdateLoading] = useState(false);
+
+    // Sync form when modal opens
+    useEffect(() => {
+        if (isEditModalOpen && user) {
+            setEditForm({
+                fullName: user.fullName || '',
+                gender: user.gender || 'Other',
+                profileImage: user.profileImage || ''
+            });
+        }
+    }, [isEditModalOpen, user]);
 
     useEffect(() => {
         const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
         setSavedCount(favs.length);
-        fetchUserInquiries();
-    }, []);
-
-    // Sync form states when modal opens or user updates
-    useEffect(() => {
-        if (isEditModalOpen) {
-            setEditName(user?.fullName || '');
-            setEditGender(user?.gender || 'Other');
-            setEditImage(user?.profileImage || '');
-        }
-    }, [isEditModalOpen, user]);
+        if (user) fetchUserInquiries();
+    }, [user]);
 
     const fetchUserInquiries = async () => {
         try {
@@ -54,15 +59,12 @@ export default function UserDashboard() {
         try {
             const res = await authFetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
-                body: JSON.stringify({
-                    fullName: editName,
-                    gender: editGender,
-                    profileImage: editImage
-                })
+                body: JSON.stringify(editForm)
             });
             if (res.ok) {
                 const data = await res.json();
-                updateUser(data.user);
+                // UPDATE GLOBAL SOURCE OF TRUTH
+                updateUserProfile(data.user);
                 setIsEditModalOpen(false);
             }
         } catch (err) {
@@ -71,6 +73,14 @@ export default function UserDashboard() {
             setUpdateLoading(false);
         }
     };
+
+    if (!user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-background text-on-surface min-h-screen pb-24">
@@ -82,26 +92,26 @@ export default function UserDashboard() {
                     {/* Profile Section */}
                     <section className="flex flex-col items-center text-center space-y-6">
                         <div className="relative group">
-                            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-[2.5rem] sm:rounded-[3.5rem] border-4 border-primary/10 p-1 group-hover:border-primary transition-all duration-500 overflow-hidden shadow-2xl">
+                            <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-[2.5rem] sm:rounded-[3.5rem] border-4 border-primary/10 p-1 hover:border-primary transition-all duration-500 overflow-hidden shadow-2xl bg-white">
                                 <img 
                                     className="w-full h-full object-cover rounded-[2rem] sm:rounded-[3rem]" 
-                                    src={profileImage || 'https://via.placeholder.com/150'} 
-                                    alt="Profile" 
+                                    src={profileImage} 
+                                    alt="Profile Avatar" 
                                 />
                             </div>
-                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-secondary text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg border-2 border-white">
-                                {user?.email === 'admin@opms.com' ? 'Administrator' : 'Premium Buyer'}
+                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-secondary text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg border-2 border-white whitespace-nowrap">
+                                {user.email === 'admin@opms.com' ? 'Administrator' : 'Premium Buyer'}
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user?.fullName || 'User Name'}</h2>
-                            <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user?.email}</p>
+                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user.fullName}</h2>
+                            <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user.email}</p>
                             <button 
                                 onClick={() => setIsEditModalOpen(true)}
-                                className="mt-4 flex items-center gap-2 mx-auto bg-primary/5 hover:bg-primary/10 text-primary px-6 py-2 rounded-full text-sm font-black transition-all"
+                                className="mt-4 flex items-center gap-2 mx-auto bg-primary text-white hover:bg-secondary px-8 py-3 rounded-full text-sm font-black transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
+                                <span className="material-symbols-outlined text-base">edit_square</span>
                                 Edit Profile
                             </button>
                         </div>
@@ -115,7 +125,7 @@ export default function UserDashboard() {
                             { label: 'Active Alerts', value: '4', icon: 'notifications', color: 'text-primary bg-primary/5' },
                             { label: 'Verified Status', value: 'Prime', icon: 'verified', color: 'text-secondary bg-secondary/5' }
                         ].map((stat, i) => (
-                            <div key={i} className="glass p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 text-center transition-all hover:scale-105 hover:shadow-2xl active:scale-95 cursor-pointer">
+                            <div key={i} className="glass p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 text-center transition-all hover:scale-105 hover:shadow-2xl">
                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stat.color}`}>
                                     <span className="material-symbols-outlined text-2xl">{stat.icon}</span>
                                 </div>
@@ -170,12 +180,12 @@ export default function UserDashboard() {
 
             {/* Edit Profile Modal */}
             {isEditModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/20 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 space-y-8 animate-fade-in-up">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-2xl font-black text-primary">Edit Profile</h3>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/20 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 space-y-8 animate-fade-in-up">
+                        <div className="flex justify-between items-center border-b border-surface-variant pb-6">
+                            <h3 className="text-2xl font-black text-primary tracking-tight">Edit Profile</h3>
                             <button onClick={() => setIsEditModalOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/20 transition-all">
-                                <span className="material-symbols-outlined">close</span>
+                                <span className="material-symbols-outlined text-primary">close</span>
                             </button>
                         </div>
 
@@ -187,21 +197,21 @@ export default function UserDashboard() {
                                     <input
                                         type="text"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={editName}
-                                        onChange={(e) => setEditName(e.target.value)}
+                                        value={editForm.fullName}
+                                        onChange={(e) => setEditForm(prev => ({ ...prev, fullName: e.target.value }))}
                                         required
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender Identity</label>
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
-                                        value={editGender}
-                                        onChange={(e) => setEditGender(e.target.value)}
+                                        value={editForm.gender}
+                                        onChange={(e) => setEditForm(prev => ({ ...prev, gender: e.target.value }))}
                                         required
                                     >
                                         <option value="Male">Male</option>
@@ -213,15 +223,15 @@ export default function UserDashboard() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Profile Image URL</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Profile Image URL (Optional)</label>
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">image</span>
                                     <input
                                         type="url"
-                                        placeholder="Paste image URL (optional)"
-                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={editImage}
-                                        onChange={(e) => setEditImage(e.target.value)}
+                                        placeholder="https://example.com/avatar.jpg"
+                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-xs"
+                                        value={editForm.profileImage}
+                                        onChange={(e) => setEditForm(prev => ({ ...prev, profileImage: e.target.value }))}
                                     />
                                 </div>
                             </div>
@@ -231,7 +241,7 @@ export default function UserDashboard() {
                                 disabled={updateLoading}
                                 className="w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50"
                             >
-                                {updateLoading ? 'Saving Changes...' : 'Save Profile'}
+                                {updateLoading ? 'Synchronizing...' : 'Save Profile Changes'}
                             </button>
                         </form>
                     </div>
