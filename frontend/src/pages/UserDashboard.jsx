@@ -7,9 +7,16 @@ import BottomNav from '../components/BottomNav';
 
 export default function UserDashboard() {
     const navigate = useNavigate();
-    const { user, logout, authFetch, profileImage } = useAuth();
+    const { user, logout, authFetch, profileImage, updateUser } = useAuth();
     const [savedCount, setSavedCount] = useState(0);
     const [inquiryCount, setInquiryCount] = useState(0);
+
+    // Edit Profile States
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editName, setEditName] = useState(user?.fullName || '');
+    const [editGender, setEditGender] = useState(user?.gender || 'Other');
+    const [editImage, setEditImage] = useState(user?.profileImage || '');
+    const [updateLoading, setUpdateLoading] = useState(false);
 
     useEffect(() => {
         const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -29,6 +36,30 @@ export default function UserDashboard() {
             }
         } catch (err) {
             console.error('Error fetching inquiries count:', err);
+        }
+    };
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setUpdateLoading(true);
+        try {
+            const res = await authFetch(`${API_URL}/api/users/profile`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    fullName: editName,
+                    gender: editGender,
+                    profileImage: editImage
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                updateUser(data.user);
+                setIsEditModalOpen(false);
+            }
+        } catch (err) {
+            console.error('Error updating profile:', err);
+        } finally {
+            setUpdateLoading(false);
         }
     };
 
@@ -57,6 +88,13 @@ export default function UserDashboard() {
                         <div className="space-y-2">
                             <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user?.fullName || 'User Name'}</h2>
                             <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user?.email}</p>
+                            <button 
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="mt-4 flex items-center gap-2 mx-auto bg-primary/5 hover:bg-primary/10 text-primary px-6 py-2 rounded-full text-sm font-black transition-all"
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                                Edit Profile
+                            </button>
                         </div>
                     </section>
 
@@ -120,6 +158,76 @@ export default function UserDashboard() {
             </main>
 
             <BottomNav />
+
+            {/* Edit Profile Modal */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-primary/20 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 space-y-8 animate-fade-in-up">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-2xl font-black text-primary">Edit Profile</h3>
+                            <button onClick={() => setIsEditModalOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/20 transition-all">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdateProfile} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Full Name</label>
+                                <div className="relative">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">person</span>
+                                    <input
+                                        type="text"
+                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                        value={editName}
+                                        onChange={(e) => setEditName(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender</label>
+                                <div className="relative">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
+                                    <select
+                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
+                                        value={editGender}
+                                        onChange={(e) => setEditGender(e.target.value)}
+                                        required
+                                    >
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Profile Image URL</label>
+                                <div className="relative">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">image</span>
+                                    <input
+                                        type="url"
+                                        placeholder="Paste image URL (optional)"
+                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                        value={editImage}
+                                        onChange={(e) => setEditImage(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={updateLoading}
+                                className="w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50"
+                            >
+                                {updateLoading ? 'Saving Changes...' : 'Save Profile'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

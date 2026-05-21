@@ -58,13 +58,26 @@ export function AuthProvider({ children }) {
         return () => clearInterval(interval);
     }, []);
 
+    const getEffectiveProfileImage = useCallback((u) => {
+        if (u?.profileImage) return u.profileImage;
+        if (u?.gender === 'Male') return 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix';
+        if (u?.gender === 'Female') return 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka';
+        return 'https://api.dicebear.com/7.x/avataaars/svg?seed=neutral';
+    }, []);
+
     const [profileImage, setProfileImage] = useState(() => {
-        return localStorage.getItem('profileImage') || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+        const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+        return getEffectiveProfileImage(storedUser);
     });
 
-    const updateProfileImage = useCallback((newImage) => {
-        localStorage.setItem('profileImage', newImage);
-        setProfileImage(newImage);
+    // Sync profile image when user changes
+    useEffect(() => {
+        setProfileImage(getEffectiveProfileImage(user));
+    }, [user, getEffectiveProfileImage]);
+
+    const updateUser = useCallback((updatedUser) => {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
     }, []);
 
     const login = useCallback((newToken, newUser) => {
@@ -77,18 +90,12 @@ export function AuthProvider({ children }) {
     const logout = useCallback(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        localStorage.removeItem('profileImage');
         setToken(null);
         setUser(null);
-        setProfileImage('https://cdn-icons-png.flaticon.com/512/149/149071.png');
     }, []);
 
     const isAuthenticated = !!token && isTokenValid(token);
 
-    /**
-     * Convenience wrapper: fetch with Authorization header pre-attached.
-     * If the server returns 401, auto-logout.
-     */
     const authFetch = useCallback(async (url, options = {}) => {
         const headers = {
             'Content-Type': 'application/json',
@@ -103,7 +110,7 @@ export function AuthProvider({ children }) {
     }, [token, logout]);
 
     return (
-        <AuthContext.Provider value={{ token, user, profileImage, updateProfileImage, isAuthenticated, login, logout, authFetch }}>
+        <AuthContext.Provider value={{ token, user, profileImage, updateUser, isAuthenticated, login, logout, authFetch }}>
             {children}
         </AuthContext.Provider>
     );

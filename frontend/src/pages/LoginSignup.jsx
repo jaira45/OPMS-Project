@@ -17,6 +17,7 @@ export default function LoginSignup() {
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [phone, setPhone] = useState('');
+    const [gender, setGender] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
     const toggleView = () => {
@@ -52,8 +53,8 @@ export default function LoginSignup() {
     };
 
     const handleSignup = async () => {
-        if (!fullName || !email || !password) {
-            setError("Please fill in all required fields.");
+        if (!fullName || !email || !password || !gender) {
+            setError("Please fill in all required fields (Name, Email, Password, Gender).");
             return;
         }
         setLoading(true);
@@ -62,7 +63,7 @@ export default function LoginSignup() {
             const res = await fetch(`${API_URL}/api/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullName, email, phone, password })
+                body: JSON.stringify({ fullName, email, phone, password, gender })
             });
             const data = await res.json();
             if (res.ok) {
@@ -123,19 +124,39 @@ export default function LoginSignup() {
 
                     <div className="space-y-6">
                         {!isLoginView && (
-                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Full Name</label>
-                                <div className="relative">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">person</span>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter your full name"
-                                        className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                    />
+                            <>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Full Name</label>
+                                    <div className="relative">
+                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">person</span>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter your full name"
+                                            className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender</label>
+                                    <div className="relative">
+                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
+                                        <select
+                                            className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
+                                            value={gender}
+                                            onChange={(e) => setGender(e.target.value)}
+                                        >
+                                            <option value="" disabled>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 pointer-events-none">expand_more</span>
+                                    </div>
+                                </div>
+                            </>
                         )}
                         
                         <div className="space-y-2">
