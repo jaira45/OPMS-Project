@@ -80,26 +80,51 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Menu Overlay */}
-            <div className={`fixed inset-0 top-16 sm:top-20 bg-surface/95 backdrop-blur-lg z-40 md:hidden transition-all duration-500 ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'}`}>
-                <div className="flex flex-col items-center justify-center h-full gap-8 p-6">
+            {/* Mobile Menu Dropdown */}
+            <div 
+                className={`fixed top-16 sm:top-20 left-0 w-full bg-white z-50 md:hidden shadow-2xl transition-all duration-300 ease-in-out transform ${
+                    isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+                }`}
+            >
+                <div className="flex flex-col p-6 gap-2">
                     {navLinks.map((item) => (
                         <Link
                             key={item.name}
                             to={item.path}
                             onClick={() => setIsMenuOpen(false)}
-                            className="text-2xl font-black text-primary hover:text-secondary transition-colors"
+                            className="flex items-center justify-between w-full p-4 rounded-xl text-lg font-bold text-primary hover:bg-primary/5 transition-all"
                         >
-                            {item.name}
+                            <span>{item.name}</span>
+                            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
                         </Link>
                     ))}
-                    {token && (
+                    
+                    <div className="h-px bg-primary/10 my-2"></div>
+                    
+                    {token ? (
+                        <div className="flex flex-col gap-2">
+                            <button
+                                onClick={() => { navigate('/dashboard'); setIsMenuOpen(false); }}
+                                className="flex items-center gap-3 w-full p-4 rounded-xl text-lg font-bold text-primary hover:bg-primary/5 transition-all"
+                            >
+                                <span className="material-symbols-outlined">dashboard</span>
+                                <span>My Dashboard</span>
+                            </button>
+                            <button
+                                onClick={() => { logout(); navigate('/login'); setIsMenuOpen(false); }}
+                                className="flex items-center gap-3 w-full p-4 rounded-xl text-lg font-bold text-error hover:bg-error/5 transition-all"
+                            >
+                                <span className="material-symbols-outlined">logout</span>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    ) : (
                         <button
-                            onClick={() => { logout(); navigate('/login'); setIsMenuOpen(false); }}
-                            className="flex items-center gap-2 text-error font-bold text-xl"
+                            onClick={() => { navigate('/login'); setIsMenuOpen(false); }}
+                            className="w-full mt-2 bg-primary text-white p-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary transition-all"
                         >
-                            <span className="material-symbols-outlined">logout</span>
-                            Logout
+                            <span className="material-symbols-outlined">login</span>
+                            Login to Account
                         </button>
                     )}
                 </div>

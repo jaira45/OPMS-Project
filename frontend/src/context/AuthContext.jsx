@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
     }, []);
 
     const [profileImage, setProfileImage] = useState(() => {
-        return localStorage.getItem('profileImage') || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop';
+        return localStorage.getItem('profileImage') || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
     });
 
     const updateProfileImage = useCallback((newImage) => {
@@ -80,7 +80,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('profileImage');
         setToken(null);
         setUser(null);
-        setProfileImage('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop');
+        setProfileImage('https://cdn-icons-png.flaticon.com/512/149/149071.png');
     }, []);
 
     const isAuthenticated = !!token && isTokenValid(token);
