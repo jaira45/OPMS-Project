@@ -19,7 +19,6 @@ const app = express();
 // CORS Configuration
 app.use(cors({
     origin: '*',
-    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
@@ -33,19 +32,12 @@ app.get('/api/health', (req, res) => res.json({ success: true }));
 app.use('/api/users', userRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/inquiries', inquiryRoutes);
-app.use('/api/auth', authRoutes); // Keep for legacy if needed, but primary is /api/users
+app.use('/api/auth', authRoutes);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    app.get('(.*)', (req, res) =>
-        res.sendFile(path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html'))
-    );
-} else {
-    app.get('/test-render-fix', (req, res) => {
-        res.send('OPMS API is running...');
-    });
-}
+// Root route
+app.get('/', (req, res) => {
+    res.send('OPMS API is running...');
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -59,5 +51,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
