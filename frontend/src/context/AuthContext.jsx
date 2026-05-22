@@ -27,31 +27,38 @@ export function AuthProvider({ children }) {
     });
     const [loading, setLoading] = useState(true);
 
-    // PERSIST SESSION: Fetch user data from backend on mount
+    // PERSIST SESSION: Verify token & sync user data from backend on every mount
     useEffect(() => {
         const fetchUserData = async () => {
-            if (token) {
-                try {
-                    const res = await fetch(`${API_URL}/api/users/profile`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        setUser(data);
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                    } else {
-                        // Token might be invalid or expired
-                        logout();
-                    }
-                } catch (err) {
-                    console.error('Failed to fetch user data:', err);
-                }
+            if (!token) {
+                setLoading(false);
+                return;
             }
-            setLoading(false);
+            try {
+                const res = await fetch(`${API_URL}/api/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    // Merge fetched data, keeping any fields login response already set
+                    const merged = { ...user, ...data };
+                    setUser(merged);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                } else if (res.status === 401) {
+                    // Token is invalid / expired — force logout
+                    logout();
+                }
+                // Any other error (503, 500, network) → keep existing session, don't logout
+            } catch (err) {
+                // Network error — keep the cached user so session survives offline
+                console.warn('[Auth] Could not reach server, using cached session:', err.message);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const logout = useCallback(() => {
@@ -66,6 +73,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
         setToken(newToken);
         setUser(newUser);
+        console.log('[Auth] Login successful, session persisted for:', newUser.email);
     }, []);
 
     const saveProfile = useCallback(async (updatedFields) => {

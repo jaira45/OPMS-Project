@@ -29,25 +29,12 @@ app.use(express.urlencoded({ extended: true }));
 // Health Check
 app.get('/api/health', (req, res) => res.json({ success: true }));
 
-// DB Connection Check Middleware & Mock Fallback
+// DB Connection Guard — returns 503 if MongoDB is not connected
 app.use((req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
-        // MOCK FALLBACK for LOGIN to allow UI access when Atlas blocks IP
-        if (req.method === 'POST' && req.originalUrl === '/api/users/login') {
-            console.warn("⚠️ MOCKING LOGIN RESPONSE DUE TO MONGODB ATLAS BLOCK.");
-            return res.json({
-                success: true,
-                _id: 'mock_user_123',
-                name: 'Jyoti Gupta',
-                email: req.body.email || 'jyotigupta85188@gmail.com',
-                gender: 'Female',
-                profileImage: '',
-                token: 'mock_jwt_token_for_ui_preview'
-            });
-        }
-        
         return res.status(503).json({
-            message: "Database connection failed. Please check your network, ensure your IP is whitelisted on MongoDB Atlas, and verify credentials."
+            success: false,
+            message: "Database unavailable. Please try again shortly."
         });
     }
     next();

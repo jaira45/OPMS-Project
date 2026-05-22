@@ -20,36 +20,48 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password, gender } = req.body;
 
-        const userExists = await User.findOne({ email });
+        console.log(`[REGISTER] Attempt: email=${email}`);
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ success: false, message: 'Name, email and password are required' });
+        }
+
+        const userExists = await User.findOne({ email: email.toLowerCase().trim() });
 
         if (userExists) {
+            console.log(`[REGISTER] User already exists: ${email}`);
             return res.status(400).json({ success: false, message: 'User already exists' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log(`[REGISTER] Password hashed successfully`);
 
         const user = await User.create({
-            name,
-            email,
+            name: name.trim(),
+            email: email.toLowerCase().trim(),
             password: hashedPassword,
             gender: gender || 'other',
             provider: 'local'
         });
 
         if (user) {
+            const token = generateToken(user._id);
+            console.log(`[REGISTER] SUCCESS: user ${user._id} created, token generated`);
             res.status(201).json({
                 success: true,
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 gender: user.gender,
+                role: user.role,
                 profileImage: user.profileImage,
-                token: generateToken(user._id)
+                token
             });
         } else {
             res.status(400).json({ success: false, message: 'Invalid user data' });
         }
     } catch (error) {
+        console.error(`[REGISTER] ERROR: ${error.message}`);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -63,22 +75,46 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        console.log(`[LOGIN] Attempt: email=${email}`);
 
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: 'Email and password are required' });
+        }
+
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
+
+        if (!user) {
+            console.log(`[LOGIN] FAILED: No user found with email=${email}`);
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+
+        if (!user.password) {
+            console.log(`[LOGIN] FAILED: User ${email} has no password (Google account?)`);
+            return res.status(401).json({ success: false, message: 'This account uses Google Sign-In. Please login with Google.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log(`[LOGIN] Password compare result: ${isMatch}`);
+
+        if (isMatch) {
+            const token = generateToken(user._id);
+            console.log(`[LOGIN] SUCCESS: user ${user._id}`);
             res.json({
                 success: true,
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 gender: user.gender,
+                role: user.role,
                 profileImage: user.profileImage,
-                token: generateToken(user._id)
+                token
             });
         } else {
+            console.log(`[LOGIN] FAILED: Wrong password for email=${email}`);
             res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
     } catch (error) {
+        console.error(`[LOGIN] ERROR: ${error.message}`);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -150,6 +186,32 @@ const getUserProfile = async (req, res) => {
         } else {
             res.status(404).json({ success: false, message: 'User not found' });
         }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+/**
+ * @desc    Get the logged-in user's own profile (via JWT)
+ * @route   GET /api/users/me
+ * @access  Private
+ */
+const getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({
+            success: true,
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            gender: user.gender,
+            role: user.role,
+            profileImage: user.profileImage,
+            favorites: user.favorites
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -263,6 +325,7 @@ module.exports = {
     registerUser, 
     loginUser, 
     googleLogin,
+    getMe,
     getUserProfile, 
     updateProfile, 
     getUsers, 

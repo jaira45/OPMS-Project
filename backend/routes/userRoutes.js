@@ -4,6 +4,7 @@ const {
     registerUser, 
     loginUser, 
     googleLogin,
+    getMe,
     getUserProfile, 
     updateProfile, 
     getUsers, 
@@ -19,9 +20,11 @@ router.post('/google', googleLogin);
 router.get('/profile/:id', getUserProfile);
 
 // Private Routes
+router.get('/me', protect, getMe);          // ← token-based "who am I"
 router.get('/', protect, getUsers);
 router.put('/update-profile', protect, updateProfile);
 router.post('/favorite', protect, toggleFavorite);
 router.delete('/:id', protect, deleteUser);
 
 module.exports = router;
+
