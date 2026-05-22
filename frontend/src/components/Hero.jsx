@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Building2, Users2, ArrowRightAlt, Mic } from 'lucide-react';
+import { Search, MapPin, Building2, Users2, ArrowRight, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import VoiceSearch from './VoiceSearch';
 
@@ -129,7 +129,7 @@ export default function Hero() {
                             className="bg-primary dark:bg-accent text-white px-10 py-5 sm:py-0 h-[3.5rem] sm:h-[4.5rem] rounded-[2rem] sm:rounded-full font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 flex items-center justify-center gap-3 group/btn hover:bg-secondary dark:hover:bg-white dark:hover:text-primary"
                         >
                             Explore Estates
-                            <ArrowRightAlt className="group-hover/btn:translate-x-2 transition-transform" />
+                            <ArrowRight className="group-hover/btn:translate-x-2 transition-transform" />
                         </button>
                     </div>
                 </motion.div>
