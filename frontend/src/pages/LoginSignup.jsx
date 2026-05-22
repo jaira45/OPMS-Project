@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API_URL from '../config/api';
-import { useGoogleLogin } from '@react-oauth/google';
+
 
 export default function LoginSignup() {
     const [isLoginView, setIsLoginView] = useState(true);
@@ -26,36 +26,7 @@ export default function LoginSignup() {
         setError('');
     };
 
-    const handleGoogleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            setLoading(true);
-            try {
-                // Fetch user info using access_token if needed, or use id_token if configured
-                // Since react-oauth/google standard flow returns access_token, we hit our google endpoint
-                // Wait, if I use implicit flow, I get an access_token. 
-                // Let's use the code flow if possible, or just use the access_token to fetch profile on backend.
-                // Actually, react-oauth/google's standard useGoogleLogin is implicit (access_token).
-                
-                const res = await fetch(`${API_URL}/api/users/google`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: tokenResponse.access_token })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    login(data.token, data);
-                    navigate(from, { replace: true });
-                } else {
-                    setError(data.message || 'Google login failed');
-                }
-            } catch (err) {
-                setError('Could not reach the server');
-            } finally {
-                setLoading(false);
-            }
-        },
-        onError: () => setError('Google login failed')
-    });
+
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -71,10 +42,12 @@ export default function LoginSignup() {
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (res.ok) {
-                login(data.token, data);
+            if (res.ok && data.success) {
+                console.log('[Login] Standard login successful');
+                login(data.token, data.user);
                 navigate(from, { replace: true });
             } else {
+                console.error('[Login] Standard login failure:', data.message);
                 setError(data.message || "Invalid email or password.");
             }
         } catch (err) {
@@ -98,10 +71,12 @@ export default function LoginSignup() {
                 body: JSON.stringify({ name: fullName, email, phone, password, gender })
             });
             const data = await res.json();
-            if (res.ok) {
-                login(data.token, data);
+            if (res.ok && data.success) {
+                console.log('[Signup] Registration successful');
+                login(data.token, data.user);
                 navigate('/home', { replace: true });
             } else {
+                console.error('[Signup] Registration failure:', data.message);
                 setError(data.message || "Registration failed.");
             }
         } catch (err) {
@@ -244,20 +219,7 @@ export default function LoginSignup() {
                             )}
                         </button>
 
-                        <div className="relative flex items-center justify-center py-4">
-                            <div className="flex-grow border-t border-surface-variant"></div>
-                            <span className="flex-shrink mx-4 text-[10px] font-black uppercase tracking-widest text-primary/40">or continue with</span>
-                            <div className="flex-grow border-t border-surface-variant"></div>
-                        </div>
 
-                        <button
-                            onClick={() => handleGoogleLogin()}
-                            type="button"
-                            className="w-full flex items-center justify-center gap-3 py-4 bg-white border-2 border-surface-variant rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-surface-variant/10 transition-all active:scale-95"
-                        >
-                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
-                            Sign in with Google
-                        </button>
                     </div>
 
                     <div className="pt-6 text-center">

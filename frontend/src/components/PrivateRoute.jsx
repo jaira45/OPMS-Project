@@ -12,6 +12,7 @@ export default function PrivateRoute({ children }) {
     const location = useLocation();
 
     if (!isAuthenticated) {
+        console.warn(`[PrivateRoute] Blocked access to ${location.pathname} - Not Authenticated. Redirecting to /login`);
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 

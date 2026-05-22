@@ -4,7 +4,7 @@ import API_URL from '../config/api';
 const AuthContext = createContext(null);
 
 const STORAGE_KEY = 'user';
-const TOKEN_KEY = 'opmsToken';
+const TOKEN_KEY = 'token';
 
 /**
  * Clean professional icons for the profile system
@@ -31,9 +31,12 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const fetchUserData = async () => {
             if (!token) {
+                console.log('[Auth] No token found in storage, skipping sync');
                 setLoading(false);
                 return;
             }
+            
+            console.log('[Auth] Syncing session with server...');
             try {
                 const res = await fetch(`${API_URL}/api/users/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -41,17 +44,18 @@ export function AuthProvider({ children }) {
 
                 if (res.ok) {
                     const data = await res.json();
-                    // Merge fetched data, keeping any fields login response already set
-                    const merged = { ...user, ...data };
+                    // Merge fetched data, ensuring token is preserved
+                    const merged = { ...user, ...data.user };
                     setUser(merged);
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                    console.log('[Auth] Session restored & synced for:', merged.email);
                 } else if (res.status === 401) {
-                    // Token is invalid / expired — force logout
+                    console.warn('[Auth] Token invalid or expired (401), logging out');
                     logout();
+                } else {
+                    console.warn('[Auth] Server returned error during sync:', res.status);
                 }
-                // Any other error (503, 500, network) → keep existing session, don't logout
             } catch (err) {
-                // Network error — keep the cached user so session survives offline
                 console.warn('[Auth] Could not reach server, using cached session:', err.message);
             } finally {
                 setLoading(false);
@@ -62,6 +66,7 @@ export function AuthProvider({ children }) {
     }, [token]);
 
     const logout = useCallback(() => {
+        console.log('[Auth] Logging out, clearing storage');
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(STORAGE_KEY);
         setToken(null);
@@ -69,11 +74,11 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = useCallback((newToken, newUser) => {
+        console.log('[Auth] Saving new session to storage:', newUser.email);
         localStorage.setItem(TOKEN_KEY, newToken);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
         setToken(newToken);
         setUser(newUser);
-        console.log('[Auth] Login successful, session persisted for:', newUser.email);
     }, []);
 
     const saveProfile = useCallback(async (updatedFields) => {

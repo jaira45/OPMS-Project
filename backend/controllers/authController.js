@@ -42,14 +42,20 @@ const googleLogin = async (req, res) => {
              await user.save();
         }
 
+        console.log(`[GOOGLE_LOGIN_AUTH] SUCCESS: user ${user._id}`);
         res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            gender: user.gender,
-            profileImage: user.profileImage,
+            success: true,
             token: generateToken(user._id),
-            provider: user.provider
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                gender: user.gender,
+                profileImage: user.profileImage,
+                role: user.role,
+                favorites: user.favorites,
+                provider: user.provider
+            }
         });
     } catch (error) {
         console.error('Google Auth Error:', error);
@@ -82,14 +88,21 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
+            const token = generateToken(user._id);
+            console.log(`[REGISTER_AUTH] SUCCESS: user ${user._id} created`);
             res.status(201).json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                gender: user.gender,
-                profileImage: user.profileImage,
-                token: generateToken(user._id),
-                provider: user.provider
+                success: true,
+                token,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
+                    role: user.role,
+                    profileImage: user.profileImage,
+                    favorites: user.favorites,
+                    provider: user.provider
+                }
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
@@ -113,14 +126,21 @@ const loginUser = async (req, res) => {
         }
 
         if (user && (await bcrypt.compare(password, user.password))) {
+            const token = generateToken(user._id);
+            console.log(`[LOGIN_AUTH] SUCCESS: user ${user._id} authenticated`);
             res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                gender: user.gender,
-                profileImage: user.profileImage,
-                token: generateToken(user._id),
-                provider: user.provider
+                success: true,
+                token,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
+                    role: user.role,
+                    profileImage: user.profileImage,
+                    favorites: user.favorites,
+                    provider: user.provider
+                }
             });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });

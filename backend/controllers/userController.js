@@ -49,15 +49,19 @@ const registerUser = async (req, res) => {
             console.log(`[REGISTER] SUCCESS: user ${user._id} created, token generated`);
             res.status(201).json({
                 success: true,
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                gender: user.gender,
-                role: user.role,
-                profileImage: user.profileImage,
-                token
+                token,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
+                    role: user.role,
+                    profileImage: user.profileImage,
+                    favorites: user.favorites
+                }
             });
         } else {
+            console.log(`[REGISTER] FAILED: user creation failed`);
             res.status(400).json({ success: false, message: 'Invalid user data' });
         }
     } catch (error) {
@@ -98,16 +102,19 @@ const loginUser = async (req, res) => {
 
         if (isMatch) {
             const token = generateToken(user._id);
-            console.log(`[LOGIN] SUCCESS: user ${user._id}`);
+            console.log(`[LOGIN] SUCCESS: user ${user._id} authenticated`);
             res.json({
                 success: true,
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                gender: user.gender,
-                role: user.role,
-                profileImage: user.profileImage,
-                token
+                token,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
+                    role: user.role,
+                    profileImage: user.profileImage,
+                    favorites: user.favorites
+                }
             });
         } else {
             console.log(`[LOGIN] FAILED: Wrong password for email=${email}`);
@@ -200,19 +207,24 @@ const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
+            console.log(`[GET_ME] FAILED: User not found for ID ${req.user._id}`);
             return res.status(404).json({ success: false, message: 'User not found' });
         }
+        console.log(`[GET_ME] SUCCESS: User ${user.email} retrieved`);
         res.json({
             success: true,
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            gender: user.gender,
-            role: user.role,
-            profileImage: user.profileImage,
-            favorites: user.favorites
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                gender: user.gender,
+                role: user.role,
+                profileImage: user.profileImage,
+                favorites: user.favorites
+            }
         });
     } catch (error) {
+        console.error(`[GET_ME] ERROR: ${error.message}`);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -307,16 +319,22 @@ const googleLogin = async (req, res) => {
             });
         }
 
+        console.log(`[GOOGLE_LOGIN] SUCCESS: user ${user._id}`);
         res.json({
             success: true,
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            gender: user.gender,
-            profileImage: user.profileImage,
-            token: generateToken(user._id)
+            token: generateToken(user._id),
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                gender: user.gender,
+                profileImage: user.profileImage,
+                role: user.role,
+                favorites: user.favorites
+            }
         });
     } catch (error) {
+        console.error(`[GOOGLE_LOGIN] ERROR: ${error.message}`);
         res.status(401).json({ success: false, message: 'Google authentication failed' });
     }
 };

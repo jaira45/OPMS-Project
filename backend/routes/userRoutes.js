@@ -16,7 +16,7 @@ const { protect } = require('../middleware/authMiddleware');
 // Public Routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.post('/google', googleLogin);
+// router.post('/google', googleLogin);
 router.get('/profile/:id', getUserProfile);
 
 // Private Routes
