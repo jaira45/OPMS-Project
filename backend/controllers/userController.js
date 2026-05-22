@@ -134,4 +134,41 @@ const toggleFavorite = async (req, res) => {
     }
 };
 
-module.exports = { getUserProfile, updateUserProfile, getUsers, deleteUser, toggleFavorite };
+
+// @desc    Update user profile (specifically for name, gender, profileImage)
+// @route   PUT /api/users/update-profile
+// @access  Private
+const updateProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.gender = req.body.gender || user.gender;
+            
+            if (req.body.profileImage !== undefined) {
+                user.profileImage = req.body.profileImage;
+            }
+
+            const updatedUser = await user.save();
+
+            res.json({
+                success: true,
+                user: {
+                    _id: updatedUser._id,
+                    name: updatedUser.name,
+                    email: updatedUser.email,
+                    gender: updatedUser.gender,
+                    profileImage: updatedUser.profileImage,
+                    role: updatedUser.role
+                }
+            });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+module.exports = { getUserProfile, updateUserProfile, updateProfile, getUsers, deleteUser, toggleFavorite };

@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
         const fetchUserData = async () => {
             if (token) {
                 try {
-                    const res = await fetch(`${API_URL}/api/user/profile`, {
+                    const res = await fetch(`${API_URL}/api/users/profile`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
 
     const saveProfile = useCallback(async (updatedFields) => {
         try {
-            const res = await fetch(`${API_URL}/api/user/profile`, {
+            const res = await fetch(`${API_URL}/api/users/update-profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,11 +79,14 @@ export function AuthProvider({ children }) {
                 body: JSON.stringify(updatedFields)
             });
 
-            if (res.ok) {
-                const updatedUser = await res.json();
-                setUser(updatedUser);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
-                return updatedUser;
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                setUser(data.user);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
+                return data.user;
+            } else {
+                throw new Error(data.message || 'Profile update failed');
             }
         } catch (err) {
             console.error('Profile update failed:', err);
@@ -94,7 +97,7 @@ export function AuthProvider({ children }) {
     const toggleFavorite = useCallback(async (propertyId) => {
         if (!token) return;
         try {
-            const res = await fetch(`${API_URL}/api/user/favorite`, {
+            const res = await fetch(`${API_URL}/api/users/favorite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
