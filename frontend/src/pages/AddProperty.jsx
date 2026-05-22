@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '../config';
+import API_URL from '../config/api';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 

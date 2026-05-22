@@ -18,13 +18,16 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5000', 'https://opms-project.vercel.app'],
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Health Check
+app.get('/api/health', (req, res) => res.json({ success: true }));
 
 // API Routes
 app.use('/api/users', userRoutes);

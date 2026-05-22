@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { API_URL } from '../config';
+import API_URL from '../config/api';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';

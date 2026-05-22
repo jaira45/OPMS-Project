@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../config';
+import API_URL from '../config/api';
 
 export default function Recommendations({ currentPropertyId, category }) {
     const [recommendations, setRecommendations] = useState([]);

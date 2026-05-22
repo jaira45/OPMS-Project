@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '../config';
+import API_URL from '../config/api';
 import { useGoogleLogin } from '@react-oauth/google';
 
 export default function LoginSignup() {
