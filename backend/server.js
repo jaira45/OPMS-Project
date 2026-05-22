@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -27,6 +28,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health Check
 app.get('/api/health', (req, res) => res.json({ success: true }));
+
+// DB Connection Check Middleware
+app.use((req, res, next) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({
+            message: "Database connection failed. Please check your network, ensure your IP is whitelisted on MongoDB Atlas, and verify credentials."
+        });
+    }
+    next();
+});
 
 // API Routes
 app.use('/api/users', userRoutes);
