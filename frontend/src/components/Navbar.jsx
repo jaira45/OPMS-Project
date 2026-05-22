@@ -1,134 +1,235 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sun, Moon, Menu, X, Shield, LayoutDashboard, LogOut, Building2, Users2, Info, Mail, Home, ChevronRight, User } from 'lucide-react';
 
 export default function Navbar() {
     const navigate = useNavigate();
-    const { token, profileImage, logout } = useAuth();
+    const location = useLocation();
+    const { token, user, profileImage, logout } = useAuth();
+    const { darkMode, toggleDarkMode } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
-    const navLinks = [
-        { name: 'Home', path: '/home' },
-        { name: 'Properties', path: '/properties' },
-        { name: 'About', path: '/about' },
-        { name: 'Agents', path: '/agents' },
-        { name: 'Contact', path: '/contact' },
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => { setIsMenuOpen(false); }, [location.pathname]);
+
+    // Re-mapping icons for lucide
+    const navItems = [
+        { name: 'Home', path: '/home', icon: <Home className="w-5 h-5" /> },
+        { name: 'Properties', path: '/properties', icon: <Building2 className="w-5 h-5" /> },
+        { name: 'Agents', path: '/agents', icon: <Users2 className="w-5 h-5" /> },
+        { name: 'About', path: '/about', icon: <Info className="w-5 h-5" /> },
+        { name: 'Contact', path: '/contact', icon: <Mail className="w-5 h-5" /> },
     ];
 
+    const isActive = (path) => location.pathname === path;
+
     return (
-        <nav className="fixed top-0 w-full z-50 transition-all duration-500 glass">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex justify-between items-center">
-                {/* Logo */}
-                <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/home')}>
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-300">
-                        <span className="material-symbols-outlined text-white text-base sm:text-xl">apartment</span>
-                    </div>
-                    <span className="font-black text-lg sm:text-xl text-primary tracking-tighter">OPMS</span>
-                </div>
-
-                {/* Navigation Menu (Desktop) */}
-                <div className="hidden md:flex items-center gap-8">
-                    {navLinks.map((item) => (
-                        <Link
-                            key={item.name}
-                            to={item.path}
-                            className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors relative group"
-                        >
-                            {item.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary group-hover:w-full transition-all duration-300"></span>
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Auth CTA & Hamburger */}
-                <div className="flex items-center gap-2 sm:gap-3">
-                    {token ? (
-                        <div className="flex items-center gap-2 sm:gap-3">
-                            <button
-                                onClick={() => navigate('/dashboard')}
-                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-primary/20 p-0.5 overflow-hidden hover:border-primary transition-all shadow-sm"
-                                title="My Dashboard"
-                            >
-                                <img alt="Profile" src={profileImage || 'https://via.placeholder.com/40'} className="w-full h-full object-cover rounded-full" />
-                            </button>
-                            <button
-                                onClick={() => { logout(); navigate('/login'); }}
-                                className="hidden lg:flex items-center gap-1.5 border-2 border-primary/20 text-primary hover:border-primary hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm font-bold transition-all"
-                            >
-                                <span className="material-symbols-outlined text-base">logout</span>
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <button
-                            onClick={() => navigate('/login')}
-                            className="bg-primary hover:bg-secondary text-white px-4 sm:px-6 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 shadow-lg shadow-primary/20"
-                        >
-                            Login
-                        </button>
-                    )}
-
-                    {/* Hamburger Button (Mobile/Tablet) */}
-                    <button 
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="flex md:hidden items-center justify-center w-10 h-10 text-primary hover:bg-primary/5 rounded-full transition-colors"
-                    >
-                        <span className="material-symbols-outlined text-2xl">
-                            {isMenuOpen ? 'close' : 'menu'}
-                        </span>
-                    </button>
-                </div>
-            </div>
-
-            {/* Mobile Menu Dropdown */}
-            <div 
-                className={`fixed top-16 sm:top-20 left-0 w-full bg-white z-50 md:hidden shadow-2xl transition-all duration-300 ease-in-out transform ${
-                    isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
-                }`}
+        <>
+            <motion.nav 
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'glass dark:glass-dark shadow-2xl py-3' : 'bg-transparent py-5'}`}
             >
-                <div className="flex flex-col p-6 gap-2">
-                    {navLinks.map((item) => (
-                        <Link
-                            key={item.name}
-                            to={item.path}
-                            onClick={() => setIsMenuOpen(false)}
-                            className="flex items-center justify-between w-full p-4 rounded-xl text-lg font-bold text-primary hover:bg-primary/5 transition-all"
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center">
+                    {/* Logo */}
+                    <div 
+                        className="flex items-center gap-3 group cursor-pointer no-select" 
+                        onClick={() => navigate('/home')}
+                    >
+                        <motion.div 
+                            whileHover={{ rotate: 0, scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="w-10 h-10 sm:w-12 sm:h-12 bg-primary dark:bg-dark-primary rounded-2xl flex items-center justify-center rotate-3 transition-colors shadow-lg shadow-primary/30"
                         >
-                            <span>{item.name}</span>
-                            <span className="material-symbols-outlined text-primary/30">chevron_right</span>
-                        </Link>
-                    ))}
-                    
-                    <div className="h-px bg-primary/10 my-2"></div>
-                    
-                    {token ? (
-                        <div className="flex flex-col gap-2">
-                            <button
-                                onClick={() => { navigate('/dashboard'); setIsMenuOpen(false); }}
-                                className="flex items-center gap-3 w-full p-4 rounded-xl text-lg font-bold text-primary hover:bg-primary/5 transition-all"
-                            >
-                                <span className="material-symbols-outlined">dashboard</span>
-                                <span>My Dashboard</span>
-                            </button>
-                            <button
-                                onClick={() => { logout(); navigate('/login'); setIsMenuOpen(false); }}
-                                className="flex items-center gap-3 w-full p-4 rounded-xl text-lg font-bold text-error hover:bg-error/5 transition-all"
-                            >
-                                <span className="material-symbols-outlined">logout</span>
-                                <span>Logout</span>
-                            </button>
+                            <Home className="text-white w-6 h-6" />
+                        </motion.div>
+                        <div className="flex flex-col leading-none">
+                            <span className="font-black text-xl sm:text-2xl text-primary dark:text-dark-on-surface tracking-tighter">OPMS</span>
+                            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary/40 dark:text-dark-on-surface-variant hidden sm:block">Premium Real Estate</span>
                         </div>
-                    ) : (
-                        <button
-                            onClick={() => { navigate('/login'); setIsMenuOpen(false); }}
-                            className="w-full mt-2 bg-primary text-white p-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary transition-all"
+                    </div>
+
+                    {/* Desktop Nav Links */}
+                    <div className="hidden lg:flex items-center gap-1 bg-surface/50 dark:bg-dark-surface/50 backdrop-blur-md p-1.5 rounded-2xl border border-surface-variant/20 dark:border-dark-surface-variant/20">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                to={item.path}
+                                className={`px-5 py-2.5 rounded-xl text-sm font-black transition-all relative group flex items-center gap-2 ${isActive(item.path) ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary hover:bg-primary/5 dark:hover:bg-dark-primary/5'}`}
+                            >
+                                {item.name}
+                                {isActive(item.path) && (
+                                    <motion.span 
+                                        layoutId="nav-pill"
+                                        className="absolute inset-0 bg-primary dark:bg-dark-primary rounded-xl -z-10"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Right Side Actions */}
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        {/* Theme Toggle */}
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={toggleDarkMode}
+                            className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-2xl bg-surface dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-dark-primary shadow-sm"
                         >
-                            <span className="material-symbols-outlined">login</span>
-                            Login to Account
-                        </button>
-                    )}
+                            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </motion.button>
+
+                        {token ? (
+                            <div className="flex items-center gap-3">
+                                {/* User Profile */}
+                                <motion.div 
+                                    whileHover={{ scale: 1.02 }}
+                                    onClick={() => navigate('/dashboard')}
+                                    className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-full cursor-pointer hover:shadow-lg transition-all group"
+                                >
+                                    <div className="w-8 h-8 rounded-full border-2 border-primary/20 dark:border-dark-primary/40 overflow-hidden bg-primary/5">
+                                        {profileImage ? <img alt="Profile" src={profileImage} className="w-full h-full object-cover" /> : <User className="w-full h-full p-1.5 text-primary" />}
+                                    </div>
+                                    <span className="text-sm font-black text-primary dark:text-dark-on-surface truncate max-w-[100px]">{user?.name?.split(' ')[0] || 'Me'}</span>
+                                </motion.div>
+
+                                {/* Admin shortcut */}
+                                {user?.email === 'admin@opms.com' && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => navigate('/admin')}
+                                        className="hidden md:flex items-center gap-2 bg-accent text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-accent/20"
+                                    >
+                                        <Shield className="w-4 h-4" />
+                                        Admin
+                                    </motion.button>
+                                )}
+                            </div>
+                        ) : (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => navigate('/login')}
+                                className="bg-primary dark:bg-dark-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-black transition-all shadow-xl shadow-primary/20"
+                            >
+                                Get Started
+                            </motion.button>
+                        )}
+
+                        {/* Hamburger */}
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="lg:hidden w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-primary dark:text-dark-primary bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-2xl shadow-sm"
+                        >
+                            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </motion.button>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </motion.nav>
+
+            {/* Mobile Fullscreen Overlay Menu */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[60] lg:hidden"
+                    >
+                        {/* Backdrop */}
+                        <motion.div 
+                            initial={{ backdropFilter: "blur(0px)" }}
+                            animate={{ backdropFilter: "blur(12px)" }}
+                            className="absolute inset-0 bg-primary/20 dark:bg-dark-bg/60" 
+                            onClick={() => setIsMenuOpen(false)} 
+                        />
+                        
+                        {/* Drawer */}
+                        <motion.div 
+                            initial={{ x: "100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "100%" }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="absolute top-0 right-0 h-full w-[85%] max-w-sm bg-white dark:bg-dark-surface shadow-2xl flex flex-col pt-8"
+                        >
+                            {/* Drawer Header */}
+                            <div className="flex justify-between items-center px-8 pb-6 border-b border-surface-variant dark:border-dark-surface-variant">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-primary dark:bg-dark-primary rounded-xl flex items-center justify-center">
+                                        <Home className="text-white w-5 h-5" />
+                                    </div>
+                                    <span className="font-black text-xl text-primary dark:text-dark-on-surface tracking-tighter">OPMS</span>
+                                </div>
+                                <button onClick={() => setIsMenuOpen(false)} className="w-10 h-10 flex items-center justify-center text-primary/40 dark:text-dark-on-surface-variant bg-surface-variant/20 dark:bg-dark-surface-variant/20 rounded-xl">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            {/* User Info */}
+                            {token && (
+                                <div className="px-8 py-6 flex items-center gap-4 bg-primary/5 dark:bg-dark-primary/5 border-b border-surface-variant dark:border-dark-surface-variant">
+                                    <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-primary/20 dark:border-dark-primary/40 bg-white">
+                                        {profileImage ? <img src={profileImage} alt="" className="w-full h-full object-cover" /> : <User className="w-full h-full p-3 text-primary" />}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="font-black text-primary dark:text-dark-on-surface text-lg truncate">{user?.name}</p>
+                                        <p className="text-xs font-bold text-primary/40 dark:text-dark-on-surface-variant truncate">{user?.email}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Nav Links */}
+                            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-2">
+                                {navItems.map((item) => (
+                                    <Link
+                                        key={item.name}
+                                        to={item.path}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-base font-black transition-all ${isActive(item.path) ? 'bg-primary dark:bg-dark-primary text-white shadow-lg shadow-primary/20' : 'text-primary dark:text-dark-on-surface-variant hover:bg-primary/5 dark:hover:bg-dark-primary/5'}`}
+                                    >
+                                        {item.icon}
+                                        {item.name}
+                                        {!isActive(item.path) && <ChevronRight className="ml-auto w-4 h-4 opacity-20" />}
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* Drawer Footer */}
+                            <div className="px-6 py-6 border-t border-surface-variant dark:border-dark-surface-variant space-y-3 safe-bottom">
+                                {token ? (
+                                    <>
+                                        <button onClick={() => { navigate('/dashboard'); setIsMenuOpen(false); }} className="w-full flex items-center gap-4 px-6 py-4 bg-secondary/5 dark:bg-dark-secondary/5 rounded-2xl text-secondary dark:text-dark-secondary font-black transition-all hover:bg-secondary hover:text-white">
+                                            <LayoutDashboard className="w-5 h-5" />
+                                            My Dashboard
+                                        </button>
+                                        <button onClick={() => { logout(); navigate('/login'); setIsMenuOpen(false); }} className="w-full flex items-center gap-4 px-6 py-4 bg-error/5 rounded-2xl text-error font-black transition-all hover:bg-error hover:text-white">
+                                            <LogOut className="w-5 h-5" />
+                                            Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button onClick={() => { navigate('/login'); setIsMenuOpen(false); }} className="w-full py-5 bg-primary dark:bg-dark-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/20 flex items-center justify-center gap-3">
+                                        Let's Explore
+                                    </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }

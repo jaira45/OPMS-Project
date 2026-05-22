@@ -1,32 +1,48 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { API_URL } from '../config';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+    Heart, Share2, MapPin, BedDouble, Bath, Square, 
+    CheckCircle2, Mail, Phone, ExternalLink, ShieldCheck, 
+    ArrowLeft, ChevronRight, Sparkles, MessageCircle
+} from 'lucide-react';
+import InteractiveMap from '../components/InteractiveMap';
+import ThreeDPreview from '../components/ThreeDPreview';
+import Recommendations from '../components/Recommendations';
+import { SkeletonProfile } from '../components/Skeleton';
 
 export default function PropertyProfile() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user, authFetch } = useAuth();
+    const { user, toggleFavorite, authFetch } = useAuth();
+    const { darkMode } = useTheme();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [favorites, setFavorites] = useState(() => {
-        return JSON.parse(localStorage.getItem('favorites') || '[]');
-    });
-    
-    const [showInquiryModal, setShowInquiryModal] = useState(false);
-    const [buyerName, setBuyerName] = useState(user?.fullName || '');
-    const [buyerEmail, setBuyerEmail] = useState(user?.email || '');
-    const [message, setMessage] = useState('Is this property available for immediate possession?');
-    const [submittingInquiry, setSubmittingInquiry] = useState(false);
-    const [inquirySuccess, setInquirySuccess] = useState(false);
+    const [activeImage, setActiveImage] = useState(0);
+    const [activeView, setActiveView] = useState('GALLERY'); // GALLERY, 3D, MAP
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [inquiryData, setInquiryData] = useState({ name: '', email: '', phone: '', message: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
 
     useEffect(() => {
-        fetchPropertyDetails();
-    }, [id]);
+        fetchPropertyData();
+        if (user) {
+            setInquiryData(prev => ({
+                ...prev,
+                name: user.name || user.fullName || '',
+                email: user.email || ''
+            }));
+        }
+    }, [id, user]);
 
-    const fetchPropertyDetails = async () => {
+    const fetchPropertyData = async () => {
         try {
             const res = await fetch(`${API_URL}/api/properties`);
             if (res.ok) {
@@ -35,292 +51,325 @@ export default function PropertyProfile() {
                 if (found) {
                     setProperty(found);
                 } else {
-                    getFallbackProperty();
+                    navigate('/home');
                 }
             }
         } catch (err) {
-            console.error('Error fetching property profile:', err);
-            getFallbackProperty();
+            console.error('Error fetching property:', err);
         } finally {
             setLoading(false);
         }
     };
 
-    const getFallbackProperty = () => {
-        const fallbacks = [
-            { _id: '1', title: 'The Sapphire Manor', price: '₹ 2.4 Crore', bhk: '3 BHK', builtupArea: '2400 ft²', location: 'Vijay Nagar, Indore, MP', coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&auto=format&fit=crop', status: 'Approved' },
-            { _id: '2', title: 'Lakeview Residency', price: '₹ 85 Lakh', bhk: '2 BHK', builtupArea: '1180 ft²', location: 'Arera Colony, Bhopal, MP', coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&auto=format&fit=crop', status: 'Approved' },
-            { _id: '3', title: 'Heritage Greens', price: '₹ 1.2 Crore', bhk: '4 BHK', builtupArea: '3200 ft²', location: 'City Center, Gwalior, MP', coverImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&auto=format&fit=crop', status: 'Approved' }
-        ];
-        const found = fallbacks.find(p => p._id === id) || fallbacks[0];
-        setProperty(found);
-    };
+    const isFavorite = user?.favorites?.includes(id);
 
-    const toggleFavorite = () => {
-        if (!property) return;
-        let updated;
-        if (favorites.includes(property._id)) {
-            updated = favorites.filter(favId => favId !== property._id);
-        } else {
-            updated = [...favorites, property._id];
-        }
-        setFavorites(updated);
-        localStorage.setItem('favorites', JSON.stringify(updated));
-    };
-
-    const handleInquirySubmit = async (e) => {
+    const handleSendInquiry = async (e) => {
         e.preventDefault();
-        if (!buyerName || !buyerEmail) return;
-        setSubmittingInquiry(true);
-
+        setIsSubmitting(true);
         try {
             const res = await authFetch(`${API_URL}/api/inquiries`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    propertyId: property._id,
+                    propertyId: id,
                     propertyName: property.title,
-                    buyerName,
-                    buyerEmail,
-                    message,
+                    buyerName: inquiryData.name,
+                    buyerEmail: inquiryData.email,
+                    buyerPhone: inquiryData.phone,
+                    message: inquiryData.message,
                     price: property.price
                 })
             });
 
             if (res.ok) {
-                setInquirySuccess(true);
+                setStatusMessage('Inquiry sent successfully!');
                 setTimeout(() => {
-                    setShowInquiryModal(false);
-                    setInquirySuccess(false);
+                    setIsModalOpen(false);
+                    setStatusMessage('');
                 }, 2000);
             }
         } catch (err) {
-            console.error('Error submitting inquiry:', err);
-            setInquirySuccess(true);
-            setTimeout(() => {
-                setShowInquiryModal(false);
-                setInquirySuccess(false);
-            }, 2000);
+            setStatusMessage('Failed to send inquiry.');
         } finally {
-            setSubmittingInquiry(false);
+            setIsSubmitting(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex flex-col justify-center items-center h-screen bg-background gap-4">
-                <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
-                <span className="text-sm font-black text-primary uppercase tracking-widest">Loading Property...</span>
-            </div>
-        );
-    }
+    if (loading) return <div className="min-h-screen bg-background dark:bg-dark-bg flex items-center justify-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
+    if (!property) return null;
+
+    const allImages = property.images && property.images.length > 0 ? property.images : [property.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'];
 
     return (
-        <div className="bg-background text-on-surface min-h-screen pb-32">
+        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen pb-32 overflow-x-hidden">
             <Navbar />
-            
-            <main className="pt-20 sm:pt-28">
-                <div className="container-responsive grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-                    
-                    {/* Left Column: Visuals & Main Info */}
-                    <div className="lg:col-span-8 space-y-8 sm:space-y-12">
-                        {/* Image Gallery */}
-                        <section className="relative rounded-[2rem] sm:rounded-[3rem] overflow-hidden aspect-video shadow-2xl group">
-                            <img 
-                                src={property.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
-                                alt={property.title} 
-                            />
-                            <div className="absolute top-6 left-6 flex gap-3">
-                                <button onClick={() => navigate(-1)} className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-all">
-                                    <span className="material-symbols-outlined text-2xl">arrow_back</span>
-                                </button>
-                            </div>
-                            <div className="absolute top-6 right-6 flex gap-3">
-                                <button onClick={toggleFavorite} className={`w-12 h-12 glass-dark rounded-2xl flex items-center justify-center transition-all active:scale-95 ${
-                                    favorites.includes(property._id) ? 'bg-red-500 border-red-400 text-white' : 'text-white'
-                                }`}>
-                                    <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: favorites.includes(property._id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                                </button>
-                            </div>
-                            <div className="absolute bottom-6 left-6 glass px-6 py-2.5 rounded-2xl shadow-xl">
-                                <span className="text-primary font-black text-sm uppercase tracking-widest">Featured Residence</span>
-                            </div>
-                        </section>
 
-                        {/* Title & Core Details */}
-                        <section className="space-y-6">
-                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                                <div className="space-y-2">
-                                    <h1 className="font-headline font-black text-3xl sm:text-4xl text-primary leading-tight tracking-tight">{property.title}</h1>
-                                    <div className="flex items-center gap-2 text-on-surface-variant font-bold">
-                                        <span className="material-symbols-outlined text-secondary">location_on</span>
-                                        <span>{property.location}</span>
-                                    </div>
-                                </div>
-                                <div className="bg-primary/5 border border-primary/10 px-6 py-3 rounded-2xl flex flex-col items-end">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/40">Market Price</span>
-                                    <span className="text-2xl font-black text-primary">{property.price}</span>
-                                </div>
-                            </div>
+            <main className="pt-24 sm:pt-32 container-responsive">
+                {/* Back Button & Actions */}
+                <div className="flex flex-wrap justify-between items-center gap-6 mb-12">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-3 font-black uppercase tracking-[0.2em] text-[10px] text-primary/40 dark:text-dark-on-surface-variant group">
+                        <div className="w-10 h-10 rounded-full border border-surface-variant dark:border-dark-surface-variant flex items-center justify-center group-hover:bg-primary dark:group-hover:bg-dark-primary group-hover:text-white transition-all">
+                            <ArrowLeft className="w-5 h-5" />
+                        </div>
+                        Return to Portfolio
+                    </button>
+                    <div className="flex gap-4">
+                        <button className="w-12 h-12 rounded-2xl border border-surface-variant dark:border-dark-surface-variant flex items-center justify-center text-primary/40 dark:text-dark-on-surface-variant hover:bg-accent hover:text-white transition-all">
+                            <Share2 className="w-5 h-5" />
+                        </button>
+                        <button 
+                            onClick={() => toggleFavorite(id)}
+                            className={`w-12 h-12 rounded-2xl border border-surface-variant dark:border-dark-surface-variant flex items-center justify-center transition-all ${isFavorite ? 'bg-red-500 text-white border-red-500 shadow-xl shadow-red-500/20' : 'text-primary/40 dark:text-dark-on-surface-variant hover:text-red-500'}`}
+                        >
+                            <Heart className="w-5 h-5" fill={isFavorite ? "currentColor" : "none"} />
+                        </button>
+                    </div>
+                </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass rounded-[2.5rem]">
-                                {[
-                                    { label: 'BHK', value: property.bhk || '3 BHK', icon: 'bed' },
-                                    { label: 'Built Space', value: property.builtupArea || '2400 ft²', icon: 'square_foot' },
-                                    { label: 'Floor', value: property.floor || '2nd', icon: 'layers' },
-                                    { label: 'Status', value: property.status || 'Ready', icon: 'verified' }
-                                ].map((spec, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-2 text-center">
-                                        <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary">
-                                            <span className="material-symbols-outlined">{spec.icon}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                    {/* Media Display Area */}
+                    <div className="lg:col-span-8 space-y-10">
+                        {/* Interactive Toggle */}
+                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-3xl border border-surface-variant dark:border-dark-surface-variant shadow-xl w-fit">
+                            {['GALLERY', '3D', 'MAP'].map((view) => (
+                                <button
+                                    key={view}
+                                    onClick={() => setActiveView(view)}
+                                    className={`px-8 py-3 rounded-2xl text-[10px] font-black tracking-widest transition-all ${activeView === view ? 'bg-primary dark:bg-accent text-white shadow-lg' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
+                                >
+                                    {view}
+                                </button>
+                            ))}
+                        </div>
+
+                        <AnimatePresence mode="wait">
+                            {activeView === 'GALLERY' && (
+                                <motion.div 
+                                    key="gallery"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="space-y-6"
+                                >
+                                    <div className="relative aspect-[16/10] rounded-[4rem] overflow-hidden shadow-2xl border border-surface-variant dark:border-dark-surface-variant">
+                                        <img src={allImages[activeImage]} className="w-full h-full object-cover" alt="" />
+                                        <div className="absolute top-8 left-8 flex gap-3">
+                                            <div className="glass dark:glass-dark px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white shadow-lg flex items-center gap-2">
+                                                <ShieldCheck className="w-4 h-4 text-accent" />
+                                                Verified Listing
+                                            </div>
                                         </div>
-                                        <span className="text-xs font-black uppercase text-primary/40 leading-none">{spec.label}</span>
-                                        <span className="text-sm font-black text-primary">{spec.value}</span>
                                     </div>
-                                ))}
-                            </div>
-                        </section>
+                                    <div className="flex gap-4 overflow-x-auto no-scrollbar py-2">
+                                        {allImages.map((img, i) => (
+                                            <button 
+                                                key={i} 
+                                                onClick={() => setActiveImage(i)}
+                                                className={`w-28 h-28 rounded-3xl overflow-hidden shrink-0 border-4 transition-all ${activeImage === i ? 'border-accent shadow-xl scale-105' : 'border-transparent opacity-40 hover:opacity-100'}`}
+                                            >
+                                                <img src={img} className="w-full h-full object-cover" alt="" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                            {activeView === '3D' && (
+                                <motion.div 
+                                    key="3d"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 20 }}
+                                >
+                                    <ThreeDPreview imageUrl={allImages[0]} />
+                                </motion.div>
+                            )}
+                            {activeView === 'MAP' && (
+                                <motion.div 
+                                    key="map"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                >
+                                    <InteractiveMap location={property.location} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                        {/* Description */}
-                        <section className="space-y-4">
-                            <h2 className="font-headline font-black text-2xl text-primary">Overview</h2>
-                            <p className="text-on-surface-variant text-base sm:text-lg leading-relaxed text-balance">
-                                Experience ultra-luxury living in this architectural masterpiece. Designed with a focus on seamless indoor-outdoor living, this residence offers expansive layouts, premium finishes, and breathtaking panoramic views of the city skyline.
+                        {/* Description Section */}
+                        <div className="space-y-8 pt-6">
+                            <div className="flex items-center gap-4">
+                                <h2 className="font-headline font-black text-3xl text-primary dark:text-dark-on-surface tracking-tight">Estate Narrative</h2>
+                                <div className="h-px flex-1 bg-surface-variant dark:bg-dark-surface-variant" />
+                            </div>
+                            <p className="text-on-surface-variant dark:text-dark-on-surface-variant text-xl leading-relaxed font-medium">
+                                {property.description || "Experience unprecedented luxury in this masterfully designed estate. Every corner reflecting architectural finesse, this property is poised for those who seek the extraordinary. From sun-drenched living areas to tranquil private quarters, it represents the pinnacle of modern residency in Central India."}
                             </p>
-                        </section>
-
-                        {/* Amenities */}
-                        <section className="space-y-6">
-                            <h2 className="font-headline font-black text-2xl text-primary">Premium Amenities</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                {[
-                                    { name: 'Private Pool', icon: 'pool' },
-                                    { name: 'Fitness Center', icon: 'fitness_center' },
-                                    { name: 'Smart Security', icon: 'security' },
-                                    { name: 'Car Parking', icon: 'local_parking' },
-                                    { name: 'Power Backup', icon: 'bolt' },
-                                    { name: 'Green Spaces', icon: 'park' }
-                                ].map((item) => (
-                                    <div key={item.name} className="flex items-center gap-4 p-4 bg-surface rounded-2xl border border-surface-variant group hover:border-primary/20 transition-all shadow-sm">
-                                        <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                                            <span className="material-symbols-outlined text-xl">{item.icon}</span>
-                                        </div>
-                                        <span className="font-bold text-primary">{item.name}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
+                        </div>
                     </div>
 
-                    {/* Right Column: Contact & Sticky Info */}
-                    <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-8">
-                        <section className="glass rounded-[2.5rem] p-8 space-y-8 border-2 border-primary/5 shadow-2xl">
-                            <div className="space-y-4">
-                                <h3 className="font-headline font-black text-xl text-primary">Interested?</h3>
-                                <div className="flex items-center gap-4 py-4 border-b border-primary/5">
-                                    <img 
-                                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop" 
-                                        className="w-14 h-14 rounded-full object-cover shadow-lg border-2 border-white" 
-                                        alt="Agent" 
-                                    />
-                                    <div>
-                                        <h4 className="font-black text-primary">Anand Verma</h4>
-                                        <p className="text-[10px] uppercase font-black text-secondary tracking-widest">Premium Estate Agent</p>
-                                    </div>
+                    {/* Sidebar / Info */}
+                    <div className="lg:col-span-4 space-y-12">
+                        <section className="space-y-6">
+                            <div className="space-y-2">
+                                <h1 className="font-headline font-black text-5xl text-primary dark:text-dark-on-surface leading-[1.1] tracking-tighter italic">{property.title}</h1>
+                                <p className="text-on-surface-variant dark:text-dark-on-surface-variant font-bold text-lg flex items-center gap-3">
+                                    <MapPin className="text-accent w-5 h-5" />
+                                    {property.location}
+                                </p>
+                            </div>
+                            <div className="bg-primary/5 dark:bg-dark-primary/5 p-8 rounded-[3rem] border border-primary/10 dark:border-dark-primary/10 flex justify-between items-center group">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-dark-on-surface-variant/40">Market Valuation</p>
+                                    <h2 className="text-4xl font-black text-primary dark:text-dark-on-surface tracking-tighter">₹ {property.price.toLocaleString()}</h2>
+                                </div>
+                                <div className="w-14 h-14 rounded-full bg-white dark:bg-dark-surface flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                                    <Sparkles className="w-6 h-6 text-accent" />
                                 </div>
                             </div>
+                        </section>
 
-                            <div className="space-y-3">
-                                <button onClick={() => setShowInquiryModal(true)} className="w-full bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 active:scale-95">
-                                    <span className="material-symbols-outlined text-sm">mail</span>
-                                    Send Inquiry
+                        <section className="grid grid-cols-2 gap-6 mt-8">
+                            {[
+                                { label: 'Suites', val: property.bedrooms || 3, icon: BedDouble },
+                                { label: 'Baths', val: property.bathrooms || 2, icon: Bath },
+                                { label: 'Extent', val: `${property.area || '2,400'}`, icon: Square },
+                                { label: 'Vibe', val: property.category || 'Luxury', icon: CheckCircle2 },
+                            ].map((spec, i) => (
+                                <div key={i} className="glass dark:glass-dark p-6 rounded-[2.5rem] flex flex-col items-center text-center gap-3 hover:ring-4 ring-accent/10 transition-all border border-white/30">
+                                    <spec.icon className="w-6 h-6 text-accent" />
+                                    <div className="space-y-0.5">
+                                        <p className="text-sm font-black text-primary dark:text-white leading-none">{spec.val}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/40">{spec.label}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </section>
+
+                        <section className="space-y-4 pt-4">
+                             <button 
+                                onClick={() => setIsModalOpen(true)}
+                                className="w-full bg-primary dark:bg-accent text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:bg-secondary dark:hover:bg-white dark:hover:text-primary transition-all shadow-2xl flex items-center justify-center gap-4 group"
+                            >
+                                <Mail className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                                Initiate Inquiry
+                            </button>
+                            <div className="grid grid-cols-2 gap-4">
+                                <button className="bg-[#25D366] text-white py-5 rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition-all flex items-center justify-center gap-3">
+                                    <MessageCircle className="w-4 h-4" />
+                                    Chat
                                 </button>
-                                <button className="w-full bg-white border-2 border-primary/10 text-primary py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:border-primary transition-all flex items-center justify-center gap-2 active:scale-95">
-                                    <span className="material-symbols-outlined text-sm">call</span>
-                                    Book a Visit
+                                <button className="bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-dark-on-surface py-5 rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] hover:border-primary transition-all flex items-center justify-center gap-3">
+                                    <Phone className="w-4 h-4" />
+                                    Recall
                                 </button>
                             </div>
                         </section>
 
-                        <section className="bg-secondary/5 rounded-[2rem] p-6 border border-secondary/10">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-secondary text-center">Safety Tip: Always visit properties in person before making any payments.</p>
-                        </section>
+                        {/* Social Proof / Security */}
+                        <div className="bg-white/5 dark:bg-white/2 p-6 rounded-3xl border border-white/10 space-y-4">
+                            <div className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-accent">
+                                <ShieldCheck className="w-4 h-4" />
+                                Security Guaranteed
+                            </div>
+                            <p className="text-[10px] text-on-surface-variant/60 dark:text-dark-on-surface-variant/40 font-bold leading-relaxed">
+                                All transactions are protected via our internal escrow system. Estate verified by the Central Intelligence Unit of OPMS.
+                            </p>
+                        </div>
                     </div>
+                </div>
+
+                {/* Recommendations Section */}
+                <div className="mt-32">
+                    <Recommendations currentPropertyId={id} category={property.category} />
                 </div>
             </main>
 
             <BottomNav />
 
-            {/* Inquiry Modal */}
-            {showInquiryModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/20 backdrop-blur-md animate-fade-in">
-                    <div className="bg-surface w-full max-w-lg rounded-[3rem] p-8 sm:p-12 space-y-8 shadow-2xl relative animate-fade-in-up">
-                        <button onClick={() => setShowInquiryModal(false)} className="absolute top-8 right-8 w-10 h-10 rounded-2xl bg-surface-variant/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                        
-                        <div className="space-y-2">
-                            <h3 className="font-headline font-black text-3xl text-primary leading-tight">Send Inquiry</h3>
-                            <p className="text-on-surface-variant font-bold text-sm">Regarding: {property.title}</p>
-                        </div>
-
-                        {inquirySuccess ? (
-                            <div className="flex flex-col items-center justify-center py-10 space-y-6 text-center">
-                                <div className="w-20 h-20 rounded-3xl bg-secondary/10 flex items-center justify-center text-secondary animate-float">
-                                    <span className="material-symbols-outlined text-5xl">check_circle</span>
+            {/* Premium Inquiry Modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsModalOpen(false)}
+                            className="absolute inset-0 bg-primary/20 dark:bg-black/60 backdrop-blur-xl"
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, y: 100, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 100, scale: 0.9 }}
+                            className="bg-white dark:bg-dark-surface w-full max-w-xl rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] p-12 space-y-10 relative overflow-hidden"
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="space-y-1">
+                                    <h3 className="text-3xl font-black text-primary dark:text-white tracking-tighter">Priority Dossier</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-accent flex items-center gap-2">
+                                        <Sparkles className="w-3 h-3" />
+                                        Personalized Consultation
+                                    </p>
                                 </div>
-                                <div className="space-y-2">
-                                    <h4 className="font-black text-2xl text-primary text-balance transition-all">Success! Your inquiry is on the way.</h4>
-                                    <p className="text-sm font-bold text-on-surface-variant">An agent will contact you within 24 hours.</p>
-                                </div>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleInquirySubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Full Name</label>
-                                        <input 
-                                            type="text" 
-                                            required 
-                                            className="w-full bg-surface-variant/20 rounded-2xl px-5 py-4 border-none focus:ring-2 focus:ring-primary/20 font-bold"
-                                            value={buyerName}
-                                            onChange={(e) => setBuyerName(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Email Address</label>
-                                        <input 
-                                            type="email" 
-                                            required 
-                                            className="w-full bg-surface-variant/20 rounded-2xl px-5 py-4 border-none focus:ring-2 focus:ring-primary/20 font-bold"
-                                            value={buyerEmail}
-                                            onChange={(e) => setBuyerEmail(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Message</label>
-                                    <textarea 
-                                        rows="4" 
-                                        className="w-full bg-surface-variant/20 rounded-[2rem] px-6 py-5 border-none focus:ring-2 focus:ring-primary/20 font-bold resize-none"
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                    />
-                                </div>
-
-                                <button 
-                                    type="submit" 
-                                    disabled={submittingInquiry}
-                                    className="w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase tracking-widest shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
-                                >
-                                    {submittingInquiry ? 'Dispatching...' : 'Submit Inquiry'}
-                                    <span className="material-symbols-outlined text-lg">send</span>
+                                <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-variant/20 transition-all">
+                                    <ArrowLeft className="w-6 h-6 text-primary dark:text-white" />
                                 </button>
-                            </form>
-                        )}
+                            </div>
+
+                            {statusMessage ? (
+                                <div className="py-20 text-center space-y-6">
+                                    <div className="w-20 h-20 bg-accent/10 text-accent rounded-full flex items-center justify-center mx-auto scale-110">
+                                        <CheckCircle2 className="w-10 h-10" />
+                                    </div>
+                                    <p className="font-black text-primary dark:text-white text-2xl tracking-tight uppercase">{statusMessage}</p>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSendInquiry} className="space-y-8">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 dark:text-white/40 px-2">Identifier</label>
+                                            <input 
+                                                className="w-full px-8 py-5 bg-surface-variant/20 dark:bg-dark-surface-variant/20 border-none rounded-3xl focus:ring-2 ring-primary dark:ring-accent font-bold text-primary dark:text-white outline-none transition-all placeholder:text-primary/20" 
+                                                value={inquiryData.name}
+                                                onChange={(e) => setInquiryData({...inquiryData, name: e.target.value})}
+                                                placeholder="Your Full Name"
+                                                required 
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 dark:text-white/40 px-2">Contact Line</label>
+                                            <input 
+                                                className="w-full px-8 py-5 bg-surface-variant/20 dark:bg-dark-surface-variant/20 border-none rounded-3xl focus:ring-2 ring-primary dark:ring-accent font-bold text-primary dark:text-white outline-none transition-all placeholder:text-primary/20" 
+                                                value={inquiryData.phone}
+                                                onChange={(e) => setInquiryData({...inquiryData, phone: e.target.value})}
+                                                placeholder="+91..."
+                                                required 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 dark:text-white/40 px-2">Briefing</label>
+                                        <textarea 
+                                            className="w-full px-8 py-5 bg-surface-variant/20 dark:bg-dark-surface-variant/20 border-none rounded-[2.5rem] focus:ring-2 ring-primary dark:ring-accent font-bold text-primary dark:text-white outline-none h-40 resize-none transition-all placeholder:text-primary/20" 
+                                            placeholder="Indicate your preferred viewing schedule..."
+                                            value={inquiryData.message}
+                                            onChange={(e) => setInquiryData({...inquiryData, message: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <button 
+                                        className="w-full py-6 bg-primary dark:bg-accent text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-secondary dark:hover:bg-white dark:hover:text-primary transition-all shadow-3xl active:scale-95 flex items-center justify-center gap-4 disabled:opacity-50"
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Syncing Dossier...' : 'Transmit Inquiry'}
+                                        <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                </form>
+                            )}
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     );
 }

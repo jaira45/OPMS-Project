@@ -2,16 +2,26 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
+import { useComparison } from '../context/ComparisonContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Plus, Scale, LayoutGrid, List, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
+import Hero from '../components/Hero';
+import PropertyReels from '../components/PropertyReels';
+import NewsSection from '../components/NewsSection';
+import Testimonials from '../components/Testimonials';
+import { SkeletonCard } from '../components/Skeleton';
 
 export default function HomeScreen() {
     const navigate = useNavigate();
+    const { user, toggleFavorite } = useAuth();
+    const { addToCompare, compareList } = useComparison();
     const [featured, setFeatured] = useState([]);
     const [activeTab, setActiveTab] = useState('BUY');
-    const [favorites, setFavorites] = useState(() => {
-        return JSON.parse(localStorage.getItem('favorites') || '[]');
-    });
+    const [loading, setLoading] = useState(true);
+
+    const favorites = user?.favorites || [];
 
     useEffect(() => {
         fetchFeaturedProperties();
@@ -23,245 +33,201 @@ export default function HomeScreen() {
             if (res.ok) {
                 const data = await res.json();
                 const approved = data.properties.filter(p => p.status === 'Approved');
-                if (approved.length > 0) {
-                    setFeatured(approved.slice(0, 3));
-                } else {
-                    getFallbackProperties();
-                }
+                setFeatured(approved.length > 0 ? approved.slice(0, 6) : fallbackData);
             } else {
-                getFallbackProperties();
+                setFeatured(fallbackData);
             }
         } catch (err) {
-            console.error('Error fetching featured properties:', err);
-            getFallbackProperties();
+            setFeatured(fallbackData);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const getFallbackProperties = () => {
-        setFeatured([
-            { _id: '1', title: 'The Sapphire Manor', price: '₹ 2.4 Crore', bhk: '3 BHK', location: 'Vijay Nagar, Indore', coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop' },
-            { _id: '2', title: 'Lakeview Residency', price: '₹ 85 Lakh', bhk: '2 BHK', location: 'Arera Colony, Bhopal', coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop' },
-            { _id: '3', title: 'Heritage Greens', price: '₹ 1.2 Crore', bhk: '4 BHK', location: 'City Center, Gwalior', coverImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop' }
-        ]);
-    };
-
-    const toggleFavorite = (id, e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        let updated;
-        if (favorites.includes(id)) {
-            updated = favorites.filter(favId => favId !== id);
-        } else {
-            updated = [...favorites, id];
-        }
-        setFavorites(updated);
-        localStorage.setItem('favorites', JSON.stringify(updated));
-    };
+    const fallbackData = [
+        { _id: '1', title: 'The Sapphire Manor', price: 24000000, bedrooms: 3, bathrooms: 2, location: 'Vijay Nagar, Indore', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop'], category: 'BUY' },
+        { _id: '2', title: 'Lakeview Residency', price: 8500000, bedrooms: 2, bathrooms: 2, location: 'Arera Colony, Bhopal', images: ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop'], category: 'RENT' },
+        { _id: '3', title: 'Heritage Greens', price: 12000000, bedrooms: 4, bathrooms: 3, location: 'City Center, Gwalior', images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop'], category: 'BUY' }
+    ];
 
     return (
-        <div className="bg-background text-on-surface min-h-screen pb-24 overflow-x-hidden">
+        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen pb-24 overflow-x-hidden">
             <Navbar />
 
-            <main className="pt-16 sm:pt-20 space-y-12 sm:space-y-24">
-                {/* Modern Hero Section */}
-                <section className="relative h-[70vh] sm:h-[90vh] min-h-[500px] flex flex-col items-center justify-center text-center px-4 sm:px-6 overflow-hidden">
-                    {/* Background Layer */}
-                    <div className="absolute inset-0 z-0">
-                        <img
-                            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&auto=format&fit=crop"
-                            className="w-full h-full object-cover"
-                            alt="Modern Luxury Home"
-                        />
-                        <div className="absolute inset-0 bg-black/40"></div>
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-background/100"></div>
+            <main>
+                {/* Premium Animated Hero */}
+                <Hero />
+
+                {/* Property Reels */}
+                <PropertyReels />
+
+                {/* Featured Collection */}
+                <section className="container-responsive py-24 space-y-16">
+                    <div className="flex flex-col md:flex-row justify-between items-end gap-10">
+                        <div className="space-y-4">
+                            <motion.div 
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 dark:bg-dark-primary/10 text-primary dark:text-dark-primary rounded-full text-[10px] font-black uppercase tracking-widest"
+                            >
+                                <LayoutGrid className="w-3 h-3" />
+                                Curated Selection
+                            </motion.div>
+                            <h2 className="font-headline font-black text-4xl sm:text-7xl text-primary dark:text-dark-on-surface tracking-tighter">
+                                Featured <span className="text-secondary opacity-20">Holdings</span>
+                            </h2>
+                        </div>
+                        
+                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-3xl border border-surface-variant dark:border-dark-surface-variant shadow-xl">
+                            {['BUY', 'RENT'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-10 py-4 rounded-2xl text-[10px] font-black tracking-widest transition-all ${activeTab === tab ? 'bg-primary dark:bg-dark-primary text-white shadow-lg' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Content Layer */}
-                    <div className="relative z-10 w-full max-w-5xl flex flex-col items-center space-y-8 animate-fade-in-up">
-                        <div className="space-y-4">
-                            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-white leading-none tracking-tighter drop-shadow-2xl">
-                                Properties to <span className="text-secondary underline decoration-secondary/40 italic">call home</span>
-                            </h1>
-                            <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-md text-balance">
-                                Discover Madhya Pradesh's most exclusive estates and heritage residences with ease.
-                            </p>
+                    {loading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+                            {[1, 2, 3].map(i => <SkeletonCard key={i} />)}
                         </div>
-
-                        {/* Search Component Container */}
-                        <div className="w-full max-w-4xl space-y-5">
-                            {/* Tabs Row */}
-                            <div className="flex justify-center">
-                                <div className="bg-white/95 backdrop-blur-md p-1.5 rounded-full flex gap-1 shadow-2xl border border-white/20">
-                                    {['BUY', 'RENT', 'SOLD', 'AGENTS'].map((tab) => (
-                                        <button
-                                            key={tab}
-                                            onClick={() => setActiveTab(tab)}
-                                            className={`px-6 sm:px-8 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all duration-300 tracking-widest ${
-                                                activeTab === tab 
-                                                ? 'bg-primary text-white shadow-lg shadow-primary/40' 
-                                                : 'text-primary hover:bg-primary/5'
-                                            }`}
-                                        >
-                                            {tab}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Search Bar Row */}
-                            <div className="bg-white rounded-3xl sm:rounded-full p-2.5 sm:p-3 shadow-2xl flex flex-col md:flex-row items-stretch gap-3 border border-surface-variant/50">
-                                <div className="flex-1 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-surface-variant">
-                                    {/* Location Input */}
-                                    <div className="flex-1 px-6 py-3 flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                                            <span className="material-symbols-outlined text-xl">location_on</span>
-                                        </div>
-                                        <div className="flex flex-col items-start w-full">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Location</span>
-                                            <input
-                                                type="text"
-                                                placeholder="Where are you looking?"
-                                                className="bg-transparent border-none p-0 text-sm sm:text-base font-bold text-primary placeholder:text-on-surface-variant/20 focus:ring-0 w-full"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Type Dropdown */}
-                                    <div className="flex-1 px-6 py-3 flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                                            <span className="material-symbols-outlined text-xl">home_work</span>
-                                        </div>
-                                        <div className="flex flex-col items-start w-full">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Property Type</span>
-                                            <select className="bg-transparent border-none p-0 text-sm sm:text-base font-bold text-primary focus:ring-0 w-full appearance-none cursor-pointer">
-                                                <option>All Properties</option>
-                                                <option>Luxury Villa</option>
-                                                <option>Modern Flat</option>
-                                                <option>Commercial</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Find Now Button */}
-                                <button
-                                    onClick={() => navigate(activeTab === 'AGENTS' ? '/agents' : '/properties')}
-                                    className="bg-secondary hover:bg-primary text-white px-10 py-5 sm:py-0 rounded-2xl sm:rounded-full font-black text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 shadow-xl shadow-secondary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-95"
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+                            {featured.filter(p => !activeTab || p.category === activeTab).map((prop, i) => (
+                                <motion.div 
+                                    key={prop._id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="group cursor-pointer flex flex-col gap-8"
+                                    onClick={() => navigate(`/property/${prop._id}`)}
                                 >
-                                    <span className="material-symbols-outlined font-bold">search</span>
-                                    <span>Find Now</span>
-                                </button>
-                            </div>
+                                    <div className="relative overflow-hidden rounded-[4rem] aspect-[4/5] shadow-2xl bg-black/5 hover:-translate-y-4 transition-all duration-700">
+                                        <img 
+                                            alt={prop.title} 
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                                            src={(prop.images && prop.images[0]) || prop.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
+                                        />
+                                        
+                                        {/* Tags */}
+                                        <div className="absolute top-8 left-8 flex flex-col gap-3">
+                                            <div className="glass dark:glass-dark px-6 py-3 rounded-2xl shadow-xl flex items-center gap-2">
+                                                <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                                                <span className="text-[10px] font-black text-primary dark:text-white uppercase tracking-widest">Active</span>
+                                            </div>
+                                            <div className="bg-primary dark:bg-accent text-white px-6 py-3 rounded-2xl shadow-xl">
+                                                <span className="text-[10px] font-black uppercase tracking-widest">₹ {typeof prop.price === 'number' ? prop.price.toLocaleString() : prop.price}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="absolute top-8 right-8 flex flex-col gap-3">
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={(e) => { e.stopPropagation(); toggleFavorite(prop._id); }}
+                                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${favorites.includes(prop._id) ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'glass dark:glass-dark text-white hover:text-red-500'}`}
+                                            >
+                                                <Heart className="w-6 h-6" fill={favorites.includes(prop._id) ? "currentColor" : "none"} />
+                                            </motion.button>
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={(e) => { e.stopPropagation(); addToCompare(prop); }}
+                                                className={`w-14 h-14 rounded-2xl glass dark:glass-dark flex items-center justify-center transition-all ${compareList.some(p => p._id === prop._id) ? 'bg-accent text-white shadow-lg' : 'text-white hover:text-accent'}`}
+                                            >
+                                                <Scale className="w-6 h-6" />
+                                            </motion.button>
+                                        </div>
+
+                                        {/* Location Overlay */}
+                                        <div className="absolute bottom-10 left-8 right-8 translate-y-20 group-hover:translate-y-0 transition-transform duration-500">
+                                            <div className="glass dark:glass-dark p-6 rounded-3xl flex justify-between items-center">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                                                        <ArrowRight className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <span className="text-xs font-black text-white uppercase tracking-widest">Explore details</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 px-4">
+                                        <div className="flex justify-between items-start gap-4">
+                                            <h3 className="font-headline font-black text-3xl text-primary dark:text-dark-on-surface leading-none tracking-tight">{prop.title}</h3>
+                                            <span className="text-accent italic font-display text-lg">Indore</span>
+                                        </div>
+                                        <div className="flex items-center gap-8 text-on-surface-variant dark:text-dark-on-surface-variant text-[10px] font-black uppercase tracking-[0.2em] opacity-60">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
+                                                {prop.bedrooms || 3} Beds
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
+                                                {prop.bathrooms || 2} Baths
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
+                                                {prop.area || 2400} SQFT
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
                         </div>
+                    )}
+
+                    <div className="text-center pt-12">
+                        <motion.button 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigate('/properties')} 
+                            className="inline-flex items-center gap-6 bg-primary dark:bg-accent text-white px-16 py-6 rounded-full font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/30 active:scale-95 group"
+                        >
+                            Explore Universal Catalog
+                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-2 transition-transform">
+                                <ArrowRight className="w-5 h-5" />
+                            </div>
+                        </motion.button>
                     </div>
                 </section>
 
-                <div className="container-responsive space-y-16 sm:space-y-32">
-                    {/* Browse by City */}
-                    <section className="space-y-8 sm:space-y-12">
-                        <div className="max-w-xl mx-auto text-center space-y-3 px-4">
-                            <h2 className="font-headline font-black text-2xl sm:text-4xl text-primary tracking-tight">Browse by City</h2>
-                            <p className="text-on-surface-variant text-sm sm:text-base font-medium">Explore premium estates across MP's most iconic locations.</p>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 px-4">
-                            {[
-                                { name: 'Indore', img: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=500&auto=format&fit=crop' },
-                                { name: 'Bhopal', img: 'https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=500&auto=format&fit=crop' },
-                                { name: 'Rewa', img: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c2f1?w=500&auto=format&fit=crop' },
-                                { name: 'Jabalpur', img: 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=500&auto=format&fit=crop' },
-                                { name: 'Ujjain', img: 'https://images.unsplash.com/photo-1627844718626-4c6b9636402b?w=500&auto=format&fit=crop' },
-                                { name: 'Gwalior', img: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a4c7?w=500&auto=format&fit=crop' }
-                            ].map((city) => (
-                                <div key={city.name} onClick={() => navigate('/properties')} className="flex flex-col items-center gap-3 group cursor-pointer">
-                                    <div className="w-full aspect-square rounded-3xl overflow-hidden border border-surface-variant shadow-sm group-hover:shadow-xl transition-all duration-500 group-hover:-translate-y-2">
-                                        <img alt={city.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src={city.img} />
-                                    </div>
-                                    <span className="text-xs sm:text-sm font-black text-primary uppercase tracking-widest">{city.name}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                {/* News & Intelligence */}
+                <NewsSection />
 
-                    {/* Featured Properties */}
-                    <section className="space-y-12 px-4">
-                        <div className="max-w-xl mx-auto text-center space-y-3">
-                            <h2 className="font-headline font-black text-2xl sm:text-4xl text-primary tracking-tight">Featured Properties</h2>
-                            <p className="text-on-surface-variant text-sm sm:text-base font-medium">Hand-picked premium listings in the most desirable neighborhoods.</p>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                            {featured.map((prop) => (
-                                <div key={prop._id} onClick={() => navigate(`/property/${prop._id}`)} className="group cursor-pointer">
-                                    <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg">
-                                        <img alt={prop.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src={prop.coverImage} />
-                                        <div className="absolute top-4 left-4 glass px-4 py-2 rounded-full">
-                                            <span className="text-primary font-black text-sm">{prop.price}</span>
-                                        </div>
-                                        <button
-                                            onClick={(e) => toggleFavorite(prop._id, e)}
-                                            className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all ${favorites.includes(prop._id) ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'glass text-white'}`}
-                                        >
-                                            <span className="material-symbols-outlined" style={{ fontVariationSettings: favorites.includes(prop._id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                                        </button>
-                                    </div>
-                                    <div className="mt-6 space-y-2">
-                                        <h3 className="font-headline font-bold text-lg sm:text-xl text-primary group-hover:text-secondary transition-colors">{prop.title}</h3>
-                                        <div className="flex items-center gap-4 text-on-surface-variant text-xs sm:text-sm font-semibold">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="material-symbols-outlined text-secondary text-lg">bed</span>
-                                                {prop.bhk}
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="material-symbols-outlined text-secondary text-lg">location_on</span>
-                                                {prop.location}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                {/* Testimonials */}
+                <Testimonials />
 
-                    {/* Trust Section */}
-                    <section className="bg-primary text-white rounded-[3rem] p-8 sm:p-20 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                            <div className="space-y-8">
-                                <h2 className="text-3xl sm:text-6xl font-black leading-tight tracking-tighter text-balance">The most trusted name in MP Real Estate.</h2>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <div className="text-3xl sm:text-4xl font-black text-secondary-container">100%</div>
-                                        <p className="text-white/60 text-xs sm:text-sm font-bold uppercase tracking-widest">Verified Listings</p>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="text-3xl sm:text-4xl font-black text-secondary-container">24/7</div>
-                                        <p className="text-white/60 text-xs sm:text-sm font-bold uppercase tracking-widest">Agent Support</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-6 lg:pl-12 border-l border-white/10">
-                                <p className="text-lg sm:text-xl text-white/80 leading-relaxed">
-                                    We don't just sell houses; we build communities. Our platform is designed to give you peace of mind throughout the entire buying or renting process.
-                                </p>
-                                <button onClick={() => navigate('/about')} className="flex items-center gap-3 text-secondary-container font-black hover:gap-5 transition-all">
-                                    <span>Learn more about our mission</span>
-                                    <span className="material-symbols-outlined">arrow_forward</span>
-                                </button>
-                            </div>
+                {/* Call to Action */}
+                <section className="container-responsive py-32">
+                    <div className="bg-primary dark:bg-dark-surface rounded-[5rem] p-12 sm:p-24 relative overflow-hidden flex flex-col items-center text-center space-y-12 group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent/20 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        
+                        <div className="relative z-10 space-y-6 max-w-3xl">
+                            <h2 className="font-headline font-black text-5xl sm:text-8xl text-white tracking-tighter leading-tight">
+                                Ready to Elevate your <br />
+                                <span className="text-accent italic font-display">Lifestyle?</span>
+                            </h2>
+                            <p className="text-white/60 font-bold text-lg sm:text-xl">Join 5,000+ investors and elite homeowners in Central India's most exclusive network.</p>
                         </div>
-                    </section>
-
-                    {/* Final Contact CTA */}
-                    <section className="text-center space-y-10 pb-12">
-                        <div className="max-w-2xl mx-auto space-y-4">
-                            <h2 className="text-3xl sm:text-5xl font-black text-primary tracking-tighter">Ready to find your dream home?</h2>
-                            <p className="text-on-surface-variant font-medium text-base sm:text-lg">Our experts are standing by to help you find the perfect property in Madhya Pradesh.</p>
+                        
+                        <div className="relative z-10 w-full max-w-lg flex flex-col sm:flex-row gap-4">
+                            <input
+                                type="email"
+                                placeholder="Reserve your subscription..."
+                                className="flex-1 bg-white/10 dark:bg-white/5 border-2 border-white/20 rounded-full px-10 py-5 text-white placeholder:text-white/40 focus:bg-white focus:text-primary outline-none font-bold transition-all"
+                            />
+                            <button className="bg-white text-primary px-12 py-5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-accent hover:text-white transition-all shadow-xl">
+                                Join Now
+                            </button>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <button onClick={() => navigate('/properties')} className="w-full sm:w-auto bg-primary text-white px-10 py-5 rounded-full font-black text-lg hover:bg-secondary transition-all shadow-xl shadow-primary/20">Browse Properties</button>
-                            <button onClick={() => navigate('/contact')} className="w-full sm:w-auto glass text-primary px-10 py-5 rounded-full font-black text-lg hover:border-primary transition-all">Contact Us</button>
-                        </div>
-                    </section>
-                </div>
+                    </div>
+                </section>
             </main>
 
             <BottomNav />

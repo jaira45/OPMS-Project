@@ -8,21 +8,82 @@ import BottomNav from '../components/BottomNav';
 export default function AddProperty() {
     const navigate = useNavigate();
     const { authFetch } = useAuth();
-    const [title, setTitle] = useState('');
-    const [price, setPrice] = useState('');
-    const [location, setLocation] = useState('');
-    const [bhk, setBhk] = useState('3 BHK');
-    const [floor, setFloor] = useState('2nd Floor');
-    const [carpetArea, setCarpetArea] = useState('');
-    const [builtupArea, setBuiltupArea] = useState('');
-    const [coverImage, setCoverImage] = useState('');
+    
+    const [formData, setFormData] = useState({
+        title: '',
+        price: '',
+        location: '',
+        bedrooms: 1,
+        bathrooms: 1,
+        area: '',
+        category: 'buy',
+        description: '',
+    });
+
+    const [images, setImages] = useState([]); // Actual file objects
+    const [previews, setPreviews] = useState([]); // Local URLs for preview
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length + images.length > 5) {
+            setError("Maximum 5 images allowed.");
+            return;
+        }
+
+        setImages(prev => [...prev, ...files]);
+        
+        // Generate previews
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setPreviews(prev => [...prev, ...newPreviews]);
+        setError('');
+    };
+
+    const removeImage = (index) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+        setPreviews(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const uploadToCloudinary = async (file) => {
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'demo';
+        const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'unsigned_upload';
+        
+        const data = new FormData();
+        data.append('file', file);
+        data.append('upload_preset', uploadPreset);
+
+        try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: data
+            });
+            const result = await res.json();
+            if (result.secure_url) {
+                return result.secure_url;
+            } else {
+                throw new Error(result.error?.message || 'Cloudinary upload failed');
+            }
+        } catch (err) {
+            console.error('Cloudinary Error:', err);
+            throw err;
+        }
+    };
+
     const submitProperty = async (e) => {
         e.preventDefault();
-        if (!title || !price || !location) {
-            setError("Title, Price, and Location are required fields.");
+        if (!formData.title || !formData.price || !formData.location || !formData.area) {
+            setError("All required fields must be filled.");
+            return;
+        }
+
+        if (images.length === 0) {
+            setError("At least one property image is required.");
             return;
         }
 
@@ -30,18 +91,16 @@ export default function AddProperty() {
         setError('');
 
         try {
+            // 1. Upload all images to Cloudinary in parallel
+            const uploadPromises = images.map(file => uploadToCloudinary(file));
+            const imageUrls = await Promise.all(uploadPromises);
+
+            // 2. Submit data to our backend
             const res = await authFetch(`${API_URL}/api/properties`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    title,
-                    price,
-                    location,
-                    bhk,
-                    floor,
-                    carpetArea: carpetArea ? `${carpetArea} sqft` : '',
-                    builtupArea: builtupArea ? `${builtupArea} sqft` : '',
-                    coverImage: coverImage || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500&auto=format&fit=crop&q=60',
-                    status: 'Pending'
+                    ...formData,
+                    images: imageUrls
                 })
             });
 
@@ -49,10 +108,10 @@ export default function AddProperty() {
                 navigate('/admin');
             } else {
                 const data = await res.json();
-                setError(data.message || 'Failed to submit property.');
+                setError(data.message || 'Failed to save property to database.');
             }
         } catch (err) {
-            setError('An error occurred. Please try again later.');
+            setError(err.message || 'An error occurred during upload. Please check your Cloudinary config.');
         } finally {
             setIsSubmitting(false);
         }
@@ -64,123 +123,144 @@ export default function AddProperty() {
 
             <main className="pt-20 sm:pt-32 container-responsive">
                 <div className="max-w-3xl mx-auto space-y-12 animate-fade-in-up">
-                    
-                    {/* Header Section */}
                     <div className="space-y-4 text-center">
-                        <h1 className="font-headline font-black text-4xl sm:text-5xl text-primary tracking-tight">List Your Estate</h1>
-                        <p className="text-on-surface-variant font-bold text-base sm:text-lg max-w-xl mx-auto text-balance">
-                            Join Madhya Pradesh's most exclusive real estate network. Your property will be reviewed by our curators before going live.
+                        <h1 className="font-headline font-black text-4xl sm:text-5xl text-primary tracking-tight">Cloud Listing</h1>
+                        <p className="text-on-surface-variant font-bold text-base sm:text-lg max-w-xl mx-auto">
+                            Upload your estate images securely with OPMS Cloudinary Integration.
                         </p>
                     </div>
 
-                    <form onSubmit={submitProperty} className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-surface p-8 sm:p-12 rounded-[3rem] border border-surface-variant shadow-2xl relative overflow-hidden">
-                        {/* Background Decoration */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16" />
-                        
+                    <form onSubmit={submitProperty} className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-surface p-8 sm:p-12 rounded-[3.5rem] border border-surface-variant shadow-2xl relative overflow-hidden">
                         <div className="col-span-1 md:col-span-2 space-y-2">
-                             <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Property Highlight Title</label>
-                             <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Property Title</label>
+                            <input
+                                name="title"
+                                value={formData.title}
+                                onChange={handleChange}
                                 className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
                                 placeholder="e.g. Maharana Suite at Shyamala Hills"
-                                type="text"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Location Details</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Expected Price (₹)</label>
                             <input
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
+                                name="price"
+                                type="number"
+                                value={formData.price}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="e.g. 25000000"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Location</label>
+                            <input
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
                                 className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
                                 placeholder="e.g. Arera Colony, Bhopal"
-                                type="text"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Expected Valuation</label>
-                            <div className="relative">
-                                <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-primary">₹</span>
-                                <input
-                                    value={price}
-                                    onChange={(e) => setPrice(e.target.value)}
-                                    className="w-full pl-10 pr-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                    placeholder="e.g. 2.4 Cr"
-                                    type="text"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Structure Type</label>
-                            <select
-                                value={bhk}
-                                onChange={(e) => setBhk(e.target.value)}
-                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
-                            >
-                                <option>1 BHK</option>
-                                <option>2 BHK</option>
-                                <option>3 BHK</option>
-                                <option>4 BHK</option>
-                                <option>5 BHK+</option>
-                                <option>Penthouse</option>
-                                <option>Villa</option>
-                            </select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Floor Level</label>
-                            <select
-                                value={floor}
-                                onChange={(e) => setFloor(e.target.value)}
-                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
-                            >
-                                <option>Ground Floor</option>
-                                <option>1st Floor</option>
-                                <option>2nd Floor</option>
-                                <option>3rd Floor</option>
-                                <option>4th Floor+</option>
-                                <option>Top Floor</option>
-                            </select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Carpet Space (SQFT)</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Bedrooms</label>
                             <input
-                                value={carpetArea}
-                                onChange={(e) => setCarpetArea(e.target.value)}
-                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                placeholder="1250"
+                                name="bedrooms"
                                 type="number"
+                                value={formData.bedrooms}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Built-up Space (SQFT)</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Bathrooms</label>
                             <input
-                                value={builtupArea}
-                                onChange={(e) => setBuiltupArea(e.target.value)}
-                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                placeholder="1500"
+                                name="bathrooms"
                                 type="number"
+                                value={formData.bathrooms}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                required
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Area (SQFT)</label>
+                            <input
+                                name="area"
+                                value={formData.area}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
+                                placeholder="e.g. 2400"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Category</label>
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
+                            >
+                                <option value="buy">For Sale</option>
+                                <option value="rent">For Rent</option>
+                            </select>
                         </div>
 
                         <div className="col-span-1 md:col-span-2 space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Cover Showcase Image URL</label>
-                            <input
-                                value={coverImage}
-                                onChange={(e) => setCoverImage(e.target.value)}
-                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                placeholder="https://images.unsplash.com/your-image-url"
-                                type="url"
+                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Description</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                className="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all resize-none h-32"
+                                placeholder="Describe the luxury and features of this estate..."
                             />
-                            <p className="text-[10px] font-bold text-on-surface-variant/40 px-1 uppercase tracking-widest">High-resolution photography increases appraisal value.</p>
+                        </div>
+
+                        <div className="col-span-1 md:col-span-2 space-y-4">
+                            <div className="flex justify-between items-center px-1">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40">Property Images (Max 5)</label>
+                                <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{images.length}/5 High-Res</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {previews.map((src, index) => (
+                                    <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-surface-variant group">
+                                        <img src={src} className="w-full h-full object-cover" alt="Preview" />
+                                        <button 
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-error text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg active:scale-90"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                ))}
+                                {images.length < 5 && (
+                                    <label className="aspect-square rounded-2xl border-2 border-dashed border-primary/20 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-primary/5 transition-all text-primary/40 hover:text-primary">
+                                        <span className="material-symbols-outlined text-3xl">add_photo_alternate</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Select</span>
+                                        <input 
+                                            type="file" 
+                                            multiple 
+                                            accept="image/*" 
+                                            onChange={handleFileChange} 
+                                            className="hidden" 
+                                        />
+                                    </label>
+                                )}
+                            </div>
                         </div>
 
                         {error && (
@@ -193,26 +273,20 @@ export default function AddProperty() {
                         <div className="col-span-1 md:col-span-2 pt-6">
                             <button
                                 disabled={isSubmitting}
-                                className="w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
+                                className="w-full py-5 bg-primary text-white rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
                                 type="submit"
                             >
                                 {isSubmitting ? (
                                     <>
                                         <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                        <span>Dispatching...</span>
+                                        <span>Cloud Upload in Progress...</span>
                                     </>
-                                ) : (
-                                    <>
-                                        <span>Submit for Appraisal</span>
-                                        <span className="material-symbols-outlined text-sm">send</span>
-                                    </>
-                                )}
+                                ) : 'Sync with OPMS Cloud'}
                             </button>
                         </div>
                     </form>
                 </div>
             </main>
-
             <BottomNav />
         </div>
     );

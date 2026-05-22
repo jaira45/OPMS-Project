@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { API_URL } from '../config';
 
 const AuthContext = createContext(null);
 
@@ -14,28 +15,6 @@ const ICONS = {
     neutral: 'https://cdn-icons-png.flaticon.com/512/847/847969.png'
 };
 
-function parseJwt(token) {
-    try {
-        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-        const json = decodeURIComponent(
-            atob(base64)
-                .split('')
-                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                .join('')
-        );
-        return JSON.parse(json);
-    } catch {
-        return null;
-    }
-}
-
-function isTokenValid(token) {
-    if (!token) return false;
-    const payload = parseJwt(token);
-    if (!payload || !payload.exp) return false;
-    return payload.exp * 1000 > Date.now();
-}
-
 export function AuthProvider({ children }) {
     const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || null);
     const [user, setUser] = useState(() => {
@@ -46,12 +25,33 @@ export function AuthProvider({ children }) {
             return null;
         }
     });
+    const [loading, setLoading] = useState(true);
 
-    // Clean up expired tokens on mount
+    // PERSIST SESSION: Fetch user data from backend on mount
     useEffect(() => {
-        if (token && !isTokenValid(token)) {
-            logout();
-        }
+        const fetchUserData = async () => {
+            if (token) {
+                try {
+                    const res = await fetch(`${API_URL}/api/user/profile`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setUser(data);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    } else {
+                        // Token might be invalid or expired
+                        logout();
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch user data:', err);
+                }
+            }
+            setLoading(false);
+        };
+        fetchUserData();
     }, [token]);
 
     const logout = useCallback(() => {
@@ -68,16 +68,50 @@ export function AuthProvider({ children }) {
         setUser(newUser);
     }, []);
 
-    const saveProfile = useCallback((updatedFields) => {
-        setUser(prevUser => {
-            const updated = {
-                ...prevUser,
-                ...updatedFields,
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-            return updated;
-        });
-    }, []);
+    const saveProfile = useCallback(async (updatedFields) => {
+        try {
+            const res = await fetch(`${API_URL}/api/user/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedFields)
+            });
+
+            if (res.ok) {
+                const updatedUser = await res.json();
+                setUser(updatedUser);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+                return updatedUser;
+            }
+        } catch (err) {
+            console.error('Profile update failed:', err);
+            throw err;
+        }
+    }, [token]);
+
+    const toggleFavorite = useCallback(async (propertyId) => {
+        if (!token) return;
+        try {
+            const res = await fetch(`${API_URL}/api/user/favorite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ propertyId })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const updatedUser = { ...user, favorites: data.favorites };
+                setUser(updatedUser);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+            }
+        } catch (err) {
+            console.error('Failed to toggle favorite:', err);
+        }
+    }, [token, user]);
 
     // Derived Profile Image - THE SINGLE SOURCE OF TRUTH FOR AVATARS
     const profileImage = useMemo(() => {
@@ -97,7 +131,7 @@ export function AuthProvider({ children }) {
         return ICONS.neutral;
     }, [user]);
 
-    const isAuthenticated = useMemo(() => !!token && isTokenValid(token), [token]);
+    const isAuthenticated = !!token && !!user;
 
     const authFetch = useCallback(async (url, options = {}) => {
         const headers = {
@@ -114,17 +148,19 @@ export function AuthProvider({ children }) {
         token,
         user,
         setUser,
+        loading,
         profileImage,
         isAuthenticated,
         login,
         logout,
         saveProfile,
-        authFetch
+        authFetch,
+        toggleFavorite
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     );
 }
