@@ -43,7 +43,9 @@ const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'], default: 'Other' },
+    profileImage: { type: String, default: '' }
 }, { timestamps: true });
 
 const PropertySchema = new mongoose.Schema({
@@ -136,17 +138,17 @@ app.post('/api/login', async (req, res) => {
 // Signup Endpoint
 app.post('/api/signup', async (req, res) => {
     try {
-        const { fullName, email, phone, password } = req.body;
+        const { fullName, email, phone, password, gender } = req.body;
 
-        if (!fullName || !email || !password) {
-            return res.status(400).json({ message: 'Please provide all required fields' });
+        if (!fullName || !email || !password || !gender) {
+            return res.status(400).json({ message: 'Please provide all required fields (Name, Email, Password, Gender)' });
         }
 
         const existingUser = await getUserByEmail(email);
         if (existingUser) return res.status(400).json({ message: 'Email already in use' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await addUser({ fullName, email, phone, password: hashedPassword });
+        const newUser = await addUser({ fullName, email, phone, password: hashedPassword, gender });
 
         const token = jwt.sign({ id: newUser._id, email: newUser.email }, JWT_SECRET, { expiresIn: '24h' });
         return res.status(201).json({ message: 'Account created successfully', token, user: userToJSON(newUser) });
@@ -175,6 +177,28 @@ app.get('/api/me', verifyToken, async (req, res) => {
         const user = await getUserByEmail(req.user.email);
         if (!user) return res.status(404).json({ message: 'User not found' });
         return res.status(200).json({ user: userToJSON(user) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update Profile Endpoint (protected)
+app.put('/api/users/profile', verifyToken, async (req, res) => {
+    try {
+        const { fullName, gender, profileImage } = req.body;
+        console.log("Update Request - Gender Received:", gender);
+        
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        if (fullName) user.fullName = fullName;
+        if (gender) user.gender = gender;
+        if (profileImage !== undefined) user.profileImage = profileImage;
+
+        const savedUser = await user.save();
+        console.log("Database Sync - Saved Gender:", savedUser.gender);
+        
+        return res.status(200).json({ message: 'Profile updated successfully', user: userToJSON(savedUser) });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

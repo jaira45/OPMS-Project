@@ -7,32 +7,32 @@ import BottomNav from '../components/BottomNav';
 
 export default function UserDashboard() {
     const navigate = useNavigate();
-    const { user, setUser, logout, authFetch, profileImage, updateUserProfile } = useAuth();
+    const { user, logout, authFetch, profileImage, saveProfile } = useAuth();
     
     const [savedCount, setSavedCount] = useState(0);
     const [inquiryCount, setInquiryCount] = useState(0);
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
-    // RE-SYNCED FORM STATE
+    // 5. EDIT PROFILE MODAL:
     const [editData, setEditData] = useState({
-        fullName: "",
+        name: "",
         gender: "other",
-        profileImage: ""
+        profileImage: "",
     });
 
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    // Sync form state when modal opens
+    // 6. LOAD USER DATA INTO MODAL:
     useEffect(() => {
-        if (isEditModalOpen && user) {
+        if (user) {
             setEditData({
-                fullName: user.fullName || "",
-                gender: (user.gender || "other").toLowerCase(),
-                profileImage: user.profileImage || ""
+                name: user.name || user.fullName || "",
+                gender: user.gender || "other",
+                profileImage: user.profileImage || "",
             });
         }
-    }, [isEditModalOpen, user]);
+    }, [user]);
 
     useEffect(() => {
         const favs = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -56,32 +56,28 @@ export default function UserDashboard() {
     };
 
     const handleUpdateProfile = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         setUpdateLoading(true);
         try {
-            const res = await authFetch(`${API_URL}/api/users/profile`, {
+            // We still hit the backend to sync, but the context update is the priority
+            await authFetch(`${API_URL}/api/users/profile`, {
                 method: 'PUT',
-                body: JSON.stringify(editData)
-            });
-            if (res.ok) {
-                const data = await res.json();
-                
-                // EXACT IMPLEMENTATION REQUESTED
-                const updatedUser = {
-                    ...user,
-                    fullName: editData.fullName,
+                body: JSON.stringify({
+                    fullName: editData.name, // Keep backend compatibility
                     gender: editData.gender,
                     profileImage: editData.profileImage
-                };
-
-                // Update Context
-                setUser(updatedUser);
-
-                // Update LocalStorage
-                localStorage.setItem("user", JSON.stringify(updatedUser));
-
-                setIsEditModalOpen(false);
-            }
+                })
+            });
+            
+            // 3. & 8. SAVE PROFILE & CLOSE MODAL
+            saveProfile({
+                name: editData.name,
+                fullName: editData.name, // Support both during transition
+                gender: editData.gender,
+                profileImage: editData.profileImage
+            });
+            
+            setIsEditModalOpen(false);
         } catch (err) {
             console.error('Error updating profile:', err);
         } finally {
@@ -120,7 +116,7 @@ export default function UserDashboard() {
                         </div>
 
                         <div className="space-y-2">
-                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user.fullName || 'User Name'}</h2>
+                            <h2 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tight">{user.name || user.fullName || 'User Name'}</h2>
                             <p className="font-bold text-on-surface-variant text-base sm:text-lg">{user.email}</p>
                             <button 
                                 onClick={() => setIsEditModalOpen(true)}
@@ -204,7 +200,7 @@ export default function UserDashboard() {
                             </button>
                         </div>
 
-                        <form onSubmit={handleUpdateProfile} className="space-y-6">
+                        <form onSubmit={(e) => { e.preventDefault(); handleUpdateProfile(); }} className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Full Name</label>
                                 <div className="relative">
@@ -212,8 +208,8 @@ export default function UserDashboard() {
                                     <input
                                         type="text"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all"
-                                        value={editData.fullName}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, fullName: e.target.value }))}
+                                        value={editData.name}
+                                        onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                         required
                                     />
                                 </div>
@@ -223,10 +219,16 @@ export default function UserDashboard() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 px-1">Gender Identity</label>
                                 <div className="relative">
                                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">wc</span>
+                                    {/* 7. DROPDOWN MUST BE: */}
                                     <select
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all appearance-none cursor-pointer"
                                         value={editData.gender}
-                                        onChange={(e) => setEditData({ ...editData, gender: e.target.value.toLowerCase() })}
+                                        onChange={(e) =>
+                                            setEditData({
+                                                ...editData,
+                                                gender: e.target.value,
+                                            })
+                                        }
                                         required
                                     >
                                         <option value="male">Male</option>
@@ -246,11 +248,12 @@ export default function UserDashboard() {
                                         placeholder="https://example.com/avatar.jpg"
                                         className="w-full pl-12 pr-4 py-4 bg-surface-variant/20 border-2 border-transparent rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-xs"
                                         value={editData.profileImage || ""}
-                                        onChange={(e) => setEditData(prev => ({ ...prev, profileImage: e.target.value }))}
+                                        onChange={(e) => setEditData({ ...editData, profileImage: e.target.value })}
                                     />
                                 </div>
                             </div>
 
+                            {/* 8. SAVE BUTTON: */}
                             <button
                                 type="submit"
                                 disabled={updateLoading}

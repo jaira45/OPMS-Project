@@ -68,11 +68,13 @@ export function AuthProvider({ children }) {
         setUser(newUser);
     }, []);
 
-    const updateUserProfile = useCallback((updates) => {
+    const saveProfile = useCallback((updatedFields) => {
         setUser(prevUser => {
-            const updated = { ...prevUser, ...updates };
+            const updated = {
+                ...prevUser,
+                ...updatedFields,
+            };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-            console.log("Client Sync - Updated Gender in Context:", updated.gender);
             return updated;
         });
     }, []);
@@ -116,7 +118,7 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         login,
         logout,
-        updateUserProfile,
+        saveProfile,
         authFetch
     };
 
