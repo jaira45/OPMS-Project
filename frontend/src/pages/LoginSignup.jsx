@@ -36,7 +36,7 @@ export default function LoginSignup() {
                 // Let's use the code flow if possible, or just use the access_token to fetch profile on backend.
                 // Actually, react-oauth/google's standard useGoogleLogin is implicit (access_token).
                 
-                const res = await fetch(`${API_URL}/api/auth/google`, {
+                const res = await fetch(`${API_URL}/api/users/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: tokenResponse.access_token })
@@ -65,7 +65,7 @@ export default function LoginSignup() {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch(`${API_URL}/api/auth/login`, {
+            const res = await fetch(`${API_URL}/api/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -92,7 +92,7 @@ export default function LoginSignup() {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch(`${API_URL}/api/auth/register`, {
+            const res = await fetch(`${API_URL}/api/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: fullName, email, phone, password, gender })

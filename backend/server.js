@@ -16,17 +16,21 @@ connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS Configuration
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5000', 'https://opms-project.vercel.app'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/users', userRoutes); // Support both singular and plural for flexibility
+app.use('/api/users', userRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/auth', authRoutes); // Keep for legacy if needed, but primary is /api/users
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
