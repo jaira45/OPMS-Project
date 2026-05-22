@@ -8,7 +8,7 @@ import BottomNav from '../components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Heart, Share2, MapPin, BedDouble, Bath, Square, 
-    CheckCircle2, Mail, Phone, ExternalLink, ShieldCheck, 
+    CheckCircle, Mail, Phone, ExternalLink, ShieldCheck, 
     ArrowLeft, ChevronRight, Sparkles, MessageCircle
 } from 'lucide-react';
 import InteractiveMap from '../components/InteractiveMap';
