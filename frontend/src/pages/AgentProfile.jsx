@@ -8,7 +8,7 @@ import BottomNav from '../components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     User, Mail, Phone, MapPin, Award, ShieldCheck, 
-    Linkedin, Twitter, Globe, ArrowLeft, Star, 
+    Globe, ArrowLeft, Star, 
     CheckCircle, TrendingUp, Building2, Briefcase
 } from 'lucide-react';
 import { SkeletonProfile } from '../components/Skeleton';
@@ -100,12 +100,16 @@ export default function AgentProfile() {
 
                             <div className="flex justify-center gap-4">
                                 { [
-                                    { icon: Linkedin, link: '#', color: 'bg-primary/5 text-primary' },
-                                    { icon: Twitter, link: '#', color: 'bg-accent/5 text-accent' },
+                                    { label: 'LI', link: '#', color: 'bg-primary/5 text-primary' },
+                                    { label: 'TW', link: '#', color: 'bg-accent/5 text-accent' },
                                     { icon: Globe, link: '#', color: 'bg-primary/5 text-primary' }
                                 ].map((social, i) => (
                                     <a key={i} href={social.link} className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg hover:scale-110 ${social.color}`}>
-                                        <social.icon className="w-6 h-6" />
+                                        {social.icon ? (
+                                            <social.icon className="w-6 h-6" />
+                                        ) : (
+                                            <span className="text-[10px] font-black">{social.label}</span>
+                                        )}
                                     </a>
                                 ))}
                             </div>
