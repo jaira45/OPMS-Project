@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html'))
     );
 } else {
-    app.get('/', (req, res) => {
+    app.get('/test-render-fix', (req, res) => {
         res.send('OPMS API is running...');
     });
 }
