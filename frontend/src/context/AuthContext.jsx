@@ -176,7 +176,14 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {loading ? (
+                <div className="min-h-screen bg-primary flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin shadow-2xl"></div>
+                        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Establishing Secure Channel</span>
+                    </div>
+                </div>
+            ) : children}
         </AuthContext.Provider>
     );
 }
