@@ -60,7 +60,7 @@ export default function HomeScreen() {
     ];
 
     return (
-        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen pb-24 overflow-x-hidden">
+        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen pb-0 overflow-x-hidden">
             <Navbar />
 
             <main>
@@ -74,28 +74,28 @@ export default function HomeScreen() {
                 <PropertyReels />
 
                 {/* Featured Collection */}
-                <section className="container-responsive py-24 space-y-16">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-10">
-                        <div className="space-y-4">
+                <section className="container-responsive py-40 space-y-24">
+                    <div className="flex flex-col lg:flex-row justify-between items-end gap-12">
+                        <div className="space-y-6">
                             <motion.div 
                                 initial={{ opacity: 0, x: -20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 dark:bg-dark-primary/10 text-primary dark:text-dark-primary rounded-full text-[10px] font-black uppercase tracking-widest"
+                                className="inline-flex items-center gap-3 px-6 py-2.5 bg-primary/5 dark:bg-dark-primary/10 border border-primary/10 text-primary dark:text-dark-primary rounded-full text-[10px] font-black uppercase tracking-[0.4em]"
                             >
-                                <LayoutGrid className="w-3 h-3" />
-                                Curated Selection
+                                <LayoutGrid className="w-4 h-4" />
+                                Exclusive Inventory
                             </motion.div>
-                            <h2 className="font-headline font-black text-4xl sm:text-7xl text-primary dark:text-dark-on-surface tracking-tighter">
-                                Featured <span className="text-secondary opacity-20">Holdings</span>
+                            <h2 className="font-headline font-black text-6xl sm:text-8xl text-primary dark:text-dark-on-surface tracking-tighter uppercase leading-[0.85]">
+                                Featured <span className="text-gold-gradient italic font-display lowercase tracking-normal">Holdings</span>
                             </h2>
                         </div>
                         
-                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-3xl border border-surface-variant dark:border-dark-surface-variant shadow-xl overflow-x-auto no-scrollbar max-w-full">
+                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-[3rem] border border-surface-variant dark:border-dark-surface-variant shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-x-auto no-scrollbar max-w-full">
                             {collections.map((col) => (
                                 <button
                                     key={col.id}
                                     onClick={() => setActiveCollection(col.id)}
-                                    className={`px-8 py-4 rounded-2xl text-[10px] font-black tracking-widest whitespace-nowrap transition-all ${activeCollection === col.id ? 'bg-primary dark:bg-dark-primary text-white shadow-lg' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
+                                    className={`px-10 py-5 rounded-[2.5rem] text-[10px] font-black tracking-[0.3em] uppercase whitespace-nowrap transition-all duration-500 ${activeCollection === col.id ? 'bg-gold-gradient text-primary shadow-xl' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
                                 >
                                     {col.label}
                                 </button>
@@ -108,84 +108,79 @@ export default function HomeScreen() {
                             {[1, 2, 3].map(i => <SkeletonCard key={i} />)}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
                             {featured.map((prop, i) => (
                                 <motion.div 
                                     key={prop._id}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="group cursor-pointer flex flex-col gap-8"
+                                    transition={{ delay: i * 0.1, duration: 0.8 }}
+                                    className="group cursor-pointer flex flex-col gap-10"
                                     onClick={() => navigate(`/property/${prop._id}`)}
                                 >
-                                    <div className="relative overflow-hidden rounded-[4rem] aspect-[4/5] shadow-2xl bg-black/5 hover:-translate-y-4 transition-all duration-700">
+                                    <div className="relative overflow-hidden rounded-[4rem] aspect-[4/5] shadow-[0_48px_80px_-20px_rgba(0,0,0,0.15)] bg-slate-200 dark:bg-dark-surface group-hover:-translate-y-4 transition-all duration-700">
                                         <img 
                                             alt={prop.title} 
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]" 
                                             src={(prop.images && prop.images[0]) || prop.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
                                         />
                                         
-                                        {/* Tags */}
-                                        <div className="absolute top-8 left-8 flex flex-col gap-3">
-                                            <div className="glass dark:glass-dark px-6 py-3 rounded-2xl shadow-xl flex items-center gap-2">
-                                                <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                                                <span className="text-[10px] font-black text-primary dark:text-white uppercase tracking-widest">Active</span>
+                                        {/* Status & Price Tags */}
+                                        <div className="absolute top-10 left-10 flex flex-col gap-3">
+                                            <div className="bg-white/10 backdrop-blur-2xl px-5 py-2.5 rounded-2xl border border-white/20 shadow-2xl flex items-center gap-3">
+                                                <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse" />
+                                                <span className="text-[9px] font-black text-white uppercase tracking-[0.2em]">Verified Asset</span>
                                             </div>
-                                            <div className="bg-primary dark:bg-accent text-white px-6 py-3 rounded-2xl shadow-xl">
-                                                <span className="text-[10px] font-black uppercase tracking-widest">₹ {typeof prop.price === 'number' ? prop.price.toLocaleString() : prop.price}</span>
+                                            <div className="bg-gold-gradient text-primary px-8 py-3.5 rounded-2xl shadow-2xl font-black text-xl tracking-tighter">
+                                                ₹ {typeof prop.price === 'number' ? prop.price.toLocaleString() : prop.price}
                                             </div>
                                         </div>
 
-                                        {/* Actions */}
-                                        <div className="absolute top-8 right-8 flex flex-col gap-3">
+                                        {/* Action Buttons */}
+                                        <div className="absolute top-10 right-10 flex flex-col gap-4">
                                             <motion.button
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={(e) => { e.stopPropagation(); toggleFavorite(prop._id); }}
-                                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${favorites.includes(prop._id) ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'glass dark:glass-dark text-white hover:text-red-500'}`}
+                                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-2xl ${favorites.includes(prop._id) ? 'bg-red-500 text-white shadow-red-500/40' : 'bg-white/10 backdrop-blur-2xl border border-white/20 text-white hover:bg-white hover:text-primary'}`}
                                             >
                                                 <Heart className="w-6 h-6" fill={favorites.includes(prop._id) ? "currentColor" : "none"} />
                                             </motion.button>
-                                            <motion.button
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={(e) => { e.stopPropagation(); addToCompare(prop); }}
-                                                className={`w-14 h-14 rounded-2xl glass dark:glass-dark flex items-center justify-center transition-all ${compareList.some(p => p._id === prop._id) ? 'bg-accent text-white shadow-lg' : 'text-white hover:text-accent'}`}
-                                            >
-                                                <Scale className="w-6 h-6" />
-                                            </motion.button>
                                         </div>
 
-                                        {/* Location Overlay */}
-                                        <div className="absolute bottom-10 left-8 right-8 translate-y-20 group-hover:translate-y-0 transition-transform duration-500">
-                                            <div className="glass dark:glass-dark p-6 rounded-3xl flex justify-between items-center">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                                                        <ArrowRight className="w-5 h-5 text-white" />
-                                                    </div>
-                                                    <span className="text-xs font-black text-white uppercase tracking-widest">Explore details</span>
-                                                </div>
-                                            </div>
+                                        {/* Hover Overlay */}
+                                        <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-center justify-center">
+                                            <motion.div 
+                                                whileHover={{ scale: 1.1 }}
+                                                className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white"
+                                            >
+                                                <ArrowRight className="w-8 h-8" />
+                                            </motion.div>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4 px-4">
-                                        <div className="flex justify-between items-start gap-4">
-                                            <h3 className="font-headline font-black text-3xl text-primary dark:text-dark-on-surface leading-none tracking-tight">{prop.title}</h3>
-                                            <span className="text-accent italic font-display text-lg">Indore</span>
+                                    <div className="space-y-6 px-4">
+                                        <div className="flex justify-between items-start gap-6">
+                                            <h3 className="font-headline font-black text-4xl text-primary dark:text-dark-on-surface leading-[0.9] tracking-tighter uppercase italic group-hover:text-[#D4AF37] transition-colors">{prop.title}</h3>
+                                            <div className="flex flex-col items-end shrink-0">
+                                                <span className="text-[#D4AF37] font-display text-xl lowercase italic leading-none">{prop.location?.split(',')[0] || 'Exclusive'}</span>
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-primary/30 dark:text-white/20 mt-1">Domain</span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-8 text-on-surface-variant dark:text-dark-on-surface-variant text-[10px] font-black uppercase tracking-[0.2em] opacity-60">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
-                                                {prop.bedrooms || 3} Beds
+                                        <div className="flex items-center justify-between pt-8 border-t border-primary/5 dark:border-white/5">
+                                            <div className="flex flex-col gap-1 items-center">
+                                                <span className="text-2xl font-black text-primary dark:text-dark-on-surface leading-none tabular-nums">{prop.bedrooms || 3}</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Beds</span>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
-                                                {prop.bathrooms || 2} Baths
+                                            <div className="w-px h-8 bg-primary/10 dark:bg-white/10" />
+                                            <div className="flex flex-col gap-1 items-center">
+                                                <span className="text-2xl font-black text-primary dark:text-dark-on-surface leading-none tabular-nums">{prop.bathrooms || 2}</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Baths</span>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-primary dark:bg-dark-primary rounded-full" />
-                                                {prop.area || 2400} SQFT
+                                            <div className="w-px h-8 bg-primary/10 dark:bg-white/10" />
+                                            <div className="flex flex-col gap-1 items-center">
+                                                <span className="text-2xl font-black text-primary dark:text-dark-on-surface leading-none tabular-nums">{prop.area || 2400}</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.1em] opacity-40 text-center">SQFT Area</span>
                                             </div>
                                         </div>
                                     </div>
@@ -194,16 +189,16 @@ export default function HomeScreen() {
                         </div>
                     )}
 
-                    <div className="text-center pt-12">
+                    <div className="text-center pt-24">
                         <motion.button 
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => navigate('/properties')} 
-                            className="inline-flex items-center gap-6 bg-primary dark:bg-accent text-white px-16 py-6 rounded-full font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/30 active:scale-95 group"
+                            className="inline-flex items-center gap-10 bg-primary dark:bg-dark-surface text-white px-20 py-8 rounded-full font-black uppercase tracking-[0.4em] text-[10px] shadow-[0_40px_80px_-20px_rgba(0,30,60,0.3)] active:scale-95 group border border-white/5"
                         >
                             Explore Universal Catalog
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-2 transition-transform">
-                                <ArrowRight className="w-5 h-5" />
+                            <div className="w-12 h-12 rounded-full bg-gold-gradient flex items-center justify-center text-primary group-hover:translate-x-3 transition-transform shadow-lg shadow-accent/20">
+                                <ArrowRight className="w-6 h-6" />
                             </div>
                         </motion.button>
                     </div>
@@ -216,26 +211,27 @@ export default function HomeScreen() {
                 <Testimonials />
 
                 {/* Call to Action */}
-                <section className="container-responsive py-32">
-                    <div className="bg-primary dark:bg-dark-surface rounded-[5rem] p-12 sm:p-24 relative overflow-hidden flex flex-col items-center text-center space-y-12 group">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent/20 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <section className="container-responsive py-40">
+                    <div className="bg-primary dark:bg-dark-surface rounded-[5rem] p-16 sm:p-32 relative overflow-hidden flex flex-col items-center text-center space-y-16 group shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)]">
+                        <div className="absolute inset-0 bg-[#D4AF37] opacity-0 group-hover:opacity-[0.03] transition-opacity duration-1000" />
+                        <div className="absolute -top-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-[100px] animate-pulse" />
                         
-                        <div className="relative z-10 space-y-6 max-w-3xl">
-                            <h2 className="font-headline font-black text-5xl sm:text-8xl text-white tracking-tighter leading-tight">
-                                Ready to Elevate your <br />
-                                <span className="text-accent italic font-display">Lifestyle?</span>
+                        <div className="relative z-10 space-y-10 max-w-4xl">
+                            <h2 className="font-headline font-black text-6xl sm:text-9xl text-white tracking-tighter leading-[0.85] uppercase">
+                                Reserve your <br />
+                                <span className="text-gold-gradient italic font-display lowercase tracking-normal">Legacy</span>
                             </h2>
-                            <p className="text-white/60 font-bold text-lg sm:text-xl">Join 5,000+ investors and elite homeowners in Central India's most exclusive network.</p>
+                            <p className="text-white/50 font-medium text-lg sm:text-2xl tracking-wide max-w-2xl mx-auto">Join Central India's most exclusive network of elite homeowners and investors.</p>
                         </div>
                         
-                        <div className="relative z-10 w-full max-w-lg flex flex-col sm:flex-row gap-4">
+                        <div className="relative z-10 w-full max-w-2xl flex flex-col sm:flex-row gap-6">
                             <input
                                 type="email"
-                                placeholder="Reserve your subscription..."
-                                className="flex-1 bg-white/10 dark:bg-white/5 border-2 border-white/20 rounded-full px-10 py-5 text-white placeholder:text-white/40 focus:bg-white focus:text-primary outline-none font-bold transition-all"
+                                placeholder="Corporate Email Address..."
+                                className="flex-1 bg-white/5 border border-white/10 rounded-full px-12 py-7 text-white placeholder:text-white/20 focus:border-[#D4AF37] outline-none font-black transition-all text-[11px] uppercase tracking-[0.3em]"
                             />
-                            <button className="bg-white text-primary px-12 py-5 rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-accent hover:text-white transition-all shadow-xl">
-                                Join Now
+                            <button className="bg-gold-gradient text-primary px-16 py-7 rounded-full font-black uppercase tracking-[0.4em] text-[11px] hover:shadow-[0_0_50px_rgba(212,175,55,0.4)] transition-all active:scale-95 whitespace-nowrap">
+                                Join Network
                             </button>
                         </div>
                     </div>

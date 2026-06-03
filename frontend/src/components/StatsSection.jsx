@@ -52,40 +52,47 @@ export default function StatsSection() {
     }, []);
 
     const cards = [
-        { label: 'Cloud Catalog', value: stats.totalProperties, icon: Building2, color: 'bg-primary' },
-        { label: 'Elite Members', value: stats.totalUsers, icon: Users, color: 'bg-secondary' },
-        { label: 'Total Inquiries', value: stats.totalInquiries, icon: LineChart, color: 'bg-primary' },
-        { label: 'Active Estates', value: stats.activeListings, icon: ShieldCheck, color: 'bg-secondary' }
+        { label: 'Properties Available', value: 3200, icon: Building2, suffix: '+' },
+        { label: 'Verified Sellers', value: 850, icon: Users, suffix: '+' },
+        { label: 'Cities Covered', value: 150, icon: LineChart, suffix: '+' },
+        { label: 'Customer Satisfaction', value: 98, icon: ShieldCheck, suffix: '%' }
     ];
 
     return (
-        <section className="py-24 container-responsive">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <section className="py-40 container-responsive relative overflow-hidden">
+            {/* Background Decorative Ambient light */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
                 {cards.map((stat, i) => (
                     <motion.div
                         key={i}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
-                        className={`${stat.color} p-10 rounded-[3rem] text-white space-y-6 shadow-2xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-500`}
+                        transition={{ delay: i * 0.1, duration: 0.8 }}
+                        whileHover={{ y: -10, scale: 1.02 }}
+                        className="bg-white/[0.03] dark:bg-white/[0.05] backdrop-blur-3xl border border-white/10 p-10 rounded-[3.5rem] text-white space-y-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] relative overflow-hidden group transition-all duration-500"
                     >
-                        {/* Decorative Icon */}
-                        <stat.icon className="absolute -right-6 -bottom-6 w-40 h-40 opacity-10 group-hover:scale-110 transition-transform duration-700" />
-                        
-                        <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                            <stat.icon className="w-7 h-7" />
+                        <div className="w-16 h-16 bg-gold-gradient rounded-2xl flex items-center justify-center shadow-xl shadow-[#D4AF37]/20 group-hover:rotate-6 transition-transform duration-500">
+                            <stat.icon className="w-8 h-8 text-primary" />
                         </div>
                         
-                        <div className="space-y-1 relative z-10">
-                            <h3 className="text-4xl font-black tracking-tighter">
+                        <div className="space-y-3 relative z-10">
+                            <h3 className="text-5xl font-black tracking-tighter flex items-baseline gap-1">
                                 <CountUp end={stat.value} />
-                                <span className="text-xl opacity-60 ml-1 font-bold">+</span>
+                                <span className="text-2xl text-[#D4AF37] font-bold">{stat.suffix}</span>
                             </h3>
-                            <p className="text-[10px] font-black uppercase tracking-[0.25em] opacity-60">
+                            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 group-hover:text-[#D4AF37] transition-colors duration-500">
                                 {stat.label}
                             </p>
                         </div>
+
+                        {/* Decorative Icon Background */}
+                        <stat.icon className="absolute -right-8 -bottom-8 w-40 h-40 opacity-[0.03] group-hover:opacity-[0.08] group-hover:scale-110 transition-all duration-1000 rotate-12 pointer-events-none" />
+                        
+                        {/* Shine Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                     </motion.div>
                 ))}
             </div>

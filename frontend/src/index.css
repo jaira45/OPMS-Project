@@ -183,4 +183,12 @@
     -webkit-line-clamp: 3;
     line-clamp: 3;
   }
+
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#F9E076] to-[#D4AF37];
+  }
+
+  .bg-gold-gradient {
+    @apply bg-gradient-to-r from-[#D4AF37] via-[#F9E076] to-[#D4AF37];
+  }
 }

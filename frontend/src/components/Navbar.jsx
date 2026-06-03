@@ -37,41 +37,41 @@ export default function Navbar() {
             <motion.nav 
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
-                className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'glass dark:glass-dark shadow-2xl py-3' : 'bg-transparent py-5'}`}
+                className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-primary/40 backdrop-blur-3xl border-b border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] py-5' : 'bg-transparent py-10'}`}
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center">
+                <div className="max-w-[1500px] mx-auto px-8 sm:px-16 flex justify-between items-center">
                     {/* Logo */}
                     <div 
-                        className="flex items-center gap-3 group cursor-pointer no-select" 
+                        className="flex items-center gap-5 group cursor-pointer no-select" 
                         onClick={() => navigate('/home')}
                     >
                         <motion.div 
-                            whileHover={{ rotate: 0, scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 sm:w-12 sm:h-12 bg-primary dark:bg-dark-primary rounded-2xl flex items-center justify-center rotate-3 transition-colors shadow-lg shadow-primary/30"
+                            whileHover={{ rotate: 12, scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="w-14 h-14 bg-gold-gradient rounded-[1.5rem] flex items-center justify-center shadow-[0_15px_30px_rgba(212,175,55,0.4)] transition-all duration-500"
                         >
-                            <Home className="text-white w-6 h-6" />
+                            <Home className="text-primary w-7 h-7" />
                         </motion.div>
                         <div className="flex flex-col leading-none">
-                            <span className="font-black text-xl sm:text-2xl text-primary dark:text-dark-on-surface tracking-tighter">OPMS</span>
-                            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary/40 dark:text-dark-on-surface-variant hidden sm:block">Premium Real Estate</span>
+                            <span className="font-black text-3xl text-white tracking-tighter uppercase italic">OPMS</span>
+                            <span className="text-[9px] font-black uppercase tracking-[0.5em] text-[#D4AF37] hidden lg:block opacity-80 mt-1">Metropolis Estates</span>
                         </div>
                     </div>
 
                     {/* Desktop Nav Links */}
-                    <div className="hidden lg:flex items-center gap-1 bg-surface/50 dark:bg-dark-surface/50 backdrop-blur-md p-1.5 rounded-2xl border border-surface-variant/20 dark:border-dark-surface-variant/20">
+                    <div className="hidden lg:flex items-center gap-3 bg-white/[0.03] backdrop-blur-3xl p-2 rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)]">
                         {navItems.map((item) => (
                             <Link
                                 key={item.name}
                                 to={item.path}
-                                className={`px-5 py-2.5 rounded-xl text-sm font-black transition-all relative group flex items-center gap-2 ${isActive(item.path) ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary hover:bg-primary/5 dark:hover:bg-dark-primary/5'}`}
+                                className={`px-10 py-4.5 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all relative group flex items-center gap-4 ${isActive(item.path) ? 'text-primary' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
                             >
                                 {item.name}
                                 {isActive(item.path) && (
                                     <motion.span 
                                         layoutId="nav-pill"
-                                        className="absolute inset-0 bg-primary dark:bg-dark-primary rounded-xl -z-10"
-                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        className="absolute inset-0 bg-gold-gradient rounded-[2rem] -z-10 shadow-lg"
+                                        transition={{ type: "spring", bounce: 0.15, duration: 0.8 }}
                                     />
                                 )}
                             </Link>
@@ -79,52 +79,39 @@ export default function Navbar() {
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex items-center gap-3 sm:gap-6">
                         {/* Theme Toggle */}
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
+                            whileHover={{ scale: 1.1, rotate: 180 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={toggleDarkMode}
-                            className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-2xl bg-surface dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-dark-primary shadow-sm"
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/[0.05] border border-white/10 text-white shadow-xl hover:bg-white hover:text-primary transition-all duration-500"
                         >
                             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </motion.button>
 
                         {token ? (
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-5">
                                 {/* User Profile */}
                                 <motion.div 
-                                    whileHover={{ scale: 1.02 }}
+                                    whileHover={{ scale: 1.05 }}
                                     onClick={() => navigate('/dashboard')}
-                                    className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-full cursor-pointer hover:shadow-lg transition-all group"
+                                    className="hidden sm:flex items-center gap-4 pl-2 pr-6 py-2 bg-white/[0.05] border border-white/10 rounded-full cursor-pointer hover:bg-white/[0.1] transition-all group shadow-xl"
                                 >
-                                    <div className="w-8 h-8 rounded-full border-2 border-primary/20 dark:border-dark-primary/40 overflow-hidden bg-primary/5">
-                                        {profileImage ? <img alt="Profile" src={profileImage} className="w-full h-full object-cover" /> : <User className="w-full h-full p-1.5 text-primary" />}
+                                    <div className="w-10 h-10 rounded-full border-2 border-[#D4AF37] overflow-hidden bg-white/10 ring-4 ring-[#D4AF37]/20 shadow-xl">
+                                        {profileImage ? <img alt="Profile" src={profileImage} className="w-full h-full object-cover" /> : <User className="w-full h-full p-2 text-white" />}
                                     </div>
-                                    <span className="text-sm font-black text-primary dark:text-dark-on-surface truncate max-w-[100px]">{user?.name?.split(' ')[0] || 'Me'}</span>
+                                    <span className="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[120px]">{user?.name?.split(' ')[0] || 'Member'}</span>
                                 </motion.div>
-
-                                {/* Admin shortcut */}
-                                {user?.email === 'admin@opms.com' && (
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => navigate('/admin')}
-                                        className="hidden md:flex items-center gap-2 bg-accent text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-accent/20"
-                                    >
-                                        <Shield className="w-4 h-4" />
-                                        Admin
-                                    </motion.button>
-                                )}
                             </div>
                         ) : (
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
+                                whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(212,175,55,0.4)" }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => navigate('/login')}
-                                className="bg-primary dark:bg-dark-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-black transition-all shadow-xl shadow-primary/20"
+                                className="bg-gold-gradient text-primary px-12 py-4.5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_15px_30px_rgba(212,175,55,0.3)] active:scale-95"
                             >
-                                Get Started
+                                Initiate Journey
                             </motion.button>
                         )}
 
@@ -132,7 +119,7 @@ export default function Navbar() {
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="lg:hidden w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-primary dark:text-dark-primary bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-2xl shadow-sm"
+                            className="lg:hidden w-12 h-12 flex items-center justify-center text-white bg-white/[0.05] border border-white/10 rounded-2xl shadow-xl"
                         >
                             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </motion.button>

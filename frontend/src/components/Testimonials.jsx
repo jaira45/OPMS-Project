@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, Quote, ChevronLeft, ChevronRight, ShieldCheck } from 'lucide-react';
 
 const testimonials = [
     {
@@ -36,31 +36,32 @@ export default function Testimonials() {
     const prev = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <section className="bg-primary dark:bg-dark-surface py-24 sm:py-32 relative overflow-hidden">
+        <section className="bg-primary dark:bg-dark-surface py-32 sm:py-48 relative overflow-hidden">
             {/* Background Accents */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-5">
-                <Quote className="text-white w-[500px] h-[500px] absolute -top-20 -left-20" />
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03]">
+                <Quote className="text-[#D4AF37] w-[600px] h-[600px] absolute -top-40 -left-40 rotate-12" />
             </div>
 
-            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8">
+            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+                <div className="space-y-12">
                     <motion.div 
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-full text-[10px] font-black uppercase tracking-widest"
+                        className="inline-flex items-center gap-3 px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl"
                     >
-                        Success Stories
+                        <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                        Member Testimonials
                     </motion.div>
-                    <h2 className="font-headline font-black text-4xl sm:text-7xl text-white tracking-tighter leading-tight">
-                        Voice of our <br />
-                        <span className="text-accent italic font-display">Elite Community</span>
+                    <h2 className="font-headline font-black text-6xl sm:text-[6rem] text-white tracking-tighter leading-[0.85] uppercase">
+                        Our Elite <br />
+                        <span className="text-gold-gradient italic font-display lowercase tracking-normal">Community</span>
                     </h2>
-                    <div className="flex gap-4">
-                        <button onClick={prev} className="w-14 h-14 rounded-2xl border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all">
-                            <ChevronLeft className="w-6 h-6" />
+                    <div className="flex gap-6">
+                        <button onClick={prev} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5">
+                            <ChevronLeft className="w-7 h-7" />
                         </button>
-                        <button onClick={next} className="w-14 h-14 rounded-2xl border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all">
-                            <ChevronRight className="w-6 h-6" />
+                        <button onClick={next} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5">
+                            <ChevronRight className="w-7 h-7" />
                         </button>
                     </div>
                 </div>
@@ -69,30 +70,36 @@ export default function Testimonials() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentIndex}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="bg-white dark:bg-dark-surface-variant p-8 sm:p-12 rounded-[3.5rem] shadow-2xl space-y-10"
+                            initial={{ opacity: 0, scale: 0.9, x: 30 }}
+                            animate={{ opacity: 1, scale: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 1.1, x: -30 }}
+                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            className="bg-white/5 backdrop-blur-3xl border border-white/10 p-10 sm:p-20 rounded-[5rem] shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)] space-y-12 relative"
                         >
-                            <div className="flex gap-1 text-accent">
+                            <div className="flex gap-1.5 text-[#D4AF37]">
                                 {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                                    <Star key={i} className="w-5 h-5 fill-current" />
+                                    <Star key={i} className="w-6 h-6 fill-current drop-shadow-[0_0_10px_rgba(212,175,55,0.5)]" />
                                 ))}
                             </div>
                             
-                            <p className="text-xl sm:text-2xl font-bold text-primary dark:text-dark-on-surface leading-relaxed italic">
+                            <p className="text-2xl sm:text-4xl font-black text-white leading-[1.2] italic tracking-tight font-display">
                                 "{testimonials[currentIndex].text}"
                             </p>
 
-                            <div className="flex items-center gap-6 pt-4 border-t border-surface-variant dark:border-dark-surface-variant/20">
-                                <img 
-                                    src={testimonials[currentIndex].image} 
-                                    className="w-16 h-16 rounded-2xl object-cover shadow-lg" 
-                                    alt={testimonials[currentIndex].name} 
-                                />
-                                <div>
-                                    <h4 className="font-black text-primary dark:text-dark-on-surface text-xl">{testimonials[currentIndex].name}</h4>
-                                    <p className="text-xs font-black uppercase tracking-widest text-primary/40 dark:text-dark-on-surface-variant">{testimonials[currentIndex].role}</p>
+                            <div className="flex items-center gap-8 pt-10 border-t border-white/10">
+                                <div className="relative">
+                                    <img 
+                                        src={testimonials[currentIndex].image} 
+                                        className="w-20 h-20 rounded-3xl object-cover shadow-2xl border-2 border-[#D4AF37]/30" 
+                                        alt={testimonials[currentIndex].name} 
+                                    />
+                                    <div className="absolute -bottom-2 -right-2 bg-gold-gradient p-1.5 rounded-lg shadow-lg">
+                                        <ShieldCheck className="w-4 h-4 text-primary" />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="font-black text-white text-2xl tracking-tighter uppercase italic">{testimonials[currentIndex].name}</h4>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37] opacity-80">{testimonials[currentIndex].role}</p>
                                 </div>
                             </div>
                         </motion.div>
