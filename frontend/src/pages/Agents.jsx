@@ -107,46 +107,68 @@ export default function Agents() {
                                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 transition={{ delay: i * 0.1 }}
-                                onClick={() => navigate(`/agent/${agent._id}`)}
-                                className="group relative bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-[4rem] p-12 flex flex-col items-center text-center space-y-10 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] transition-all duration-700 cursor-pointer overflow-hidden group/card"
+                                className="group relative bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-[4rem] p-8 flex flex-col items-center text-center space-y-8 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] transition-all duration-700 overflow-hidden group/card"
                             >
                                 <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-accent via-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 
+                                {/* Agent Photo */}
                                 <div className="relative">
-                                    <div className="w-36 h-36 rounded-[3rem] border-8 border-primary/5 dark:border-dark-primary/5 p-1 overflow-hidden shadow-2xl bg-white dark:bg-dark-surface group-hover:rotate-6 group-hover:scale-105 transition-all duration-500">
-                                        <img src={agent.profileImage || `https://ui-avatars.com/api/?name=${agent.fullName || agent.name}&background=random&size=200`} className="w-full h-full object-cover rounded-[2.2rem]" alt="" />
+                                    <div className="w-32 h-32 rounded-[2.5rem] border-8 border-primary/5 p-1 overflow-hidden shadow-2xl bg-white group-hover:rotate-6 transition-transform">
+                                        <img src={agent.profileImage || `https://ui-avatars.com/api/?name=${agent.name}&background=random&size=200`} className="w-full h-full object-cover rounded-[2rem]" alt="" />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 bg-accent text-white w-10 h-10 rounded-2xl flex items-center justify-center border-4 border-white dark:border-dark-surface shadow-xl">
+                                    <div className="absolute -bottom-2 -right-2 bg-accent text-white w-10 h-10 rounded-2xl flex items-center justify-center border-4 border-white shadow-xl">
                                         <ShieldCheck className="w-5 h-5" />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h3 className="font-headline font-black text-3xl text-primary dark:text-dark-on-surface leading-tight group-hover:text-accent transition-colors">{agent.fullName || agent.name}</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30 dark:text-dark-on-surface-variant/40 flex items-center justify-center gap-2">
-                                        <Sparkles className="w-3 h-3" />
-                                        Certified Strategic Associate
-                                    </p>
+                                    <h3 className="font-headline font-black text-2xl text-primary dark:text-dark-on-surface leading-tight">{agent.name}</h3>
+                                    
+                                    {/* Rating */}
+                                    <div className="flex items-center justify-center gap-1">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <Star key={star} className={`w-3 h-3 ${star <= (agent.rating || 5) ? 'text-accent fill-accent' : 'text-primary/10'}`} />
+                                        ))}
+                                        <span className="text-[10px] font-black ml-2 text-primary/40">4.9 / 5.0</span>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 w-full gap-8 py-8 border-y border-surface-variant/50 dark:border-dark-surface-variant/50">
+                                {/* Stats Grid */}
+                                <div className="grid grid-cols-2 w-full gap-4 py-6 border-y border-surface-variant/50 dark:border-dark-surface-variant/50">
                                      <div className="space-y-1">
-                                         <p className="font-black text-primary dark:text-white text-3xl tracking-tighter">{agent.experience || 8}+</p>
+                                         <p className="font-black text-primary dark:text-white text-2xl tracking-tighter">{agent.experience || 5}+ Yrs</p>
                                          <p className="text-[8px] font-black uppercase text-primary/40 dark:text-dark-on-surface-variant/40 tracking-widest">Experience</p>
                                      </div>
                                      <div className="space-y-1 border-l border-surface-variant/50 dark:border-dark-surface-variant/50">
-                                         <p className="font-black text-primary dark:text-white text-3xl tracking-tighter">4.9</p>
-                                         <p className="text-[8px] font-black uppercase text-primary/40 dark:text-dark-on-surface-variant/40 tracking-widest">Client Rating</p>
+                                         <p className="font-black text-primary dark:text-white text-2xl tracking-tighter">{agent.listedCount || 12}</p>
+                                         <p className="text-[8px] font-black uppercase text-primary/40 dark:text-dark-on-surface-variant/40 tracking-widest">Estates Listed</p>
                                      </div>
                                 </div>
 
-                                <button className="w-full py-5 bg-primary dark:bg-accent/10 dark:text-accent text-white rounded-3xl font-black uppercase tracking-widest text-[10px] group-hover:bg-accent group-hover:text-white transition-all shadow-xl shadow-primary/20 dark:shadow-none flex items-center justify-center gap-3">
-                                    Consult Profile
-                                    <ChevronRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-                                </button>
+                                {/* Action Buttons */}
+                                <div className="w-full grid grid-cols-2 gap-4">
+                                    <a 
+                                        href={`tel:${agent.phoneNumber || '9123456789'}`}
+                                        className="flex items-center justify-center gap-2 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[9px] shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                                    >
+                                        <User className="w-3 h-3" />
+                                        Contact
+                                    </a>
+                                    <a 
+                                        href={`https://wa.me/${agent.phoneNumber || '9123456789'}`}
+                                        className="flex items-center justify-center gap-2 py-4 bg-green-500 text-white rounded-2xl font-black uppercase tracking-widest text-[9px] shadow-lg shadow-green-500/20 hover:scale-105 active:scale-95 transition-all"
+                                    >
+                                        <MessageCircle className="w-3 h-3" />
+                                        WhatsApp
+                                    </a>
+                                </div>
 
-                                {/* Decorative Background Icon */}
-                                <Users2 className="absolute -right-12 -bottom-12 text-primary/[0.03] dark:text-white/[0.03] w-64 h-64 -rotate-12 group-hover:scale-110 transition-transform duration-1000" />
+                                <button 
+                                    onClick={() => navigate(`/agent/${agent._id}`)}
+                                    className="w-full text-center text-[9px] font-black uppercase tracking-[0.2em] text-primary/30 dark:text-dark-on-surface-variant/40 hover:text-accent transition-colors pt-2"
+                                >
+                                    View Full Dossier
+                                </button>
                             </motion.div>
                         ))}
                     </div>

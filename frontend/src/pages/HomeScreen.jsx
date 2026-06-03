@@ -9,27 +9,36 @@ import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 import Hero from '../components/Hero';
 import PropertyReels from '../components/PropertyReels';
+import StatsSection from '../components/StatsSection';
 import NewsSection from '../components/NewsSection';
 import Testimonials from '../components/Testimonials';
+import Footer from '../components/Footer';
 import { SkeletonCard } from '../components/Skeleton';
 
 export default function HomeScreen() {
     const navigate = useNavigate();
     const { user, toggleFavorite } = useAuth();
     const { addToCompare, compareList } = useComparison();
-    const [featured, setFeatured] = useState([]);
-    const [activeTab, setActiveTab] = useState('BUY');
-    const [loading, setLoading] = useState(true);
-
     const favorites = user?.favorites || [];
+    const [featured, setFeatured] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [activeCollection, setActiveCollection] = useState('LATEST'); // LATEST | POPULAR | LUXURY | RECENT
+    const collections = [
+        { id: 'LATEST', label: 'Latest Properties', sort: 'latest' },
+        { id: 'POPULAR', label: 'Popular Properties', sort: 'popular' },
+        { id: 'LUXURY', label: 'Luxury Properties', sort: 'luxury' },
+        { id: 'RECENT', label: 'Recently Added', sort: 'recent' },
+    ];
 
     useEffect(() => {
-        fetchFeaturedProperties();
-    }, []);
+        fetchProperties();
+    }, [activeCollection]);
 
-    const fetchFeaturedProperties = async () => {
+    const fetchProperties = async () => {
+        setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/properties`);
+            const sort = collections.find(c => c.id === activeCollection)?.sort || 'latest';
+            const res = await fetch(`${API_URL}/api/properties?sort=${sort}`);
             if (res.ok) {
                 const data = await res.json();
                 const approved = data.properties.filter(p => p.status === 'Approved');
@@ -58,6 +67,9 @@ export default function HomeScreen() {
                 {/* Premium Animated Hero */}
                 <Hero />
 
+                {/* Platform Growth Metrics */}
+                <StatsSection />
+
                 {/* Property Reels */}
                 <PropertyReels />
 
@@ -78,14 +90,14 @@ export default function HomeScreen() {
                             </h2>
                         </div>
                         
-                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-3xl border border-surface-variant dark:border-dark-surface-variant shadow-xl">
-                            {['BUY', 'RENT'].map((tab) => (
+                        <div className="flex bg-white dark:bg-dark-surface p-2 rounded-3xl border border-surface-variant dark:border-dark-surface-variant shadow-xl overflow-x-auto no-scrollbar max-w-full">
+                            {collections.map((col) => (
                                 <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`px-10 py-4 rounded-2xl text-[10px] font-black tracking-widest transition-all ${activeTab === tab ? 'bg-primary dark:bg-dark-primary text-white shadow-lg' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
+                                    key={col.id}
+                                    onClick={() => setActiveCollection(col.id)}
+                                    className={`px-8 py-4 rounded-2xl text-[10px] font-black tracking-widest whitespace-nowrap transition-all ${activeCollection === col.id ? 'bg-primary dark:bg-dark-primary text-white shadow-lg' : 'text-on-surface-variant dark:text-dark-on-surface-variant hover:text-primary dark:hover:text-dark-primary'}`}
                                 >
-                                    {tab}
+                                    {col.label}
                                 </button>
                             ))}
                         </div>
@@ -97,7 +109,7 @@ export default function HomeScreen() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                            {featured.filter(p => !activeTab || p.category === activeTab).map((prop, i) => (
+                            {featured.map((prop, i) => (
                                 <motion.div 
                                     key={prop._id}
                                     initial={{ opacity: 0, y: 30 }}
@@ -230,6 +242,7 @@ export default function HomeScreen() {
                 </section>
             </main>
 
+            <Footer />
             <BottomNav />
         </div>
     );

@@ -4,27 +4,43 @@ import { TrendingUp, Calendar, ArrowRight, Newspaper } from 'lucide-react';
 const newsItems = [
     {
         id: 1,
-        title: "The Rise of Luxury Condos in Central India",
-        category: "Market Trends",
-        date: "May 20, 2026",
-        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop",
-        excerpt: "Investors are increasingly looking towards integrated luxury complexes offering a mix of workspace and residential spaces."
+        title: "Real Estate Investment Tips for 2026",
+        category: "Investing",
+        date: "June 03, 2026",
+        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
+        excerpt: "Maximize your ROI with our curated strategies for emerging markets in Central India."
     },
     {
         id: 2,
-        title: "Interest Rates: What Homebuyers Should Know",
-        category: "Finance",
-        date: "May 18, 2026",
-        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
-        excerpt: "Current market analysis suggests a stable rate period, making it an ideal time for high-ticket property investments."
+        title: "The Ultimate Property Tax Guide",
+        category: "Legal",
+        date: "June 01, 2026",
+        image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&auto=format&fit=crop",
+        excerpt: "Understanding stamp duty, registration fees, and annual property tax exemptions."
     },
     {
         id: 3,
-        title: "Sustainability in Modern Architecture",
-        category: "Design",
-        date: "May 15, 2026",
-        image: "https://images.unsplash.com/photo-1518005020251-58296d87ba67?w=800&auto=format&fit=crop",
-        excerpt: "Eco-friendly materials and smart energy management are now top priorities for premium developers."
+        title: "Home Loan Information & Strategies",
+        category: "Finance",
+        date: "May 28, 2026",
+        image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop",
+        excerpt: "Compare interest rates and discover how to fast-track your mortgage approvals."
+    },
+    {
+        id: 4,
+        title: "Market Trends: The Shift to Smart Cities",
+        category: "Market Trends",
+        date: "May 25, 2026",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
+        excerpt: "How urban developmental changes are driving property values in localized hubs."
+    },
+    {
+        id: 5,
+        title: "Smart Buying Guide for First-Timers",
+        category: "Education",
+        date: "May 20, 2026",
+        image: "https://images.unsplash.com/photo-1560520633-936efabb1f41?w=800&auto=format&fit=crop",
+        excerpt: "Avoid common pitfalls with our step-by-step navigation for first-time homeowners."
     }
 ];
 
@@ -56,7 +72,7 @@ export default function NewsSection() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {newsItems.map((news, i) => (
                     <motion.article 
                         key={news.id}

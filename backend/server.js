@@ -31,7 +31,7 @@ app.get('/api/health', (req, res) => res.json({ success: true }));
 
 // DB Connection Guard — returns 503 if MongoDB is not connected
 app.use((req, res, next) => {
-    if (mongoose.connection.readyState !== 1) {
+    if (mongoose.connection.readyState !== 1 && req.path.startsWith('/api') && req.path !== '/api/health') {
         return res.status(503).json({
             success: false,
             message: "Database unavailable. Please try again shortly."
@@ -41,15 +41,18 @@ app.use((req, res, next) => {
 });
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/inquiries', inquiryRoutes);
-app.use('/api/auth', authRoutes);
 
 // Root route
 app.get('/', (req, res) => {
     res.send('OPMS API is running...');
 });
+
+
+// Global Error Handler
 
 // Global Error Handler
 app.use((err, req, res, next) => {
