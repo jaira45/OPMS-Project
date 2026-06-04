@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useComparison } from '../context/ComparisonContext';
 import { useTheme } from '../context/ThemeContext';
-import { X, Scale, ArrowRight, Minus, Sparkles, LayoutGrid, Zap, ShieldCheck } from 'lucide-react';
+import { X, Scale, ArrowRight, Minus, BedDouble, LayoutGrid, Zap, ShieldCheck } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BottomNav from '../components/BottomNav';
@@ -15,7 +15,7 @@ export default function Comparison() {
     const specs = [
         { key: 'price', label: 'Valuation', icon: Zap, format: (v) => `₹ ${v.toLocaleString()}` },
         { key: 'area', label: 'Total Area', icon: LayoutGrid, format: (v) => `${v || 2400} SQFT` },
-        { key: 'bedrooms', label: 'Bedrooms', icon: Sparkles, format: (v) => `${v || 3} BHK` },
+        { key: 'bedrooms', label: 'Bedrooms', icon: BedDouble, format: (v) => `${v || 3} BHK` },
         { key: 'bathrooms', label: 'Bathrooms', icon: ShieldCheck, format: (v) => v || 2 },
         { key: 'location', label: 'Global Position', icon: Scale },
         { key: 'category', label: 'Asset Class', icon: Scale },

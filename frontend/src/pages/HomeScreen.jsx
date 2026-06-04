@@ -4,7 +4,7 @@ import API_URL from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useComparison } from '../context/ComparisonContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Plus, Scale, LayoutGrid, List, SlidersHorizontal, ArrowRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { Heart, Plus, Scale, LayoutGrid, List, SlidersHorizontal, ArrowRight, ChevronLeft, ChevronRight, MapPin, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 import Hero from '../components/Hero';
@@ -69,17 +69,17 @@ export default function HomeScreen() {
                 <section className="relative py-48 overflow-hidden">
                     {/* Background Decorative */}
                     <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/[0.03] blur-[180px] rounded-full -mr-96 -mt-96" />
-                    
+
                     <div className="container-responsive space-y-24">
                         {/* Section Intel */}
                         <div className="flex flex-col lg:flex-row justify-between items-end gap-12 border-b border-white/10 pb-16">
                             <div className="space-y-8">
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     className="inline-flex items-center gap-4 px-8 py-3 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.5em] shadow-3xl"
                                 >
-                                    <LayoutGrid className="w-5 h-5" />
+                                    <Sparkles className="w-5 h-5 text-accent" />
                                     Elite Acquisitions
                                 </motion.div>
                                 <h2 className="font-headline font-black text-6xl sm:text-8xl md:text-[9.5rem] text-white tracking-tighter uppercase leading-[0.8] italic">
@@ -99,7 +99,7 @@ export default function HomeScreen() {
                                         </button>
                                     ))}
                                 </div>
-                                
+
                                 <button className="flex items-center gap-6 font-black text-white/40 hover:text-white uppercase tracking-[0.5em] text-[11px] group transition-all" onClick={() => navigate('/property')}>
                                     Full Inventory
                                     <div className="w-16 h-16 rounded-2xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all duration-700">

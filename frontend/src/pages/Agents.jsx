@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, User, MapPin, Star, Award, ShieldCheck, ChevronRight, Filter, Users2, Sparkles, MessageCircle, Building2, Mail, Phone, ExternalLink, ArrowUpRight } from 'lucide-react';
+import { Search, User, MapPin, Star, Award, ShieldCheck, ChevronRight, Filter, Users2, MessageCircle, Building2, Mail, Phone, ExternalLink, ArrowUpRight } from 'lucide-react';
 import { SkeletonCard } from '../components/Skeleton';
 import LazyImage from '../components/LazyImage';
 

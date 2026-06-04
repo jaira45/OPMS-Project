@@ -114,7 +114,10 @@ export default function Navbar() {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-black text-white tracking-widest uppercase italic">{user?.name || 'Vanguard'}</span>
-                                    <span className="text-[7px] font-black text-accent uppercase tracking-widest leading-none">Imperial Member</span>
+                                    <span className="text-[7px] font-black text-accent uppercase tracking-widest leading-none flex items-center gap-1">
+                                        <Sparkles className="w-2 h-2" />
+                                        Imperial Member
+                                    </span>
                                 </div>
                                 <ChevronDown className="w-4 h-4 text-white/20 group-hover:text-accent transition-colors" />
                             </motion.div>
@@ -123,8 +126,9 @@ export default function Navbar() {
                                 whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => navigate('/login')}
-                                className="bg-gold-gradient text-primary px-10 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.5em] shadow-[0_20px_40px_rgba(212,175,55,0.3)] italic"
+                                className="bg-gold-gradient text-primary px-10 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.5em] shadow-[0_20px_40px_rgba(212,175,55,0.3)] italic flex items-center gap-3"
                             >
+                                <Sparkles className="w-4 h-4" />
                                 Join Elite
                             </motion.button>
                         )}

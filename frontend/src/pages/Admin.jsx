@@ -11,7 +11,7 @@ import {
     Users, Building2, Clock, CheckCircle2, 
     Trash2, ShieldAlert, LayoutDashboard, BarChart3,
     MoreHorizontal, MapPin, Search, Filter, 
-    ChevronRight, ExternalLink, UserMinus, Sparkles
+    ChevronRight, ExternalLink, UserMinus
 } from 'lucide-react';
 import { 
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 

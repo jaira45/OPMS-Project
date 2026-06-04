@@ -50,7 +50,10 @@ export default function Footer() {
                         </motion.div>
                         <div className="flex flex-col">
                             <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">OPMS</h2>
-                            <span className="text-[10px] font-black uppercase tracking-[0.6em] text-accent mt-2 opacity-60">Metropolis Estates</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.6em] text-accent mt-2 opacity-60 flex items-center gap-2">
+                                <Sparkles className="w-3 h-3" />
+                                Metropolis Estates
+                            </span>
                         </div>
                     </div>
                     <p className="text-lg font-medium leading-[1.8] max-w-sm text-white/30 italic">
