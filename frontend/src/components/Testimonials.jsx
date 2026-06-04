@@ -52,16 +52,16 @@ export default function Testimonials() {
                         <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
                         Member Testimonials
                     </motion.div>
-                    <h2 className="font-headline font-black text-6xl sm:text-[6rem] text-white tracking-tighter leading-[0.85] uppercase">
+                    <h2 className="font-headline font-black text-6xl sm:text-8xl md:text-[8rem] text-white tracking-tighter leading-tight sm:leading-[0.85] uppercase">
                         Our Elite <br />
-                        <span className="text-gold-gradient italic font-display lowercase tracking-normal">Community</span>
+                        <span className="text-gold-gradient italic font-display normal-case tracking-normal block -mt-2 sm:-mt-4">community</span>
                     </h2>
-                    <div className="flex gap-6">
-                        <button onClick={prev} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5">
-                            <ChevronLeft className="w-7 h-7" />
+                    <div className="flex gap-6 pt-4">
+                        <button onClick={prev} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5 backdrop-blur-xl group">
+                            <ChevronLeft className="w-7 h-7 group-hover:-translate-x-1 transition-transform" />
                         </button>
-                        <button onClick={next} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5">
-                            <ChevronRight className="w-7 h-7" />
+                        <button onClick={next} className="w-16 h-16 rounded-[1.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all shadow-xl bg-white/5 backdrop-blur-xl group">
+                            <ChevronRight className="w-7 h-7 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </div>

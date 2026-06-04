@@ -178,6 +178,9 @@ export default function HomeScreen() {
                 {/* News & Intelligence */}
                 <NewsSection />
 
+                {/* Member Testimonials */}
+                <Testimonials />
+
                 {/* Footer and BottomNav */}
             </main>
 
