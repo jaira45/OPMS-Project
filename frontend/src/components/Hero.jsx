@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Building2, Users2, ArrowRight, Home, TrendingUp, Trophy, Globe, ShieldCheck, UserCheck, Headphones, LayoutGrid, Coins } from 'lucide-react';
+import { Search, MapPin, Building2, Users2, ArrowRight, Home, TrendingUp, Trophy, Globe, ShieldCheck, UserCheck, Headphones, LayoutGrid, Coins, Sparkles, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import VoiceSearch from './VoiceSearch';
 

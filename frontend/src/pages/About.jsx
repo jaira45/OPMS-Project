@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import BottomNav from '../components/BottomNav';
 import { 
     Target, Eye, Award, Users, 
-    Verified, ShieldCheck, Heart, Sparkles,
+    ShieldCheck, Heart, Sparkles,
     Zap, Rocket, Star, Fingerprint, Globe, Building2
 } from 'lucide-react';
 import LazyImage from '../components/LazyImage';
