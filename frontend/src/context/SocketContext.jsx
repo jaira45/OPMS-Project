@@ -8,9 +8,7 @@ export function SocketProvider({ children }) {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io(API_URL.replace('/api', ''), {
-            transports: ['websocket'],
-        });
+        const newSocket = io(API_URL.replace('/api', ''));
         setSocket(newSocket);
 
         return () => newSocket.close();
