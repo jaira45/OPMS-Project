@@ -5,10 +5,6 @@ export default function LazyImage({ src, alt, className, ...props }) {
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
-    useEffect(() => {
-        if (!src) setHasError(true);
-    }, [src]);
-
     const placeholder = "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80";
 
     if (hasError || !src) {

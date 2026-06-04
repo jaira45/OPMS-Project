@@ -10,12 +10,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Users, Building2, Clock, CheckCircle2, 
     Trash2, ShieldAlert, LayoutDashboard, BarChart3,
-    MoreHorizontal, MapPin, Search, Filter, 
-    ChevronRight, ExternalLink, UserMinus, Loader2, Sparkles
+    MapPin, ExternalLink, UserMinus, Loader2
 } from 'lucide-react';
 import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-    ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell 
+    BarChart, Bar, XAxis, CartesianGrid, Tooltip, 
+    ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 
 export default function Admin() {

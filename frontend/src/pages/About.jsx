@@ -3,9 +3,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BottomNav from '../components/BottomNav';
 import { 
-    Target, Eye, Award, Users, 
+    Target, Eye, Users, 
     ShieldCheck, Heart, Sparkles,
-    Zap, Rocket, Star, Fingerprint, Globe, Building2
+    Zap, Rocket, Star, Globe, Building2
 } from 'lucide-react';
 import LazyImage from '../components/LazyImage';
 
@@ -76,8 +76,8 @@ export default function About() {
                     </motion.div>
                 </section>
 
-                {/* Focus Areas */}
-                <section className="container-responsive grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center pt-16">
+                {/* Core Values / Focus Areas */}
+                <section className="container-responsive grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center section-padding px-6">
                     <div className="relative group">
                         <div className="absolute -inset-10 bg-accent/10 rounded-[4rem] blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                         <div className="relative rounded-[3rem] overflow-hidden shadow-2xl aspect-[4/5] border border-white/10">
@@ -90,16 +90,16 @@ export default function About() {
                         </div>
                     </div>
                     
-                    <div className="space-y-12 sm:space-y-16">
+                    <div className="space-y-16">
                         <div className="space-y-6">
-                            <span className="text-[10px] uppercase tracking-widest text-accent flex items-center gap-4 font-bold">
+                            <span className="label-link text-accent flex items-center gap-4">
                                 <div className="w-8 h-px bg-accent/40" />
-                                Our Focus
+                                Our Principles
                             </span>
-                            <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest leading-[0.9] italic uppercase">Core <br/><span className="text-gold-gradient block lg:inline-block">Values</span></h2>
+                            <h2 className="section-heading text-white">Core <span className="text-gold-gradient italic">Values</span></h2>
                         </div>
                         
-                        <div className="space-y-10 sm:space-y-12">
+                        <div className="space-y-12">
                             {[
                                 { title: 'Trusted Verification', desc: 'Every property on our platform undergoes a rigorous inspection process to ensure quality and documentation accuracy.', icon: ShieldCheck },
                                 { title: 'Market Expertise', desc: 'We utilize deep market analysis to provide the most competitive property valuations for our clients.', icon: Zap },
@@ -111,14 +111,14 @@ export default function About() {
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.8, delay: i * 0.1, ease: "easeOut" }}
-                                    className="flex gap-6 sm:gap-8 group"
+                                    className="flex gap-8 group"
                                 >
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/5 rounded-2xl flex items-center justify-center text-accent shadow-xl group-hover:bg-gold-gradient group-hover:text-primary transition-all duration-500 shrink-0">
-                                        <v.icon className="w-6 h-6 sm:w-8 sm:h-8" />
+                                    <div className="w-20 h-20 bg-white/[0.03] rounded-[1.5rem] flex items-center justify-center text-accent shadow-xl group-hover:bg-gold-gradient group-hover:text-primary transition-all duration-700 shrink-0 border border-white/5">
+                                        <v.icon className="w-8 h-8" />
                                     </div>
-                                    <div className="space-y-1 sm:space-y-2">
-                                        <h3 className="text-2xl font-bold text-white tracking-tight uppercase italic group-hover:text-accent transition-colors">{v.title}</h3>
-                                        <p className="text-white/30 text-base sm:text-lg font-medium leading-relaxed">{v.desc}</p>
+                                    <div className="space-y-3">
+                                        <h3 className="text-xl font-semibold text-white group-hover:text-accent transition-colors">{v.title}</h3>
+                                        <p className="text-white/40 text-base font-normal leading-[1.7]">{v.desc}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -126,44 +126,44 @@ export default function About() {
                     </div>
                 </section>
 
-                {/* Metrics */}
-                <section className="bg-white/[0.02] backdrop-blur-3xl py-24 sm:py-32 relative overflow-hidden border-y border-white/5 sm:rounded-[4rem]">
-                    <div className="container-responsive grid grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 relative z-10">
+                {/* Metrics Strip */}
+                <section className="bg-white/[0.02] backdrop-blur-3xl py-24 sm:py-32 relative overflow-hidden border-y border-white/5">
+                    <div className="container-responsive grid grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 relative z-10 px-6">
                         {milestones.map((m, i) => (
                             <motion.div 
                                 key={i}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, delay: i * 0.1 }}
-                                className="text-center space-y-6 sm:space-y-8"
+                                className="text-center space-y-6"
                             >
-                                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#071B3A] rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mx-auto text-accent shadow-xl ring-2 ring-white/10 group hover:ring-accent transition-all">
-                                    <m.icon className="w-6 h-6 sm:w-8 sm:h-8 group-hover:scale-110 transition-transform" />
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#071B3A] rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mx-auto text-accent shadow-xl ring-1 ring-white/10 hover:ring-accent transition-all">
+                                    <m.icon className="w-6 h-6 sm:w-8 sm:h-8" />
                                 </div>
-                                <div className="space-y-1 sm:space-y-2">
-                                    <div className="text-4xl sm:text-6xl lg:text-7xl font-headline font-bold text-white tracking-tighter italic leading-none">{m.val}</div>
-                                    <div className="text-[9px] sm:text-[10px] text-accent uppercase tracking-widest font-bold">{m.label}</div>
+                                <div className="space-y-2">
+                                    <div className="text-4xl sm:text-6xl font-headline font-bold text-white tracking-tighter italic leading-none">{m.val}</div>
+                                    <div className="label-link text-accent opacity-60">{m.label}</div>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
                 </section>
 
-                {/* Roadmap / Journey */}
-                <section className="container-responsive py-32 space-y-24 sm:space-y-32 relative">
+                {/* Journey / Roadmap */}
+                <section className="container-responsive section-padding space-y-20 relative px-6">
                     <div className="text-center space-y-6">
-                        <span className="text-[10px] uppercase tracking-widest text-accent font-bold">Our Journey</span>
-                        <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest leading-[0.9] italic uppercase">Strategic <br/><span className="text-gold-gradient block">Growth</span></h2>
+                        <span className="label-link text-accent">Our Journey</span>
+                        <h2 className="section-heading text-white">Strategic <br/><span className="text-gold-gradient italic block">Growth</span></h2>
                     </div>
 
-                    <div className="max-w-5xl mx-auto relative px-4">
+                    <div className="max-w-5xl mx-auto relative">
                         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/30 to-transparent -translate-x-1/2 hidden sm:block" />
 
-                        <div className="space-y-24 sm:space-y-32">
+                        <div className="space-y-24">
                             {[
                                 { year: '2023', title: 'Foundation', desc: 'Developing the initial framework with a focus on real estate market expertise and verification.', icon: Rocket },
                                 { year: '2024', title: 'Market Launch', desc: 'Launching our verified listing platform across the regional Central Indian markets.', icon: ShieldCheck },
-                                { year: '2025', title: 'Expansion', desc: 'Expanding our network and established property partnerships globally.', icon: Sparkles }
+                                { year: '2025', title: 'Expansion', desc: 'Expanding our network and establishing property partnerships globally.', icon: Sparkles }
                             ].map((item, i) => (
                                 <motion.div 
                                     key={i}
@@ -173,19 +173,19 @@ export default function About() {
                                     className={`relative flex items-center justify-between gap-12 ${i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'}`}
                                 >
                                     <div className={`flex-1 hidden sm:block ${i % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                                        <span className="text-7xl lg:text-9xl font-headline font-bold text-white opacity-[0.03] tracking-tighter italic">{item.year}</span>
+                                        <span className="text-7xl lg:text-9xl font-headline font-bold text-white opacity-[0.03] tracking-tighter">{item.year}</span>
                                     </div>
                                     
-                                    <div className="relative z-10 w-20 h-20 bg-white/5 backdrop-blur-3xl rounded-2xl border border-white/10 flex items-center justify-center text-accent shadow-xl ring-4 ring-[#071B3A]">
+                                    <div className="relative z-10 w-20 h-20 bg-white/[0.03] backdrop-blur-3xl rounded-2xl border border-white/10 flex items-center justify-center text-accent shadow-xl ring-4 ring-[#071B3A] shrink-0">
                                         <item.icon className="w-8 h-8" />
                                     </div>
 
-                                    <div className="flex-1 space-y-2 sm:space-y-4">
+                                    <div className="flex-1 space-y-3">
                                         <div className="flex items-center gap-4 sm:hidden">
-                                            <span className="text-3xl font-headline font-bold text-accent/20 italic">{item.year}</span>
+                                            <span className="text-2xl font-headline font-bold text-accent/20 italic">{item.year}</span>
                                         </div>
-                                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight italic uppercase leading-none">{item.title}</h3>
-                                        <p className="text-white/30 text-lg sm:text-xl font-medium leading-relaxed">{item.desc}</p>
+                                        <h3 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">{item.title}</h3>
+                                        <p className="text-white/40 text-base sm:text-lg font-normal leading-[1.7]">{item.desc}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -193,11 +193,11 @@ export default function About() {
                     </div>
                 </section>
 
-                {/* Expert Leadership */}
-                <section className="container-responsive py-32 space-y-24">
+                {/* Leadership Team */}
+                <section className="container-responsive section-padding space-y-20 px-6">
                     <div className="text-center space-y-6">
-                        <span className="text-[10px] uppercase tracking-widest text-accent font-bold">Our Team</span>
-                        <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest leading-[0.9] italic uppercase">Expert <br/><span className="text-gold-gradient block">Leadership</span></h2>
+                        <span className="label-link text-accent">Our Team</span>
+                        <h2 className="section-heading text-white">Expert <br/><span className="text-gold-gradient italic block">Leadership</span></h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16">
@@ -222,9 +222,9 @@ export default function About() {
                                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#071B3A] to-transparent opacity-80" />
                                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gold-gradient scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
                                 </div>
-                                <div className="text-center space-y-1">
-                                    <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight uppercase italic group-hover:text-accent transition-colors">{member.name}</h3>
-                                    <p className="text-[10px] uppercase tracking-widest text-accent opacity-60 font-bold">{member.role}</p>
+                                <div className="text-center space-y-2">
+                                    <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-tight group-hover:text-accent transition-colors">{member.name}</h3>
+                                    <p className="label-link text-accent opacity-60">{member.role}</p>
                                 </div>
                             </motion.div>
                         ))}

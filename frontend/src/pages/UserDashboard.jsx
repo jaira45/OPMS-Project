@@ -8,10 +8,9 @@ import Footer from '../components/Footer';
 import BottomNav from '../components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-    User, Mail, Heart, MessageSquare, PlusCircle, 
-    Settings, LogOut, Camera, ShieldCheck,
-    LayoutDashboard, Building2, TrendingUp, Sparkles, X,
-    ChevronRight, Trash2
+    Heart, MessageSquare, 
+    Settings, LogOut, Camera,
+    Building2, Sparkles, X
 } from 'lucide-react';
 import { SkeletonDashboard } from '../components/Skeleton';
 

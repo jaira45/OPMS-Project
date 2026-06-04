@@ -3,16 +3,16 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Menu, X, LayoutDashboard, LogOut, Building2, Users2, Info, Mail, Home, ChevronDown, User, Bell, Search, Sparkles } from 'lucide-react';
+import { Sun, Moon, Menu, X, Building2, ChevronDown, User, Bell, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { token, user, profileImage, logout } = useAuth();
+    const { token, user, profileImage } = useAuth();
     const { darkMode, toggleDarkMode } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [hasNotifications, setHasNotifications] = useState(true);
+    const [hasNotifications] = useState(true);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);

@@ -36,7 +36,7 @@ export default function App() {
                 <Route path="/agents" element={<Agents />} />
                 <Route path="/agent/:id" element={<AgentProfile />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/compare" element={<Comparison />} />
+                <Route path="/comparison" element={<Comparison />} />
 
                 {/* Protected routes — require valid JWT */}
                 <Route path="/home" element={<PrivateRoute><HomeScreen /></PrivateRoute>} />
