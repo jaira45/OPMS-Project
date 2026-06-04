@@ -55,9 +55,9 @@ export default function Hero() {
                         </motion.div>
 
                         <div className="space-y-4">
-                            <h1 className="font-headline font-black text-white leading-none tracking-tight">
-                                <span className="text-6xl sm:text-7xl block mb-2">Find. Explore. Own.</span>
-                                <span className="font-display italic text-8xl sm:text-9xl text-gold-gradient lowercase leading-tight">Extraordinary Homes.</span>
+                            <h1 className="font-headline font-black text-white leading-none tracking-tight uppercase">
+                                <span className="text-5xl sm:text-7xl block mb-2">Find. Explore. Own.</span>
+                                <span className="font-display italic text-6xl sm:text-8xl md:text-9xl text-gold-gradient normal-case leading-[0.9] block -mt-1 sm:-mt-2">Extraordinary Homes.</span>
                             </h1>
                         </div>
 

@@ -37,15 +37,15 @@ export default function Contact() {
                         Concierge Services
                     </motion.div>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="space-y-6">
-                            <h1 className="font-headline font-black text-6xl sm:text-9xl tracking-tighter leading-[0.85] uppercase">
+                            <h1 className="font-headline font-black text-6xl sm:text-8xl md:text-9xl tracking-tighter leading-tight sm:leading-[0.9] uppercase">
                                 Initiate <br />
-                                <span className="font-display italic text-gold-gradient lowercase tracking-normal">Communication</span>
+                                <span className="font-display italic text-gold-gradient normal-case tracking-normal block -mt-2 sm:-mt-4">communication</span>
                             </h1>
                         </div>
-                        <div className="max-w-xl pb-4">
-                            <p className="text-white/40 text-xl font-medium leading-relaxed">
+                        <div className="max-w-xl">
+                            <p className="text-white/50 text-lg md:text-xl font-medium leading-relaxed">
                                 Our elite advisory team is prepared to facilitate your next high-stakes property acquisition in Central India's most exclusive markets.
                             </p>
                         </div>
@@ -119,44 +119,44 @@ export default function Contact() {
                                 ) : (
                                     <form onSubmit={handleSubmit} className="space-y-12">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-                                            <div className="space-y-3">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Identificator</label>
+                                            <div className="space-y-4">
+                                                <label className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40 px-8">Identificator</label>
                                                 <input
                                                     type="text"
                                                     required
-                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-7 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/5"
                                                     placeholder="Full Private Name"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                                                 />
                                             </div>
-                                            <div className="space-y-3">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Digital Link</label>
+                                            <div className="space-y-4">
+                                                <label className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40 px-8">Digital Link</label>
                                                 <input
                                                     type="email"
                                                     required
-                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-7 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/5"
                                                     placeholder="Your Secure Email"
                                                     value={formData.email}
                                                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                                                 />
                                             </div>
                                         </div>
-                                        <div className="space-y-3">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Subject Protocol</label>
+                                        <div className="space-y-4">
+                                            <label className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40 px-8">Subject Protocol</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-7 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/5"
                                                 placeholder="Asset Interest | Investment Inquiry"
                                                 value={formData.subject}
                                                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
                                             />
                                         </div>
-                                        <div className="space-y-3">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Detailed Briefing</label>
+                                        <div className="space-y-4">
+                                            <label className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40 px-8">Detailed Briefing</label>
                                             <textarea
                                                 rows={5}
-                                                className="w-full bg-white/5 border border-white/10 rounded-[3rem] px-10 py-8 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10 resize-none"
+                                                className="w-full bg-white/5 border border-white/10 rounded-[3.5rem] px-10 py-9 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/5 resize-none"
                                                 placeholder="Specify asset preferences or partnership details..."
                                                 value={formData.message}
                                                 onChange={(e) => setFormData({...formData, message: e.target.value})}

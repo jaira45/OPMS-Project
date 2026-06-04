@@ -58,10 +58,10 @@ export default function Agents() {
                         <motion.h1 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="font-headline font-black text-6xl sm:text-9xl tracking-tighter leading-[0.85] uppercase"
+                            className="font-headline font-black text-6xl sm:text-8xl md:text-9xl tracking-tighter leading-tight sm:leading-[0.9] uppercase"
                         >
                             Masters of <br />
-                            <span className="font-display italic text-gold-gradient lowercase tracking-normal">Acquisition</span>
+                            <span className="font-display italic text-gold-gradient normal-case tracking-normal block -mt-2 sm:-mt-4">acquisition</span>
                         </motion.h1>
                         <motion.p 
                             initial={{ opacity: 0 }}
