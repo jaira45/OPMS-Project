@@ -10,7 +10,7 @@ export default function PropertyCard({ property }) {
     const isFavorite = user?.favorites?.includes(property._id);
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -20,12 +20,12 @@ export default function PropertyCard({ property }) {
         >
             {/* ─ Media Container ────────────────────────────────────────── */}
             <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 shadow-2xl shrink-0">
-                <LazyImage 
-                    src={property.images?.[0] || property.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
+                <LazyImage
+                    src={property.images?.[0] || property.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]"
                     alt={property.title}
                 />
-                
+
                 {/* Status Badges */}
                 <div className="absolute top-6 left-6 flex flex-wrap gap-2">
                     <div className="bg-[#071B3A]/90 backdrop-blur-xl px-4 py-2 rounded-xl flex items-center gap-2 shadow-2xl border border-white/5">
@@ -42,7 +42,7 @@ export default function PropertyCard({ property }) {
 
                 {/* Interaction Cluster */}
                 <div className="absolute top-5 right-5">
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             toggleFavorite(property._id);
