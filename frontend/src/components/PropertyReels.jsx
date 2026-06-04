@@ -1,271 +1,457 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Play, Pause, Volume2, VolumeX, Heart, 
-    MessageCircle, Share2, MapPin, ChevronUp, 
-    ChevronDown, DollarSign, User, ShieldCheck 
-} from 'lucide-react';
-import { SkeletonReel } from './Skeleton';
+import { Play, Pause, Volume2, VolumeX, Heart, Share2, MapPin, ChevronLeft, ChevronRight, User, ShieldCheck, ImageOff, Building2, ArrowRight } from 'lucide-react';
 
+// ─── Reel data with reliable Mixkit CDN videos + Unsplash thumbnails ────────
 const reels = [
     {
         id: 1,
-        video: "https://player.vimeo.com/external/494163956.sd.mp4?s=63de7c82c3374944f2d7183e20e8902506b3a0df&profile_id=165&oauth2_token_id=57447761",
+        // Mixkit: luxury house pool aerial — free, no auth required
+        video: "https://assets.mixkit.co/videos/preview/mixkit-house-with-a-big-pool-and-a-terrace-4073-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
         title: "The Glass Pavilion",
         location: "Vijay Nagar, Indore",
         price: "₹12.5 Cr",
         agent: "Arya Khan",
-        likes: "4.8k",
-        comments: "156"
+        tag: "VERIFIED",
     },
     {
         id: 2,
-        video: "https://player.vimeo.com/external/454503827.sd.mp4?s=72fd290dfc10976159c65636f1c422c5443de7a1&profile_id=165&oauth2_token_id=57447761",
+        // Mixkit: luxury beach apartment pool view — free, no auth required
+        video: "https://assets.mixkit.co/videos/preview/mixkit-white-couch-and-a-pool-view-of-a-beach-apartment-3-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
         title: "Azure Infinity Estate",
         location: "Arera Colony, Bhopal",
         price: "₹18.2 Cr",
         agent: "Vikram Malhotra",
-        likes: "12.5k",
-        comments: "482"
+        tag: "EXCLUSIVE",
     },
     {
         id: 3,
-        video: "https://player.vimeo.com/external/371433843.sd.mp4?s=236307498247f117f397223296c098939c36c726&profile_id=165&oauth2_token_id=57447761",
+        // Mixkit: aerial luxury house with pool — free, no auth required
+        video: "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-luxury-house-with-big-pool-4071-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1600566753190-17f0bb2a6c3e?w=800&q=80",
         title: "Skyline Citadel",
         location: "City Center, Gwalior",
         price: "₹9.5 Cr",
         agent: "Sana Kapoor",
-        likes: "3.2k",
-        comments: "94"
-    }
+        tag: "NEW",
+    },
+    {
+        id: 4,
+        // Mixkit: modern living room — free, no auth required
+        video: "https://assets.mixkit.co/videos/preview/mixkit-stylish-hotel-room-with-a-pool-view-4882-small.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+        title: "The Sapphire Manor",
+        location: "New Market, Bhopal",
+        price: "₹24 Cr",
+        agent: "Rohan Dev",
+        tag: "LUXURY",
+    },
 ];
 
-export default function PropertyReels() {
-    const [currentReel, setCurrentReel] = useState(0);
-    const [isMuted, setIsMuted] = useState(true);
-    const [isPlaying, setIsPlaying] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
-    const [progress, setProgress] = useState(0);
-    const videoRef = useRef(null);
+// ─── Small inline Skeleton for reel loading state ────────────────────────────
+const ReelSkeleton = () => (
+    <div className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center gap-6">
+        <div className="w-16 h-16 rounded-full border-4 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+            Loading Reel…
+        </span>
+    </div>
+);
 
-    const handleNext = () => {
-        setCurrentReel((prev) => (prev + 1) % reels.length);
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function PropertyReels() {
+    const [current, setCurrent] = useState(0);
+    const [isMuted, setIsMuted] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasError, setHasError] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [liked, setLiked] = useState({});
+
+    const videoRef = useRef(null);
+    const sectionRef = useRef(null);
+    const rafRef = useRef(null);
+
+    const reel = reels[current];
+
+    // ── Navigation ──────────────────────────────────────────────────────
+    const goTo = useCallback((idx) => {
+        setCurrent((idx + reels.length) % reels.length);
         setIsLoading(true);
+        setHasError(false);
+        setProgress(0);
+        setIsPlaying(false);
+        cancelAnimationFrame(rafRef.current);
+    }, []);
+
+    const handlePrev = () => goTo(current - 1);
+    const handleNext = () => goTo(current + 1);
+
+    // ── RAF-based smooth progress ────────────────────────────────────────
+    const tickProgress = useCallback(() => {
+        const v = videoRef.current;
+        if (!v || !v.duration) return;
+        setProgress((v.currentTime / v.duration) * 100);
+        rafRef.current = requestAnimationFrame(tickProgress);
+    }, []);
+
+    // ── Intersection Observer — pause when scrolled away ────────────────
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                const v = videoRef.current;
+                if (!v || hasError) return;
+                if (entry.isIntersecting) {
+                    v.play().then(() => setIsPlaying(true)).catch(() => {});
+                } else {
+                    v.pause();
+                    setIsPlaying(false);
+                }
+            },
+            { threshold: 0.5 }
+        );
+        if (sectionRef.current) observer.observe(sectionRef.current);
+        return () => observer.disconnect();
+    }, [current, hasError]);
+
+    // ── Sync muted state ────────────────────────────────────────────────
+    useEffect(() => {
+        if (videoRef.current) videoRef.current.muted = isMuted;
+    }, [isMuted]);
+
+    // ── Cleanup RAF on unmount ───────────────────────────────────────────
+    useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+
+    // ── Video event handlers ─────────────────────────────────────────────
+    const handleCanPlay = () => {
+        setIsLoading(false);
+        const v = videoRef.current;
+        if (!v) return;
+        v.play()
+            .then(() => {
+                setIsPlaying(true);
+                rafRef.current = requestAnimationFrame(tickProgress);
+            })
+            .catch(() => setIsPlaying(false));
     };
 
-    const handlePrev = () => {
-        setCurrentReel((prev) => (prev - 1 + reels.length) % reels.length);
-        setIsLoading(true);
+    const handleError = () => {
+        setIsLoading(false);
+        setHasError(true);
+        setIsPlaying(false);
+        cancelAnimationFrame(rafRef.current);
+    };
+
+    const handleEnded = () => {
+        cancelAnimationFrame(rafRef.current);
+        setProgress(100);
+        setTimeout(() => goTo(current + 1), 600);
+    };
+
+    const handleTimeUpdate = () => {
+        const v = videoRef.current;
+        if (v && v.duration) setProgress((v.currentTime / v.duration) * 100);
     };
 
     const togglePlay = () => {
-        if (videoRef.current) {
-            if (isPlaying) videoRef.current.pause();
-            else videoRef.current.play();
-            setIsPlaying(!isPlaying);
+        const v = videoRef.current;
+        if (!v || hasError) return;
+        if (isPlaying) {
+            v.pause();
+            setIsPlaying(false);
+            cancelAnimationFrame(rafRef.current);
+        } else {
+            v.play().then(() => {
+                setIsPlaying(true);
+                rafRef.current = requestAnimationFrame(tickProgress);
+            }).catch(() => {});
         }
     };
 
+    // ── Keyboard navigation ──────────────────────────────────────────────
     useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return;
-
-        const updateProgress = () => {
-            if (video.duration) {
-                const p = (video.currentTime / video.duration) * 100;
-                setProgress(p);
-            }
+        const onKey = (e) => {
+            if (e.key === 'ArrowRight') handleNext();
+            if (e.key === 'ArrowLeft') handlePrev();
+            if (e.key === ' ') { e.preventDefault(); togglePlay(); }
         };
-
-        const handleEnded = () => handleNext();
-
-        video.addEventListener('timeupdate', updateProgress);
-        video.addEventListener('ended', handleEnded);
-        return () => {
-            video.removeEventListener('timeupdate', updateProgress);
-            video.removeEventListener('ended', handleEnded);
-        };
-    }, [currentReel]);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            if (isPlaying) {
-                videoRef.current.play().catch(() => setIsPlaying(false));
-            } else {
-                videoRef.current.pause();
-            }
-        }
-    }, [currentReel, isPlaying]);
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [current, isPlaying]);
 
     return (
-        <section className="container-responsive py-32 space-y-16 overflow-hidden">
-            <div className="text-center space-y-6">
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-3 px-6 py-2 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-lg"
-                >
-                    <ShieldCheck className="w-4 h-4" />
-                    Cinematic Experiences
-                </motion.div>
-                <h2 className="font-headline font-black text-6xl sm:text-8xl text-primary dark:text-dark-on-surface tracking-tighter uppercase leading-[0.85]">
-                    Estate <span className="text-gold-gradient italic font-display lowercase tracking-normal">Dossiers</span>
-                </h2>
+        <section ref={sectionRef} className="container-responsive py-24 space-y-12 overflow-hidden bg-[#071B3A]">
+            {/* ─ Section Header ───────────────────────────────────────────── */}
+            <div className="flex justify-between items-center px-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gold-gradient rounded-xl flex items-center justify-center shadow-lg">
+                        <Building2 className="text-primary w-5 h-5" />
+                    </div>
+                    <h2 className="font-headline font-black text-3xl text-white tracking-tight uppercase flex items-center gap-3">
+                        Property Reels <span className="text-accent text-xs tracking-[0.3em] font-bold">OPMS</span>
+                    </h2>
+                </div>
+                <button className="flex items-center gap-3 text-white/60 hover:text-accent transition-all group">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">View All Reels</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                </button>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-16 items-center justify-center pt-10">
-                {/* Reel Player Container */}
-                <div className="relative group/player scale-110">
-                    {/* Navigation Buttons (Desktop) */}
-                    <div className="absolute -left-20 top-1/2 -translate-y-1/2 flex flex-col gap-6 hidden lg:flex opacity-0 group-hover/player:opacity-100 transition-all duration-500">
-                        <button onClick={handlePrev} className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:scale-110 transition-all shadow-2xl">
-                            <ChevronUp className="w-7 h-7" />
-                        </button>
-                        <button onClick={handleNext} className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:scale-110 transition-all shadow-2xl">
-                            <ChevronDown className="w-7 h-7" />
-                        </button>
-                    </div>
+            {/* ─ Player + Sidebar layout ──────────────────────────────────── */}
+            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center pt-4">
 
-                    <div className="relative w-[340px] sm:w-[400px] aspect-[9/16] rounded-[4.5rem] overflow-hidden shadow-[0_64px_128px_-32px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
-                        
-                        {/* Loading State */}
-                        {isLoading && (
-                            <div className="absolute inset-0 z-50 bg-black">
-                                <SkeletonReel />
-                            </div>
-                        )}
+                {/* ── Reel Player ──────────────────────────────────────────── */}
+                <div className="relative group/player">
+                    {/* Phone frame */}
+                    <div className="relative w-[300px] sm:w-[340px] aspect-[9/16] rounded-[3.5rem] overflow-hidden shadow-[0_64px_128px_-24px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
 
-                        <video
-                            ref={videoRef}
-                            key={reels[currentReel].id}
-                            src={reels[currentReel].video}
-                            poster={reels[currentReel].thumbnail}
-                            muted={isMuted}
-                            autoPlay
-                            playsInline
-                            onLoadStart={() => setIsLoading(true)}
-                            onCanPlay={() => setIsLoading(false)}
-                            className="w-full h-full object-cover cursor-pointer"
-                            onClick={togglePlay}
-                        />
-
-                        {/* Progress Bar */}
-                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/10 z-40">
-                            <motion.div 
-                                className="h-full bg-gold-gradient shadow-[0_0_15px_#D4AF37]"
+                        {/* ── Progress Bar ──────────────────────────────────── */}
+                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/10 z-50">
+                            <motion.div
+                                className="h-full bg-gradient-to-r from-[#D4AF37] via-[#F9E076] to-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
                                 style={{ width: `${progress}%` }}
-                                transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
+                                transition={{ ease: 'linear', duration: 0.1 }}
                             />
                         </div>
 
-                        {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
-                        
-                        {/* Mute Toggle */}
-                        <div className="absolute top-10 right-8 z-40">
-                            <motion.button 
+                        {/* ── Loading Skeleton ──────────────────────────────── */}
+                        {isLoading && !hasError && <ReelSkeleton />}
+
+                        {/* ── Error / Thumbnail Fallback ────────────────────── */}
+                        {hasError && (
+                            <div className="absolute inset-0 z-10">
+                                <img
+                                    src={reel.thumbnail}
+                                    alt={reel.title}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center gap-3">
+                                    <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center">
+                                        <ImageOff className="w-7 h-7 text-white/60" />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                                        Preview Unavailable
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ── Video Element ─────────────────────────────────── */}
+                        <AnimatePresence mode="wait">
+                            <motion.video
+                                key={reel.id}
+                                ref={videoRef}
+                                src={reel.video}
+                                poster={reel.thumbnail}
+                                muted={isMuted}
+                                playsInline
+                                loop={false}
+                                preload="metadata"
+                                onLoadStart={() => { setIsLoading(true); setHasError(false); }}
+                                onCanPlay={handleCanPlay}
+                                onError={handleError}
+                                onEnded={handleEnded}
+                                onTimeUpdate={handleTimeUpdate}
+                                onClick={togglePlay}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.4 }}
+                                className="w-full h-full object-cover cursor-pointer select-none"
+                            />
+                        </AnimatePresence>
+
+                        {/* ── Overlay Gradient ──────────────────────────────── */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90 pointer-events-none z-20" />
+
+                        {/* ── Top Controls ──────────────────────────────────── */}
+                        <div className="absolute top-8 left-8 right-8 flex justify-between items-center z-30 pointer-events-none">
+                            {/* Tag badge */}
+                            <div className="bg-[#D4AF37]/90 backdrop-blur-md text-primary px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl">
+                                {reel.tag}
+                            </div>
+                            {/* Mute button */}
+                            <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}
-                                className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all shadow-2xl"
+                                className="pointer-events-auto w-11 h-11 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-xl"
                             >
-                                {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                             </motion.button>
                         </div>
 
-                        {/* Interaction Bar */}
-                        <div className="absolute right-8 bottom-32 flex flex-col gap-8 items-center z-40">
+                        {/* ── Side Action Buttons ───────────────────────────── */}
+                        <div className="absolute right-6 bottom-36 z-30 flex flex-col gap-6 items-center">
                             {[
-                                { icon: Heart, value: reels[currentReel].likes, color: 'hover:bg-red-500 hover:border-red-500' },
-                                { icon: Share2, value: 'Share', color: 'hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-primary' },
-                                { icon: ShieldCheck, value: 'Verify', color: 'hover:bg-blue-500 hover:border-blue-500' }
-                            ].map((item, idx) => (
-                                <motion.div 
-                                    key={idx} 
-                                    whileHover={{ y: -5 }}
-                                    className="flex flex-col items-center gap-2 group/btn cursor-pointer"
+                                {
+                                    icon: Heart,
+                                    label: liked[current] ? "Liked" : "Like",
+                                    active: liked[current],
+                                    action: () => setLiked(prev => ({ ...prev, [current]: !prev[current] })),
+                                    activeClass: "bg-red-500 border-red-500",
+                                },
+                                {
+                                    icon: Share2,
+                                    label: "Share",
+                                    active: false,
+                                    action: () => {},
+                                    activeClass: "bg-[#D4AF37] border-[#D4AF37] text-primary",
+                                },
+                            ].map((btn, i) => (
+                                <motion.button
+                                    key={i}
+                                    whileHover={{ y: -4, scale: 1.05 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={(e) => { e.stopPropagation(); btn.action(); }}
+                                    className={`flex flex-col items-center gap-1.5 group/btn`}
                                 >
-                                    <div className={`w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-3xl flex items-center justify-center text-white border border-white/10 transition-all duration-500 ${item.color} shadow-2xl`}>
-                                        <item.icon className="w-7 h-7" />
+                                    <div className={`w-12 h-12 rounded-2xl border backdrop-blur-xl flex items-center justify-center text-white transition-all duration-300 shadow-2xl ${btn.active ? btn.activeClass : 'bg-white/10 border-white/20 hover:bg-white/20'}`}>
+                                        <btn.icon className={`w-5 h-5 ${btn.active && btn.icon === Heart ? 'fill-white' : ''}`} />
                                     </div>
-                                    <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">{item.value}</span>
-                                </motion.div>
+                                    <span className="text-[9px] font-black text-white/60 uppercase tracking-widest">{btn.label}</span>
+                                </motion.button>
                             ))}
                         </div>
 
-                        {/* Property Details Info */}
-                        <div className="absolute bottom-12 left-10 right-24 z-40 pointer-events-none">
-                            <motion.div 
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                key={`info-${currentReel}`}
-                                className="space-y-6"
+                        {/* ── Property Info Overlay ─────────────────────────── */}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`info-${current}`}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.4 }}
+                                className="absolute bottom-10 left-8 right-20 z-30 space-y-4 pointer-events-none"
                             >
+                                {/* Location + Price pills */}
                                 <div className="flex flex-wrap gap-2">
-                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gold-gradient text-primary border border-white/20 shadow-xl">
-                                        <MapPin className="w-3.5 h-3.5" />
-                                        <span className="text-[9px] font-black uppercase tracking-wider">{reels[currentReel].location}</span>
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#D4AF37]/90 text-primary shadow-lg backdrop-blur-md">
+                                        <MapPin className="w-3 h-3" />
+                                        <span className="text-[9px] font-black uppercase tracking-wider">{reel.location}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 text-white shadow-xl">
-                                        <span className="text-[9px] font-black uppercase tracking-wider">{reels[currentReel].price}</span>
+                                    <div className="flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg">
+                                        <span className="text-[9px] font-black uppercase tracking-wider">{reel.price}</span>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <h3 className="text-4xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl italic uppercase">{reels[currentReel].title}</h3>
-                                    <div className="flex items-center gap-3 text-white/60">
-                                        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
-                                            <User className="w-4 h-4" />
-                                        </div>
-                                        <span className="text-[10px] font-black tracking-[0.2em] uppercase">{reels[currentReel].agent}</span>
+
+                                {/* Property name */}
+                                <h3 className="text-3xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl italic uppercase">
+                                    {reel.title}
+                                </h3>
+
+                                {/* Agent */}
+                                <div className="flex items-center gap-2 text-white/60">
+                                    <div className="w-7 h-7 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center">
+                                        <User className="w-3.5 h-3.5 text-white" />
                                     </div>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{reel.agent}</span>
                                 </div>
                             </motion.div>
-                        </div>
+                        </AnimatePresence>
 
-                        {/* Playback Indicator */}
+                        {/* ── Play/Pause Indicator ──────────────────────────── */}
                         <AnimatePresence>
-                            {!isPlaying && (
-                                <motion.div 
-                                    initial={{ opacity: 0, scale: 0.5 }}
+                            {!isPlaying && !isLoading && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.6 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 1.2 }}
+                                    exit={{ opacity: 0, scale: 1.3 }}
+                                    transition={{ duration: 0.2 }}
                                     className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
                                 >
-                                    <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                                        <Play className="w-12 h-12 text-white fill-current translate-xl ml-1" />
+                                    <div className="w-20 h-20 rounded-full bg-black/30 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-[0_0_40px_rgba(0,0,0,0.4)]">
+                                        <Play className="w-9 h-9 text-white fill-white ml-1" />
                                     </div>
                                 </motion.div>
                             )}
-                        </AnimatePresence>
+        </AnimatePresence>
+
+                    </div>{/* end phone frame */}
+
+                    {/* ── Desktop Prev/Next Arrows ──────────────────────────── */}
+                    <div className="hidden lg:flex flex-col gap-4 absolute -right-16 top-1/2 -translate-y-1/2">
+                        <motion.button
+                            whileHover={{ scale: 1.1, y: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handlePrev}
+                            className="w-12 h-12 rounded-2xl bg-primary/80 dark:bg-dark-surface backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.1, y: 2 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handleNext}
+                            className="w-12 h-12 rounded-2xl bg-primary/80 dark:bg-dark-surface backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
+                        >
+                            <ChevronRight className="w-6 h-6" />
+                        </motion.button>
                     </div>
 
-                    {/* Mobile Navigation */}
-                    <div className="flex justify-center gap-6 mt-12 lg:hidden">
-                        <button onClick={handlePrev} className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl">
-                            <ChevronUp className="w-5 h-5" /> Prev
-                        </button>
-                        <button onClick={handleNext} className="px-8 py-4 rounded-2xl bg-gold-gradient text-primary font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-2xl shadow-[#D4AF37]/30">
-                            Next <ChevronDown className="w-5 h-5" />
-                        </button>
+                    {/* ── Reel Dots ─────────────────────────────────────────── */}
+                    <div className="flex justify-center gap-3 mt-8">
+                        {reels.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => goTo(i)}
+                                className={`transition-all duration-500 rounded-full ${i === current ? 'w-8 h-2.5 bg-[#D4AF37]' : 'w-2.5 h-2.5 bg-primary/20 dark:bg-white/20 hover:bg-primary/40'}`}
+                            />
+                        ))}
+                    </div>
+
+                    {/* ── Mobile Prev/Next Buttons ──────────────────────────── */}
+                    <div className="flex justify-center gap-4 mt-6 lg:hidden">
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handlePrev}
+                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-white font-black text-[10px] uppercase tracking-widest shadow-xl"
+                        >
+                            <ChevronLeft className="w-5 h-5" /> Prev
+                        </motion.button>
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={handleNext}
+                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gold-gradient text-primary font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-[#D4AF37]/30"
+                        >
+                            Next <ChevronRight className="w-5 h-5" />
+                        </motion.button>
                     </div>
                 </div>
 
-                {/* Sidebar Preview (Desktop) */}
-                <div className="hidden lg:flex flex-col gap-6">
-                    {reels.map((reel, i) => (
+                {/* ── Desktop Sidebar Thumbnails ────────────────────────────── */}
+                <div className="hidden lg:flex flex-col gap-5">
+                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/30 dark:text-white/20 mb-2 text-center">
+                        Collection
+                    </p>
+                    {reels.map((r, i) => (
                         <motion.button
-                            key={reel.id}
-                            whileHover={{ scale: 1.05, x: -10 }}
-                            onClick={() => { setCurrentReel(i); setIsPlaying(true); }}
-                            className={`group relative w-24 h-24 rounded-[2rem] overflow-hidden border-4 transition-all duration-700 ${currentReel === i ? 'border-[#D4AF37] scale-125 shadow-2xl z-10' : 'border-transparent opacity-30 hover:opacity-100 hover:border-white/20'}`}
+                            key={r.id}
+                            whileHover={{ scale: 1.06, x: -6 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => goTo(i)}
+                            className={`group relative w-[88px] h-[118px] rounded-[2rem] overflow-hidden border-4 transition-all duration-500 shadow-lg ${
+                                i === current
+                                    ? 'border-[#D4AF37] shadow-[0_0_30px_rgba(212,175,55,0.35)] scale-105 z-10'
+                                    : 'border-transparent opacity-40 hover:opacity-90 hover:border-white/30'
+                            }`}
                         >
-                            <img src={reel.thumbnail} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />
-                            <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors flex items-center justify-center">
-                                <Play className="w-6 h-6 text-white" />
+                            <img
+                                src={r.thumbnail}
+                                alt={r.title}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <div className={`absolute inset-0 flex flex-col justify-end p-3 transition-all duration-300 ${i === current ? 'bg-black/20' : 'bg-black/50 group-hover:bg-black/25'}`}>
+                                <p className="text-[8px] font-black text-white leading-tight truncate">{r.title}</p>
+                                <p className="text-[7px] font-bold text-[#D4AF37] uppercase tracking-wider">{r.price}</p>
                             </div>
+                            {i === current && (
+                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-lg">
+                                    <Play className="w-2.5 h-2.5 text-primary fill-primary" />
+                                </div>
+                            )}
                         </motion.button>
                     ))}
                 </div>

@@ -1,40 +1,40 @@
 @import "tailwindcss";
 
 @theme {
-  /* Core Colors - Light Mode (Default) */
-  --color-primary: #001e3c; /* Deep Professional Navy */
-  --color-primary-container: #003366;
-  --color-on-primary-container: #e1f0ff;
-  --color-secondary: #0056b3; /* Vibrant Executive Blue */
-  --color-secondary-container: #3b82f6; /* High-Contrast Accent */
+  /* Core Colors - Luxury Theme */
+  --color-primary: #071B3A; /* Deepest Luxury Navy */
+  --color-primary-container: #0a254d;
+  --color-on-primary-container: #e6edff;
+  --color-secondary: #004da1; /* Deep Executive Blue */
+  --color-secondary-container: #1e3a8a;
   --color-on-secondary-container: #ffffff;
-  --color-background: #f8fafc;
+  --color-background: #fdfdfd;
   --color-surface: #ffffff;
-  --color-surface-variant: #e2e8f0;
-  --color-on-surface: #1a1b1f;
-  --color-on-surface-variant: #44474f;
-  --color-outline: #747780;
-  --color-error: #ba1a1a;
-  --color-success: #15803d;
-  --color-warning: #b45309;
+  --color-surface-variant: #f1f5f9;
+  --color-on-surface: #071B3A;
+  --color-on-surface-variant: #64748b;
+  --color-outline: #cbd5e1;
+  --color-error: #991b1b;
+  --color-success: #166534;
+  --color-warning: #92400e;
 
   /* Luxury Gold Accents */
-  --color-accent: #c5a059; /* Metallic Gold */
-  --color-accent-light: #e6d5b8;
+  --color-accent: #D4AF37; /* Burnished Luxury Gold */
+  --color-accent-light: #f3e5ab;
 
-  /* Dark Mode Overrides (used with .dark class) */
-  --color-dark-bg: #020617; /* Deepest Navy */
-  --color-dark-surface: #0f172a;
-  --color-dark-surface-variant: #1e293b;
+  /* Dark Mode Overrides */
+  --color-dark-bg: #030816;
+  --color-dark-surface: #071B3A;
+  --color-dark-surface-variant: #0f2a50;
   --color-dark-on-surface: #f8fafc;
   --color-dark-on-surface-variant: #94a3b8;
-  --color-dark-primary: #38bdf8;
+  --color-dark-primary: #D4AF37;
   --color-dark-secondary: #60a5fa;
 
   /* Typography */
-  --font-headline: "Manrope", sans-serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
-  --font-display: "Playfair Display", serif; /* For luxury headers */
+  --font-headline: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-display: "Playfair Display", serif; /* Truly elegant headers */
 
   /* Fluid Spacing & Sizing */
   --radius-3xl: 1.5rem;
@@ -43,7 +43,7 @@
   --radius-6xl: 4rem;
   
   /* Animations */
-  --animate-fade-in-up: fade-in-up 0.6s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-float: float 6s ease-in-out infinite;
   --animate-slide-in-right: slide-in-right 0.3s ease-out forwards;
   --animate-shimmer: shimmer 2s infinite linear;

@@ -3,11 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BottomNav from '../components/BottomNav';
-import { 
-    Send, Mail, Phone, MapPin, Sparkles, 
-    MessageCircle, CheckCircle2, Globe, Clock,
-    ChevronRight, ExternalLink
-} from 'lucide-react';
+import { Send, Mail, Phone, MapPin, Sparkles, MessageCircle, CheckCircle2, Globe, Clock, ChevronRight, ExternalLink, ArrowRight } from 'lucide-react';
 
 export default function Contact() {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -20,180 +16,204 @@ export default function Contact() {
     };
 
     const contactInfo = [
-        { label: 'Cloud Mail', val: 'contact@opms.com', icon: Mail, path: 'mailto:contact@opms.com' },
-        { label: 'Hotline', val: '+91 98765 43210', icon: Phone, path: 'tel:+919876543210' },
-        { label: 'Nexus H.Q.', val: 'DB Mall, Arera Hills, Bhopal', icon: MapPin, path: '#' },
+        { label: 'Private Line', val: '+91 98765 43210', icon: Phone, path: 'tel:+919876543210' },
+        { label: 'Secure Mail', val: 'concierge@opms.com', icon: Mail, path: 'mailto:concierge@opms.com' },
+        { label: 'Nexus H.Q.', val: 'Arera Hills, Bhopal, India', icon: MapPin, path: '#' },
     ];
 
     return (
-        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen overflow-x-hidden">
+        <div className="bg-[#071B3A] text-white min-h-screen">
             <Navbar />
 
-            <main className="pt-32 pb-40 container-responsive space-y-20">
-                {/* Header Welcome */}
-                <div className="max-w-3xl space-y-6">
+            <main className="pt-32 pb-40">
+                {/* ─ Header Welcome ────────────────────────────────────────── */}
+                <section className="container-responsive py-24 space-y-10">
                     <motion.div 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 text-secondary rounded-full text-[10px] font-black uppercase tracking-widest"
+                        className="inline-flex items-center gap-3 px-6 py-2 bg-accent/10 border border-accent/20 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-lg"
                     >
                         <Sparkles className="w-3 h-3" />
-                        Access Global Support
+                        Concierge Services
                     </motion.div>
-                    <h1 className="font-headline font-black text-5xl sm:text-8xl text-primary dark:text-white tracking-tighter leading-[0.9] italic">
-                        Initiate <span className="text-secondary">Communication</span>
-                    </h1>
-                    <p className="text-on-surface-variant dark:text-white/40 text-xl font-medium leading-relaxed">
-                        Our elite advisory team is standing by to facilitate your next high-stakes property acquisition in Central India's premier markets.
-                    </p>
-                </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
+                        <div className="space-y-6">
+                            <h1 className="font-headline font-black text-6xl sm:text-9xl tracking-tighter leading-[0.85] uppercase">
+                                Initiate <br />
+                                <span className="font-display italic text-gold-gradient lowercase tracking-normal">Communication</span>
+                            </h1>
+                        </div>
+                        <div className="max-w-xl pb-4">
+                            <p className="text-white/40 text-xl font-medium leading-relaxed">
+                                Our elite advisory team is prepared to facilitate your next high-stakes property acquisition in Central India's most exclusive markets.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-                    {/* Connection Node */}
-                    <div className="lg:col-span-5 space-y-12">
-                        <section className="space-y-8">
+                <div className="container-responsive grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+                    {/* Information Cluster */}
+                    <div className="lg:col-span-5 space-y-16">
+                        <section className="space-y-10">
                             {contactInfo.map((item, i) => (
                                 <motion.a 
                                     key={i}
                                     href={item.path}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
+                                    initial={{ opacity: 0, x: -30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="flex items-center gap-6 group hover:translate-x-2 transition-all"
+                                    className="flex items-center gap-8 group"
                                 >
-                                    <div className="w-16 h-16 bg-white dark:bg-dark-surface-variant rounded-[2rem] flex items-center justify-center text-primary dark:text-white shadow-xl group-hover:bg-primary group-hover:text-white transition-all ring-1 ring-surface-variant dark:ring-dark-surface-variant/20">
-                                        <item.icon className="w-6 h-6" />
+                                    <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[2.5rem] flex items-center justify-center text-accent shadow-2xl group-hover:bg-accent group-hover:text-primary transition-all duration-500">
+                                        <item.icon className="w-8 h-8" />
                                     </div>
-                                    <div className="space-y-0.5">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 leading-none">{item.label}</p>
-                                        <p className="text-xl font-black text-primary dark:text-white tracking-tight">{item.val}</p>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 leading-none">{item.label}</p>
+                                        <p className="text-2xl font-headline font-black text-white tracking-tight uppercase">{item.val}</p>
                                     </div>
                                 </motion.a>
                             ))}
                         </section>
 
-                        <section className="bg-primary space-y-8 p-10 rounded-[4rem] text-white shadow-2xl relative overflow-hidden group">
-                           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000" />
-                           <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-secondary">
-                               <Clock className="w-4 h-4" />
-                               Availability Node
+                        {/* Availability Node */}
+                        <section className="bg-gold-gradient p-12 rounded-[4rem] text-primary shadow-2xl relative overflow-hidden group">
+                           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-white/20 transition-all duration-1000" />
+                           <div className="relative z-10 space-y-8">
+                               <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-primary/60">
+                                   <Clock className="w-4 h-4" />
+                                   Operational Window
+                               </div>
+                               <h3 className="text-5xl font-headline font-black uppercase tracking-tighter leading-none">Mon - Sat <br/> 09:00 - 21:00</h3>
+                               <p className="text-primary/60 font-black text-[10px] uppercase tracking-widest italic">Live concierge support active during these hours.</p>
                            </div>
-                           <h3 className="text-3xl font-black italic tracking-tighter leading-tight">Mon-Sat<br/>09:00 - 21:00 IST</h3>
-                           <button className="w-full py-5 bg-white text-primary rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-secondary hover:text-white transition-all shadow-xl flex items-center justify-center gap-3">
-                               <Globe className="w-4 h-4" />
-                               International Inquiries
-                           </button>
                         </section>
                     </div>
 
                     {/* Inquiry Terminal */}
                     <div className="lg:col-span-7">
-                        <div className="bg-white dark:bg-dark-surface-variant p-8 sm:p-16 rounded-[4rem] border border-surface-variant dark:border-dark-surface-variant/20 shadow-3xl relative">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            className="bg-white/5 backdrop-blur-3xl p-10 sm:p-20 rounded-[5rem] border border-white/10 shadow-3xl relative overflow-hidden"
+                        >
+                            {/* Decorative element */}
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gold-gradient opacity-20" />
+
                             <AnimatePresence mode="wait">
                                 {sent ? (
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
-                                        className="py-20 text-center space-y-8"
+                                        className="py-20 text-center space-y-10"
                                     >
-                                        <div className="w-24 h-24 bg-secondary/10 rounded-[2.5rem] flex items-center justify-center mx-auto text-secondary scale-110">
-                                            <CheckCircle2 className="w-12 h-12" />
+                                        <div className="w-28 h-28 bg-accent/20 rounded-[3rem] flex items-center justify-center mx-auto text-accent scale-110 shadow-2xl">
+                                            <CheckCircle2 className="w-14 h-14" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <h3 className="text-3xl font-black text-primary dark:text-white tracking-tight uppercase">Transmission Success</h3>
-                                            <p className="text-on-surface-variant dark:text-white/40 font-bold max-w-xs mx-auto">Your dossier has been routed to the appropriate department. Stay alert for our response.</p>
+                                        <div className="space-y-4">
+                                            <h3 className="text-4xl font-headline font-black text-white tracking-tight uppercase">Dossier Received</h3>
+                                            <p className="text-white/40 font-medium text-lg max-w-xs mx-auto">Your inquiry has been routed to our lead advisors. Expect a secure transmission shortly.</p>
                                         </div>
                                     </motion.div>
                                 ) : (
-                                    <form onSubmit={handleSubmit} className="space-y-8">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Originator</label>
+                                    <form onSubmit={handleSubmit} className="space-y-12">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                                            <div className="space-y-3">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Identificator</label>
                                                 <input
                                                     type="text"
                                                     required
-                                                    className="w-full bg-primary/5 dark:bg-white/5 border-none rounded-3xl px-8 py-5 font-bold text-primary dark:text-white outline-none focus:ring-4 ring-secondary/5 transition-all"
-                                                    placeholder="Full Identity Name"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                    placeholder="Full Private Name"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                                                 />
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Digital Link</label>
+                                            <div className="space-y-3">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Digital Link</label>
                                                 <input
                                                     type="email"
                                                     required
-                                                    className="w-full bg-primary/5 dark:bg-white/5 border-none rounded-3xl px-8 py-5 font-bold text-primary dark:text-white outline-none focus:ring-4 ring-secondary/5 transition-all"
-                                                    placeholder="name@domain.com"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                    placeholder="Your Secure Email"
                                                     value={formData.email}
                                                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                                                 />
                                             </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Subject Protocol</label>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Subject Protocol</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-primary/5 dark:bg-white/5 border-none rounded-3xl px-8 py-5 font-bold text-primary dark:text-white outline-none focus:ring-4 ring-secondary/5 transition-all"
-                                                placeholder="Interested in Estate XYZ"
+                                                className="w-full bg-white/5 border border-white/10 rounded-full px-10 py-6 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10"
+                                                placeholder="Asset Interest | Investment Inquiry"
                                                 value={formData.subject}
                                                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Briefing</label>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-6">Detailed Briefing</label>
                                             <textarea
                                                 rows={5}
-                                                className="w-full bg-primary/5 dark:bg-white/5 border-none rounded-[3rem] px-8 py-7 font-bold text-primary dark:text-white outline-none focus:ring-4 ring-secondary/5 transition-all resize-none"
-                                                placeholder="Provide depth for your inquiry..."
+                                                className="w-full bg-white/5 border border-white/10 rounded-[3rem] px-10 py-8 font-bold text-white outline-none focus:border-accent transition-all uppercase text-[11px] tracking-widest placeholder:text-white/10 resize-none"
+                                                placeholder="Specify asset preferences or partnership details..."
                                                 value={formData.message}
                                                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                                             />
                                         </div>
                                         <button
                                             type="submit"
-                                            className="w-full bg-primary dark:bg-dark-primary text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:bg-secondary transition-all shadow-3xl flex items-center justify-center gap-4 group active:scale-95"
+                                            className="w-full bg-gold-gradient text-primary py-8 rounded-full font-black uppercase tracking-[0.5em] text-[11px] shadow-2xl hover:scale-[1.02] active:scale-98 transition-all flex items-center justify-center gap-6 group"
                                         >
-                                            <span>Transmit Inquiry</span>
-                                            <Send className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                                            Transmit Securely
+                                            <Send className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                                         </button>
                                     </form>
                                 )}
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
 
-                <section className="pt-12">
-                     <div className="bg-white dark:bg-dark-surface-variant p-4 rounded-[4.5rem] border border-surface-variant dark:border-dark-surface-variant/20 shadow-3xl overflow-hidden">
-                        <div className="w-full h-80 sm:h-[600px] rounded-[3.5rem] overflow-hidden relative border border-surface-variant/20">
+                {/* Map Interface */}
+                <section className="container-responsive pt-40">
+                     <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="bg-white/5 p-4 rounded-[6rem] border border-white/10 shadow-3xl overflow-hidden"
+                    >
+                        <div className="w-full h-[600px] rounded-[5rem] overflow-hidden relative border border-white/10">
                             <iframe 
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3666.216654763198!2d77.42875137532057!3d23.235171779024095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c4268e31ba061%3A0xe2125712f6a73c1c!2sDB%20City%20Mall!5e0!3m2!1sen!2sin!4v1717430000000!5m2!1sen!2sin" 
-                                className="w-full h-full grayscale active:grayscale-0 transition-all duration-700"
+                                className="w-full h-full grayscale invert opacity-60 contrast-125 transition-all duration-1000 group-hover:opacity-100"
                                 style={{ border: 0 }} 
                                 allowFullScreen="" 
                                 loading="lazy" 
                                 referrerPolicy="no-referrer-when-downgrade"
                             ></iframe>
                             
-                            <div className="absolute bottom-10 left-10 right-10 bg-white/90 dark:bg-dark-surface/90 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-3xl pointer-events-none hidden md:flex items-center justify-between">
-                                <div className="flex items-center gap-6">
-                                    <div className="w-12 h-12 bg-primary dark:bg-accent rounded-2xl flex items-center justify-center text-white">
-                                        <MapPin className="w-6 h-6" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#071B3A] via-transparent to-[#071B3A]/20 pointer-events-none" />
+
+                            <div className="absolute bottom-16 left-16 right-16 grid grid-cols-1 md:grid-cols-3 gap-10 pointer-events-none">
+                                <div className="md:col-span-2 bg-[#071B3A]/80 backdrop-blur-2xl p-10 rounded-[3rem] border border-white/20 shadow-3xl flex items-center gap-8">
+                                    <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center text-primary shadow-2xl">
+                                        <MapPin className="w-7 h-7" />
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase text-primary/40 dark:text-white/20 tracking-widest">Office HQ</p>
-                                        <p className="text-xl font-black text-primary dark:text-white tracking-tight">Main Atrium, DB City Mall, Bhopal, MP 462011</p>
+                                        <p className="text-[10px] font-black uppercase text-accent tracking-[0.4em]">Operations Center</p>
+                                        <p className="text-3xl font-headline font-black text-white tracking-tight uppercase">Arera Hills, Bhopal, India 462011</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Status</p>
-                                    <p className="text-xl font-black text-primary dark:text-white tracking-tight">Live Operations</p>
+                                <div className="bg-gold-gradient p-10 rounded-[3rem] shadow-3xl flex items-center justify-center text-primary">
+                                    <div className="text-center">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Status</p>
+                                        <p className="text-3xl font-headline font-black uppercase tracking-widest">Live</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                     </div>
+                     </motion.div>
                 </section>
             </main>
 
