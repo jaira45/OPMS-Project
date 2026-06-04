@@ -71,10 +71,10 @@
 
 @layer base {
   :root {
-    /* Fluid Typography Scale — Phase 1 */
-    --text-hero: clamp(48px, 6vw, 88px);
-    --text-section: clamp(36px, 4vw, 64px);
-    --text-card: clamp(22px, 3vw, 36px);
+    /* Fluid Typography Scale — Luxury 10/10 Standard */
+    --text-hero: clamp(72px, 8vw, 96px);
+    --text-section: clamp(48px, 5vw, 64px);
+    --text-card: clamp(24px, 3vw, 32px);
     
     --text-xs: 0.75rem;     /* 12px */
     --text-sm: 0.875rem;    /* 14px */
@@ -82,16 +82,15 @@
     --text-lg: 1.125rem;    /* 18px */
     --text-xl: 1.25rem;     /* 20px */
     --text-2xl: 1.5rem;     /* 24px */
-    --text-3xl: 1.875rem;   /* 30px */
-    --text-4xl: 2.25rem;    /* 36px */
-    --text-5xl: 3rem;       /* 48px */
-    --text-6xl: 3.75rem;    /* 60px */
+    --text-3xl: 2rem;       /* 32px */
+    --text-4xl: 3rem;       /* 48px */
+    --text-5xl: 4rem;       /* 64px */
 
-    /* Standardized Spacing Scale — Phase 9 */
-    --space-section: clamp(80px, 12vw, 120px);
-    --space-content: clamp(40px, 8vw, 60px);
-    --space-card: clamp(24px, 4vw, 40px);
-    --space-gap: clamp(20px, 3vw, 32px);
+    /* Standardized Spacing Scale — Elite Proportions */
+    --space-section: 120px;
+    --space-content: 80px;
+    --space-card: 40px;
+    --space-gap: 32px;
   }
 
   *, *::before, *::after {
@@ -107,57 +106,53 @@
 
   body {
     @apply bg-background text-on-surface font-body antialiased;
-    font-size: 16px; /* Default body size */
-    font-weight: 400; /* Normal readable weight */
-    line-height: 1.6; /* Phase 1 requirement */
+    font-size: 18px; /* Standard luxury readability */
+    font-weight: 400;
+    line-height: 1.7; /* Increased for premium breathability */
     word-break: normal;
-    overflow-wrap: break-word; /* Phase 2 requirement */
-    overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-wrap: anywhere; 
+    hyphens: none;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
-    line-height: 1.1;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
   }
 
   /* Specific Scale Mappings */
   .hero-heading {
     font-size: var(--text-hero);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.04em;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
   }
 
   .section-heading {
     font-size: var(--text-section);
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   .card-heading {
     font-size: var(--text-card);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
   }
 
   .body-text {
     font-size: clamp(16px, 1.1vw, 18px);
     font-weight: 400;
-    line-height: 1.6;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .label-link {
     font-size: clamp(12px, 0.8vw, 14px);
     font-weight: 600;
     letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  /* Remove default button & input tap highlighting */
-  button, input, select, textarea {
-    -webkit-appearance: none;
-    appearance: none;
   }
 }
 
@@ -183,70 +178,8 @@
     @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
 
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .responsive-padding {
-    @apply px-4 sm:px-8 md:px-12 lg:px-24;
-  }
-
   .container-responsive {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  /* Hide scrollbar but keep scrollability */
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Safe area padding for iOS devices with notches */
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 1.5rem);
-  }
-
-  /* Touch-friendly tap areas */
-  .tap-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Prevent text selection on interactive elements */
-  .no-select {
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  /* Smooth momentum scrolling for iOS */
-  .scroll-smooth-ios {
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Line clamp utilities */
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-  }
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-  }
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+    @apply max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16;
   }
 
   .text-gold-gradient {
@@ -255,5 +188,13 @@
 
   .bg-gold-gradient {
     @apply bg-gradient-to-r from-[#D4AF37] via-[#F9E076] to-[#D4AF37];
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

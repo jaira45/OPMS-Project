@@ -39,7 +39,7 @@ export default function Hero() {
             </div>
 
             {/* Hero Content Architecture */}
-            <div className="relative z-10 w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+            <div className="relative z-10 w-full max-w-[1920px] mx-auto px-6 sm:px-10 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
                 <div className="lg:col-span-8 xl:col-span-7 space-y-10 sm:space-y-12">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -47,7 +47,7 @@ export default function Hero() {
                         transition={{ duration: 0.8 }}
                         className="space-y-8"
                     >
-                        <div className="space-y-6">
+                        <div className="space-y-6 sm:space-y-10 max-w-5xl">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -57,7 +57,7 @@ export default function Hero() {
                                 <span className="text-[9px] font-bold uppercase tracking-widest">Premium Real Estate Platform</span>
                             </motion.div>
 
-                            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-headline font-bold text-white uppercase italic leading-[0.9] tracking-tight">
+                            <h1 className="hero-heading text-white tracking-tighter">
                                 <span className="block mb-2">Find Your</span>
                                 <span className="text-gold-gradient block lg:inline-block">Exclusive</span>
                                 <span className="block mt-2">Residence</span>

@@ -44,30 +44,30 @@ export default function Agents() {
 
             <main className="pt-24 sm:pt-32 pb-40">
                 {/* Agent Advisory Hero */}
-                <section className="container-responsive py-24 text-center space-y-12 sm:space-y-16 px-4">
+                <section className="container-responsive pt-16 pb-20 text-center space-y-12 px-4">
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-4 px-8 py-3 bg-accent/10 border border-accent/20 text-accent rounded-full text-[10px] font-bold uppercase tracking-widest shadow-2xl"
+                        className="inline-flex items-center gap-4 px-8 py-3 bg-white/5 backdrop-blur-2xl border border-white/10 text-accent rounded-full text-[11px] font-bold uppercase tracking-widest shadow-xl"
                     >
-                        <Award className="w-5 h-5" />
+                        <Award className="w-4 h-4" />
                         Certified Agent Network
                     </motion.div>
                     
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         <motion.h1 
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="font-headline font-bold text-6xl sm:text-8xl md:text-9xl tracking-tighter leading-[0.9] uppercase italic"
+                            className="hero-heading text-white tracking-tighter"
                         >
                             Expert <br />
-                            <span className="text-gold-gradient block lg:inline-block">Advisors</span>
+                            <span className="text-gold-gradient block lg:inline-block italic">Advisors</span>
                         </motion.h1>
                         <motion.p 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}
-                            className="text-white/50 font-medium text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed"
+                            className="body-text text-xl max-w-2xl mx-auto opacity-60"
                         >
                             Our team of certified professionals provides unparalleled expertise and local market knowledge for every transaction.
                         </motion.p>

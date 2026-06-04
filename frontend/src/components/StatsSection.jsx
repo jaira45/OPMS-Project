@@ -76,35 +76,33 @@ export default function StatsSection() {
                             transition={{ delay: i * 0.1, duration: 0.6 }}
                             className="relative group h-full"
                         >
-                            {/* Card Body */}
-                            <div className="bg-[#0A254D] border border-white/5 rounded-[2.5rem] card-padding h-full flex flex-col items-center text-center space-y-6 shadow-2xl transition-all duration-500 group-hover:border-accent/30 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                                
-                                {/* Icon Container */}
-                                <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:scale-110 transition-all duration-500">
-                                    <stat.icon className="w-7 h-7 text-accent group-hover:text-primary transition-colors duration-500" />
-                                </div>
-                                
-                                <div className="space-y-2">
-                                    <h3 className="text-5xl font-headline font-bold text-white tracking-tighter flex items-center justify-center gap-1 italic">
-                                        <CountUp end={stat.value} />
-                                        <span className="text-2xl text-accent font-bold not-italic">{stat.suffix}</span>
-                                    </h3>
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40 group-hover:text-white transition-colors duration-500">
-                                        {stat.label}
-                                    </p>
-                                </div>
-
-                                {/* Progress Line Overlay */}
-                                <div className="absolute bottom-6 left-10 right-10 h-[1px] bg-white/5 overflow-hidden">
-                                    <motion.div 
-                                        initial={{ x: "-100%" }}
-                                        whileInView={{ x: "100%" }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.2, duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
-                                        className="w-20 h-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-40"
-                                    />
-                                </div>
+                        <div className="bg-[#0A254D] border border-white/5 rounded-[2.5rem] p-10 sm:p-14 h-full flex flex-col items-center text-center space-y-8 shadow-2xl transition-all duration-700 group-hover:border-accent/30 group-hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)] group-hover:-translate-y-2">
+                            {/* Icon */}
+                            <div className="w-20 h-20 rounded-[1.5rem] bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:scale-110 transition-all duration-700 shadow-lg">
+                                <stat.icon className="w-9 h-9 text-accent group-hover:text-primary transition-colors duration-500" />
                             </div>
+
+                            <div className="space-y-3">
+                                <h3 className="text-5xl sm:text-6xl font-headline font-bold text-white tracking-tighter flex items-center justify-center gap-1">
+                                    <CountUp end={stat.value} />
+                                    <span className="text-xl text-accent font-bold">{stat.suffix}</span>
+                                </h3>
+                                <p className="label-link text-white/40 group-hover:text-white/70 transition-colors duration-500">
+                                    {stat.label}
+                                </p>
+                            </div>
+
+                            {/* Progress Line */}
+                            <div className="absolute bottom-6 left-10 right-10 h-px bg-white/5 overflow-hidden">
+                                <motion.div
+                                    initial={{ x: "-100%" }}
+                                    whileInView={{ x: "100%" }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.2, duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
+                                    className="w-20 h-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-40"
+                                />
+                            </div>
+                        </div>
 
                             {/* Background Number Decal (Subtle) */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[120px] font-black text-white/[0.02] pointer-events-none select-none z-0">

@@ -70,28 +70,32 @@ export default function HomeScreen() {
 
                     <div className="container-responsive space-y-12 sm:space-y-16">
                         {/* Section Header */}
-                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b border-white/5 pb-10">
+                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b border-white/5 pb-12">
                             <div className="space-y-6">
                                 <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
-                                    className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full"
+                                    className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full text-[11px] font-bold uppercase tracking-widest"
                                 >
-                                    <Sparkles className="w-4 h-4 text-accent" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest">Premier Selections</span>
+                                    <Sparkles className="w-3.5 h-3.5 text-accent" />
+                                    Premier Selections
                                 </motion.div>
-                                <h2 className="text-4xl sm:text-6xl font-headline font-bold text-white uppercase italic leading-none">
-                                    Featured <span className="text-gold-gradient block lg:inline">Properties</span>
-                                </h2>
+                                <motion.h2
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    className="section-heading text-white"
+                                >
+                                    Featured <span className="text-gold-gradient italic">Properties</span>
+                                </motion.h2>
                             </div>
 
                             <div className="flex flex-col md:flex-row items-start md:items-center gap-8 w-full lg:w-auto">
                                 <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 shadow-xl overflow-x-auto no-scrollbar w-full md:w-auto">
-                                    {['ALL PROPERTIES', 'BUY', 'RENT', 'LUXURY'].map((cat) => (
+                                    {['All Properties', 'Buy', 'Rent', 'Luxury'].map((cat) => (
                                         <button
                                             key={cat}
-                                            onClick={() => setActiveCollection(cat)}
-                                            className={`px-6 sm:px-8 py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase whitespace-nowrap transition-all duration-500 ${activeCollection === cat ? 'bg-gold-gradient text-primary shadow-lg' : 'text-white/40 hover:text-white'}`}
+                                            onClick={() => setActiveCollection(cat.toUpperCase() === 'ALL PROPERTIES' ? 'ALL PROPERTIES' : cat.toUpperCase())}
+                                            className={`px-6 sm:px-10 py-3.5 rounded-xl text-[11px] font-bold tracking-widest uppercase whitespace-nowrap transition-all duration-500 ${activeCollection === cat.toUpperCase() || activeCollection === 'ALL PROPERTIES' && cat === 'All Properties' ? 'bg-gold-gradient text-primary shadow-lg' : 'text-white/40 hover:text-white'}`}
                                         >
                                             {cat}
                                         </button>
@@ -99,8 +103,8 @@ export default function HomeScreen() {
                                 </div>
 
                                 <button className="flex items-center gap-4 text-white/50 hover:text-white transition-all group" onClick={() => navigate('/property')}>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest">View All</span>
-                                    <div className="w-11 h-11 rounded-xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all">
+                                    <span className="label-link">View All</span>
+                                    <div className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all">
                                         <ArrowRight className="w-5 h-5" />
                                     </div>
                                 </button>

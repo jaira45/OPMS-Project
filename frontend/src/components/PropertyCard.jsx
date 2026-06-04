@@ -27,15 +27,15 @@ export default function PropertyCard({ property }) {
                 />
                 
                 {/* Status Badges */}
-                <div className="absolute top-5 left-5 flex flex-wrap gap-2">
+                <div className="absolute top-6 left-6 flex flex-wrap gap-2">
                     <div className="bg-[#071B3A]/90 backdrop-blur-xl px-4 py-2 rounded-xl flex items-center gap-2 shadow-2xl border border-white/5">
-                        <ShieldCheck className="w-3 h-3 text-accent" />
-                        <span className="text-[8px] font-bold text-white uppercase tracking-widest italic">Verified</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+                        <span className="label-link text-white font-bold opacity-80">Verified</span>
                     </div>
                     {property.isFeatured && (
                         <div className="bg-gold-gradient px-4 py-2 rounded-xl flex items-center gap-2 shadow-2xl border border-white/10">
-                            <Sparkles className="w-3 h-3 text-primary" />
-                            <span className="text-[8px] font-bold text-primary uppercase tracking-widest italic">Elite</span>
+                            <Sparkles className="w-3.5 h-3.5 text-primary" />
+                            <span className="label-link text-primary font-bold">Elite</span>
                         </div>
                     )}
                 </div>
@@ -63,35 +63,35 @@ export default function PropertyCard({ property }) {
             </div>
 
             {/* ─ Asset Intelligence ──────────────────────────────────────── */}
-            <div className="px-4 pb-4 space-y-4">
-                <div className="space-y-1">
+            <div className="px-6 pb-6 space-y-5">
+                <div className="space-y-2">
                     <div className="flex justify-between items-start gap-4">
-                        <h3 className="card-heading text-lg text-primary dark:text-white tracking-tight leading-tight truncate flex-1 group-hover:text-accent transition-colors">
+                        <h3 className="card-heading text-primary dark:text-white group-hover:text-accent transition-colors">
                             {property.title}
                         </h3>
-                        <p className="font-headline font-bold text-xl text-primary dark:text-white whitespace-nowrap">
+                        <p className="font-headline font-bold text-2xl text-primary dark:text-white whitespace-nowrap">
                             ₹ {property.price.toLocaleString()}
-                            {property.category === 'rent' && <span className="text-xs font-normal opacity-60 ml-1">/mo</span>}
+                            {property.category === 'rent' && <span className="text-sm font-normal opacity-60 ml-1">/mo</span>}
                         </p>
                     </div>
                     <div className="flex items-center gap-2 text-slate-500 dark:text-white/40">
-                        <MapPin className="w-3.5 h-3.5 text-accent" />
-                        <span className="text-xs font-medium truncate">{property.location}</span>
+                        <MapPin className="w-4 h-4 text-accent" />
+                        <span className="text-sm font-medium truncate">{property.location}</span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-6 pt-4 border-t border-slate-100 dark:border-white/5">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary dark:text-white">{property.bedrooms || 3}</span>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Beds</span>
+                <div className="flex items-center gap-8 pt-6 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-primary dark:text-white">{property.bedrooms || 3}</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Beds</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary dark:text-white">{property.bathrooms || 2}</span>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Baths</span>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-primary dark:text-white">{property.bathrooms || 2}</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Baths</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary dark:text-white">{property.area || 2400}</span>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Sqft</span>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-primary dark:text-white">{property.area || 2400}</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Sqft</span>
                     </div>
                 </div>
             </div>

@@ -21,56 +21,56 @@ export default function About() {
         <div className="bg-[#071B3A] text-white min-h-screen overflow-x-hidden">
             <Navbar />
             
-            <main className="pt-24 sm:pt-32 pb-0 space-y-24 sm:space-y-32 px-4">
+            <main className="pt-32 pb-0">
                 {/* Hero Section */}
-                <section className="container-responsive text-center space-y-12 relative py-20">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-accent/5 blur-[150px] rounded-full pointer-events-none" />
+                <section className="container-responsive text-center space-y-16 relative py-32 section-padding px-6">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-accent/[0.03] blur-[180px] rounded-full pointer-events-none" />
                     
                     <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        className="space-y-10 relative z-10"
+                        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="space-y-12 relative z-10"
                     >
-                        <span className="inline-flex items-center gap-3 px-8 py-3 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-bold uppercase tracking-widest italic">
-                            <Building2 className="w-4 h-4" />
-                            Founded in 2025
-                        </span>
-                        <h1 className="text-6xl sm:text-8xl md:text-9xl font-headline font-bold text-white tracking-widest leading-[0.9] uppercase italic">
+                        <div className="inline-flex items-center gap-4 px-10 py-4 bg-white/5 backdrop-blur-3xl border border-white/10 text-accent rounded-full text-[12px] font-bold uppercase tracking-[0.4em] italic shadow-2xl">
+                            <Building2 className="w-5 h-5" />
+                            Established 2025
+                        </div>
+                        <h1 className="hero-heading text-white tracking-tighter leading-[0.85]">
                             Real Estate <br />
                             <span className="text-gold-gradient block lg:inline-block">Excellence</span>
                         </h1>
                     </motion.div>
-                    <p className="text-white/50 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed font-medium italic px-4">
-                        OPMS is a premium real estate platform dedicated to providing the finest property listings and expert advisory services in Central India.
+                    <p className="body-text text-xl sm:text-2xl max-w-4xl mx-auto italic px-6 opacity-60">
+                        OPMS is a premier real estate platform dedicated to providing the finest property listings and expert advisory services in Central India.
                     </p>
                 </section>
 
-                {/* Mission & Vision */}
-                <section className="container-responsive grid grid-cols-1 lg:grid-cols-2 gap-12">
+                {/* Mission & Vision — Expansive Focal Points */}
+                <section className="container-responsive grid grid-cols-1 lg:grid-cols-2 gap-16 section-padding px-6">
                     <motion.div 
-                        whileHover={{ y: -10 }}
-                        className="bg-white/[0.03] backdrop-blur-3xl p-10 sm:p-16 rounded-[3rem] text-white shadow-2xl space-y-8 relative overflow-hidden group border border-white/10 transition-all duration-500"
+                        whileHover={{ y: -15 }}
+                        className="bg-white/[0.02] backdrop-blur-3xl p-16 sm:p-24 rounded-[4rem] text-white shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)] space-y-12 relative overflow-hidden group border border-white/5 transition-all duration-700"
                     >
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gold-gradient opacity-20" />
-                        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-accent ring-2 ring-white/10 group-hover:rotate-6 transition-all">
-                            <Target className="w-8 h-8" />
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gold-gradient opacity-20" />
+                        <div className="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center text-accent ring-1 ring-white/10 group-hover:rotate-12 transition-all duration-700 shadow-2xl">
+                            <Target className="w-12 h-12" />
                         </div>
-                        <h2 className="text-4xl sm:text-5xl font-headline font-bold italic tracking-tight uppercase leading-none">Our Mission</h2>
-                        <p className="text-base sm:text-lg text-white/40 font-bold leading-relaxed">
+                        <h2 className="section-heading italic leading-none">Our Mission</h2>
+                        <p className="body-text text-xl sm:text-2xl font-medium leading-relaxed opacity-40 group-hover:opacity-60 transition-opacity">
                             To create a transparent and modern real estate ecosystem that empowers clients with direct access to quality properties and certified professional advisors.
                         </p>
                     </motion.div>
 
                     <motion.div 
-                        whileHover={{ y: -10 }}
-                        className="bg-gold-gradient p-10 sm:p-16 rounded-[3rem] text-[#071B3A] shadow-2xl space-y-8 relative overflow-hidden group transition-all duration-500"
+                        whileHover={{ y: -15 }}
+                        className="bg-gold-gradient p-16 sm:p-24 rounded-[4rem] text-[#071B3A] shadow-3xl space-y-12 relative overflow-hidden group transition-all duration-700"
                     >
-                        <div className="w-16 h-16 bg-[#071B3A]/10 rounded-2xl flex items-center justify-center text-[#071B3A] ring-2 ring-[#071B3A]/20 group-hover:-rotate-6 transition-all">
-                            <Eye className="w-8 h-8" />
+                        <div className="w-24 h-24 bg-[#071B3A]/5 rounded-[2rem] flex items-center justify-center text-[#071B3A] ring-1 ring-[#071B3A]/10 group-hover:-rotate-12 transition-all duration-700 shadow-2xl">
+                            <Eye className="w-12 h-12" />
                         </div>
-                        <h2 className="text-4xl sm:text-5xl font-headline font-bold italic tracking-tight uppercase leading-none">Our Vision</h2>
-                        <p className="text-base sm:text-lg text-[#071B3A]/60 font-bold leading-relaxed">
+                        <h2 className="section-heading italic leading-none">Our Vision</h2>
+                        <p className="text-[#071B3A]/60 text-xl sm:text-2xl font-bold leading-relaxed tracking-tight">
                             To become the definitive standard for high-end real estate service, defined by integrity, innovation, and exceptional customer results.
                         </p>
                     </motion.div>

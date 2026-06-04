@@ -39,17 +39,17 @@ export default function NewsSection() {
                         <motion.div 
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-bold uppercase tracking-[0.2em]"
+                            className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full text-[11px] font-bold uppercase tracking-widest"
                         >
                             <Sparkles className="w-4 h-4" />
                             Market Insights
                         </motion.div>
-                        <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest uppercase italic leading-[1]">
-                            Market <br/><span className="text-gold-gradient block">Insights</span>
+                        <h2 className="section-heading text-white">
+                            Market <br/><span className="text-gold-gradient italic block">Insights</span>
                         </h2>
                     </div>
                     <button className="flex items-center gap-4 text-white/40 hover:text-white transition-all group">
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Explore Archive</span>
+                        <span className="label-link">Explore Archive</span>
                         <div className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all">
                             <ArrowRight className="w-5 h-5" />
                         </div>
@@ -93,10 +93,10 @@ export default function NewsSection() {
                                 </div>
 
                                 <div className="space-y-4 flex-1">
-                                    <h3 className="text-xl sm:text-2xl font-headline font-bold text-white leading-tight uppercase italic group-hover:text-accent transition-colors duration-500 line-clamp-2">
+                                    <h3 className="text-lg sm:text-xl font-semibold text-white leading-snug group-hover:text-accent transition-colors duration-500 line-clamp-2" style={{overflowWrap:'break-word', hyphens:'none'}}>
                                         {news.title}
                                     </h3>
-                                    <p className="text-white/40 text-sm font-medium leading-relaxed line-clamp-2">
+                                    <p className="text-white/40 text-sm font-normal leading-[1.7] line-clamp-2">
                                         {news.excerpt}
                                     </p>
                                 </div>

@@ -54,12 +54,12 @@ export default function Testimonials() {
                         Client Reviews
                     </motion.div>
                     
-                    <div className="space-y-4">
-                        <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest leading-[1] uppercase italic">
+                    <div className="space-y-6">
+                        <h2 className="section-heading text-white">
                             Trusted <br />
-                            <span className="text-gold-gradient block">Experiences</span>
+                            <span className="text-gold-gradient block italic">Experiences</span>
                         </h2>
-                        <p className="text-white/40 text-lg sm:text-xl font-medium max-w-xl mx-auto lg:mx-0">
+                        <p className="body-text text-lg sm:text-xl max-w-xl mx-auto lg:mx-0 italic opacity-60">
                             Our commitment to excellence reflected through the words of our esteemed clients and investors.
                         </p>
                     </div>
@@ -88,14 +88,14 @@ export default function Testimonials() {
                             <Quote className="absolute top-12 right-12 w-24 h-24 text-white/[0.03] group-hover:text-accent/[0.05] transition-colors duration-700" />
                             
                             <div className="space-y-10 relative z-10">
-                                <div className="flex gap-1.5 text-accent">
+                                <div className="flex gap-2 text-accent">
                                     {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
                                         <Star key={i} className="w-5 h-5 fill-current" />
                                     ))}
                                 </div>
                                 
-                                <p className="text-xl sm:text-2xl font-headline font-bold text-white leading-relaxed italic tracking-tight uppercase">
-                                    "{testimonials[currentIndex].text}"
+                                <p className="text-xl sm:text-2xl font-medium text-white/80 leading-[1.75] italic tracking-normal">
+                                    &ldquo;{testimonials[currentIndex].text}&rdquo;
                                 </p>
 
                                 <div className="flex items-center gap-6 pt-10 border-t border-white/5">
@@ -111,9 +111,9 @@ export default function Testimonials() {
                                             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
                                         </div>
                                     </div>
-                                    <div className="space-y-1">
-                                        <h4 className="font-headline font-bold text-white text-xl tracking-tight uppercase italic">{testimonials[currentIndex].name}</h4>
-                                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#D4AF37]/60">{testimonials[currentIndex].role}</p>
+                                    <div className="space-y-2">
+                                        <h4 className="font-headline font-semibold text-white text-xl tracking-tight">{testimonials[currentIndex].name}</h4>
+                                        <p className="label-link text-[#D4AF37]/60">{testimonials[currentIndex].role}</p>
                                     </div>
                                 </div>
                             </div>

@@ -54,27 +54,27 @@ export default function TrustSection() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                     {pillars.map((pillar, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1, duration: 0.6 }}
-                            className="group relative bg-[#0A254D] border border-white/5 p-8 sm:p-10 rounded-[2.5rem] hover:border-accent/20 transition-all duration-700 flex flex-col gap-8 shadow-2xl overflow-hidden"
+                            className="group relative bg-[#0A254D] border border-white/5 p-10 sm:p-12 rounded-[2.5rem] hover:border-accent/20 transition-all duration-700 flex flex-col gap-8 shadow-xl overflow-hidden min-w-0"
                         >
                             {/* Card Accent */}
                             <div className="absolute top-0 left-0 w-full h-1 bg-gold-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                             
-                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-accent/40 group-hover:bg-gold-gradient group-hover:text-primary transition-all duration-700 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                                <pillar.icon className="w-8 h-8" />
+                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-accent/50 group-hover:bg-gold-gradient group-hover:text-primary transition-all duration-700 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] shrink-0">
+                                <pillar.icon className="w-7 h-7" />
                             </div>
                             
-                            <div className="space-y-4">
-                                <h3 className="text-2xl font-headline font-bold text-white uppercase italic tracking-tight leading-none group-hover:text-accent transition-colors duration-500">
+                            <div className="space-y-3 min-w-0">
+                                <h3 className="text-xl font-semibold text-white group-hover:text-accent transition-colors duration-500 leading-snug" style={{wordBreak:'normal', overflowWrap:'normal', hyphens:'none', whiteSpace:'normal'}}>
                                     {pillar.title}
                                 </h3>
-                                <p className="text-white/30 text-xs font-bold leading-relaxed tracking-wider uppercase group-hover:text-white/50 transition-colors duration-500">
+                                <p className="text-white/40 text-sm font-normal leading-[1.7] group-hover:text-white/60 transition-colors duration-500" style={{overflowWrap:'break-word', hyphens:'none'}}>
                                     {pillar.desc}
                                 </p>
                             </div>
