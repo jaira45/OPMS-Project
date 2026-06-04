@@ -65,8 +65,8 @@ export default function StatsSection() {
             {/* Ambient Background Light */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
             
-            <div className="container-responsive px-4 relative z-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 content-gap">
+            <div className="container-responsive relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                     {cards.map((stat, i) => (
                         <motion.div
                             key={i}
@@ -74,9 +74,9 @@ export default function StatsSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1, duration: 0.6 }}
-                            className="relative group h-full"
+                            className="relative group w-full"
                         >
-                        <div className="bg-[#0A254D] border border-white/5 rounded-[2.5rem] p-10 sm:p-14 h-full flex flex-col items-center text-center space-y-8 shadow-2xl transition-all duration-700 group-hover:border-accent/30 group-hover:shadow-[0_32px_80px_rgba(0,0,0,0.5)] group-hover:-translate-y-2">
+                        <div className="bg-[#0A254D] border border-white/10 rounded-[2.5rem] p-8 sm:p-14 flex flex-col items-center text-center space-y-6 sm:space-y-8 shadow-2xl transition-all duration-700 group-hover:border-accent/30 box-border">
                             {/* Icon */}
                             <div className="w-20 h-20 rounded-[1.5rem] bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:scale-110 transition-all duration-700 shadow-lg">
                                 <stat.icon className="w-9 h-9 text-accent group-hover:text-primary transition-colors duration-500" />
@@ -105,7 +105,7 @@ export default function StatsSection() {
                         </div>
 
                             {/* Background Number Decal (Subtle) */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[120px] font-black text-white/[0.02] pointer-events-none select-none z-0">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[80px] sm:text-[120px] font-black text-white/[0.02] pointer-events-none select-none z-0">
                                 {i + 1}
                             </div>
                         </motion.div>

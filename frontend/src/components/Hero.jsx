@@ -25,7 +25,7 @@ export default function Hero() {
     };
 
     return (
-        <section className="relative min-h-[700px] lg:h-screen lg:min-h-[850px] w-full overflow-hidden flex items-center pt-20 lg:pt-0">
+        <section className="relative min-h-[600px] lg:h-screen lg:min-h-[850px] w-full overflow-hidden flex items-center pt-24 lg:pt-0">
             {/* Hero Background */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <LazyImage

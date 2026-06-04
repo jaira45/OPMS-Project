@@ -36,8 +36,8 @@ export default function TrustSection() {
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent/[0.03] blur-[100px] rounded-full -mr-32 -mt-32" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/[0.03] blur-[100px] rounded-full -ml-32 -mb-32" />
 
-            <div className="container-responsive relative z-10 space-y-16">
-                <div className="flex flex-col items-center text-center space-y-6 max-w-3xl mx-auto">
+            <div className="container-responsive relative z-10 space-y-10 sm:space-y-16">
+                <div className="flex flex-col items-center text-center space-y-4 sm:space-y-6 max-w-3xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}

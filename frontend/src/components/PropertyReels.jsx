@@ -199,9 +199,9 @@ export default function PropertyReels() {
             <div className="flex flex-col lg:flex-row gap-10 items-center justify-center pt-4 px-4">
 
                 {/* ── Reel Player ──────────────────────────────────────────── */}
-                <div className="relative group/player">
+                <div className="relative group/player w-full flex justify-center">
                     {/* Phone frame */}
-                    <div className="relative w-[300px] sm:w-[340px] aspect-[9/16] rounded-[3rem] overflow-hidden shadow-[0_64px_128px_-24px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
+                    <div className="relative w-[min(90vw,340px)] aspect-[9/16] rounded-[3rem] overflow-hidden shadow-[0_64px_128px_-24px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
 
                         {/* ── Progress Bar ──────────────────────────────────── */}
                         <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/10 z-50">

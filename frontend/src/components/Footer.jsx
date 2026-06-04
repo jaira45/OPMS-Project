@@ -32,12 +32,12 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="bg-[#000a16] border-t border-white/5 pt-24 sm:pt-32 pb-16 relative overflow-hidden text-white/40 px-4">
+        <footer className="bg-[#000a16] border-t border-white/5 pt-16 sm:pt-32 pb-16 relative overflow-hidden text-white/40 px-4">
             {/* ─ Master Decorative Context ──────────────────────────────── */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
             <div className="absolute -bottom-64 -left-64 w-[600px] h-[600px] bg-accent/[0.03] rounded-full blur-[180px] pointer-events-none" />
             
-            <div className="container-responsive grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-24 relative z-10">
+            <div className="container-responsive grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-20 lg:gap-24 relative z-10">
                 {/* ─ Brand Identity Sector ───────────────────────────────── */}
                 <div className="space-y-10">
                     <div className="flex items-center gap-5 group cursor-pointer" onClick={() => navigate('/home')}>
@@ -122,10 +122,10 @@ export default function Footer() {
             </div>
 
             {/* ─ Legal Notice & Ownership ─────────────────────────── */}
-            <div className="container-responsive mt-24 sm:mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 relative">
-                <div className="space-y-3 text-center md:text-left">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/20 italic">&copy; {currentYear} OPMS Real Estate. Built for Professionalism.</p>
-                    <div className="flex flex-wrap justify-center md:justify-start gap-10 text-[9px] font-bold uppercase tracking-widest text-white/10">
+            <div className="container-responsive mt-16 sm:mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 relative">
+                <div className="space-y-4 text-center md:text-left">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/20 italic">&copy; {currentYear} OPMS Real Estate. Built for Professionalism.</p>
+                    <div className="flex flex-wrap justify-center md:justify-start gap-6 sm:gap-10 text-[10px] font-bold uppercase tracking-widest text-white/10">
                         <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
                         <a href="#" className="hover:text-accent transition-colors">Safety & Security</a>
                         <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>

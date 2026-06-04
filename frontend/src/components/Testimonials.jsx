@@ -41,10 +41,10 @@ export default function Testimonials() {
             {/* Background Ambient Light */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/[0.02] blur-[150px] rounded-full pointer-events-none" />
 
-            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
+            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
                 
                 {/* Text Content */}
-                <div className="lg:col-span-12 xl:col-span-5 space-y-10 text-center lg:text-left">
+                <div className="lg:col-span-12 xl:col-span-5 space-y-6 sm:space-y-10 text-center lg:text-left">
                     <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}

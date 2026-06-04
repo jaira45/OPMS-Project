@@ -38,7 +38,7 @@ export default function Navbar() {
                 initial={{ y: -120 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-[#071B3A]/95 backdrop-blur-3xl border-b border-white/5 py-4 shadow-2xl' : 'bg-transparent py-8'}`}
+                className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-[#071B3A]/95 backdrop-blur-3xl border-b border-white/5 py-2.5 sm:py-4 shadow-2xl' : 'bg-transparent py-4 sm:py-8'}`}
             >
                 <div className="max-w-[1700px] mx-auto px-6 sm:px-10 flex justify-between items-center">
                     {/* Brand Identity */}
