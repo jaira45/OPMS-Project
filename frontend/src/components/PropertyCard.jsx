@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MapPin, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { Heart, MapPin, ArrowUpRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LazyImage from './LazyImage';
 
@@ -15,11 +15,11 @@ export default function PropertyCard({ property }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ y: -12 }}
-            className="group bg-white dark:bg-dark-surface rounded-[2.5rem] p-3 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/5 cursor-pointer transition-all duration-700"
+            className="group bg-white dark:bg-dark-surface rounded-[2.5rem] p-3 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/5 cursor-pointer transition-all duration-700 flex flex-col h-full"
             onClick={() => navigate(`/property/${property._id}`)}
         >
             {/* ─ Media Container ────────────────────────────────────────── */}
-            <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 shadow-2xl">
+            <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 shadow-2xl shrink-0">
                 <LazyImage 
                     src={property.images?.[0] || property.coverImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6'} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]"
@@ -63,14 +63,14 @@ export default function PropertyCard({ property }) {
             </div>
 
             {/* ─ Asset Intelligence ──────────────────────────────────────── */}
-            <div className="px-6 pb-6 space-y-5">
-                <div className="space-y-2">
+            <div className="px-6 pb-6 flex flex-col flex-1">
+                <div className="space-y-4 flex-1">
                     <div className="flex justify-between items-start gap-4">
-                        <h3 className="card-heading text-primary dark:text-white group-hover:text-accent transition-colors">
+                        <h3 className="card-heading text-primary dark:text-white group-hover:text-accent transition-colors line-clamp-2 flex-1 min-w-0" style={{ wordBreak: 'normal', overflowWrap: 'break-word' }}>
                             {property.title}
                         </h3>
-                        <p className="font-headline font-bold text-2xl text-primary dark:text-white whitespace-nowrap">
-                            ₹ {property.price.toLocaleString()}
+                        <p className="font-headline font-bold text-2xl text-primary dark:text-white whitespace-nowrap pt-1">
+                            ₹{property.price.toLocaleString()}
                             {property.category === 'rent' && <span className="text-sm font-normal opacity-60 ml-1">/mo</span>}
                         </p>
                     </div>
@@ -80,7 +80,7 @@ export default function PropertyCard({ property }) {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-8 pt-6 border-t border-slate-100 dark:border-white/5">
+                <div className="flex items-center gap-8 pt-6 mt-6 border-t border-slate-100 dark:border-white/5">
                     <div className="flex items-center gap-3">
                         <span className="text-sm font-bold text-primary dark:text-white">{property.bedrooms || 3}</span>
                         <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Beds</span>

@@ -110,7 +110,7 @@
     font-weight: 400;
     line-height: 1.7; /* Increased for premium breathability */
     word-break: normal;
-    overflow-wrap: anywhere; 
+    overflow-wrap: break-word; 
     hyphens: none;
     overflow-x: hidden;
   }
