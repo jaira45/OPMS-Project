@@ -66,7 +66,7 @@ export default function PropertyCard({ property }) {
             <div className="px-6 pb-6 flex flex-col flex-1">
                 <div className="space-y-4 flex-1">
                     <div className="flex justify-between items-start gap-4">
-                        <h3 className="card-heading text-primary dark:text-white group-hover:text-accent transition-colors line-clamp-2 flex-1 min-w-0" style={{ wordBreak: 'normal', overflowWrap: 'break-word' }}>
+                        <h3 className="text-3xl font-bold text-primary dark:text-white group-hover:text-accent leading-tight break-words line-clamp-2">
                             {property.title}
                         </h3>
                         <p className="font-headline font-bold text-2xl text-primary dark:text-white whitespace-nowrap pt-1">
