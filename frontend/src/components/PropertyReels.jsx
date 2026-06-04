@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, Heart, Share2, MapPin, ChevronLeft, ChevronRight, User, ShieldCheck, ImageOff, Building2, ArrowRight } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Heart, Share2, MapPin, ChevronLeft, ChevronRight, User, ShieldCheck, ImageOff, Building2, ArrowRight, Loader2 } from 'lucide-react';
 
 // ─── Reel data with reliable Mixkit CDN videos + Unsplash thumbnails ────────
 const reels = [
     {
         id: 1,
-        // Mixkit: luxury house pool aerial — free, no auth required
         video: "https://assets.mixkit.co/videos/preview/mixkit-house-with-a-big-pool-and-a-terrace-4073-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
         title: "The Glass Pavilion",
@@ -17,7 +16,6 @@ const reels = [
     },
     {
         id: 2,
-        // Mixkit: luxury beach apartment pool view — free, no auth required
         video: "https://assets.mixkit.co/videos/preview/mixkit-white-couch-and-a-pool-view-of-a-beach-apartment-3-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
         title: "Azure Infinity Estate",
@@ -28,7 +26,6 @@ const reels = [
     },
     {
         id: 3,
-        // Mixkit: aerial luxury house with pool — free, no auth required
         video: "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-luxury-house-with-big-pool-4071-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1600566753190-17f0bb2a6c3e?w=800&q=80",
         title: "Skyline Citadel",
@@ -39,23 +36,22 @@ const reels = [
     },
     {
         id: 4,
-        // Mixkit: modern living room — free, no auth required
         video: "https://assets.mixkit.co/videos/preview/mixkit-stylish-hotel-room-with-a-pool-view-4882-small.mp4",
         thumbnail: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
         title: "The Sapphire Manor",
         location: "New Market, Bhopal",
         price: "₹24 Cr",
         agent: "Rohan Dev",
-        tag: "LUXURY",
+        tag: "BEST VALUE",
     },
 ];
 
 // ─── Small inline Skeleton for reel loading state ────────────────────────────
 const ReelSkeleton = () => (
-    <div className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center gap-6">
-        <div className="w-16 h-16 rounded-full border-4 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
-            Loading Reel…
+    <div className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center gap-6 px-4 text-center">
+        <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+            Loading property preview...
         </span>
     </div>
 );
@@ -187,25 +183,25 @@ export default function PropertyReels() {
             <div className="flex justify-between items-center px-4">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-gold-gradient rounded-xl flex items-center justify-center shadow-lg">
-                        <Building2 className="text-primary w-5 h-5" />
+                        <Play className="text-primary w-5 h-5 fill-primary" />
                     </div>
-                    <h2 className="font-headline font-black text-3xl text-white tracking-tight uppercase flex items-center gap-3">
-                        Property Reels <span className="text-accent text-xs tracking-[0.3em] font-bold">OPMS</span>
+                    <h2 className="text-2xl sm:text-3xl font-headline font-bold text-white tracking-tight uppercase flex items-center gap-3 italic">
+                        Property <span className="text-accent italic font-bold">Highlights</span>
                     </h2>
                 </div>
                 <button className="flex items-center gap-3 text-white/60 hover:text-accent transition-all group">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">View All Reels</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Explore All Videos</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </button>
             </div>
 
             {/* ─ Player + Sidebar layout ──────────────────────────────────── */}
-            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center pt-4">
+            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center pt-4 px-4">
 
                 {/* ── Reel Player ──────────────────────────────────────────── */}
                 <div className="relative group/player">
                     {/* Phone frame */}
-                    <div className="relative w-[300px] sm:w-[340px] aspect-[9/16] rounded-[3.5rem] overflow-hidden shadow-[0_64px_128px_-24px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
+                    <div className="relative w-[300px] sm:w-[340px] aspect-[9/16] rounded-[3rem] overflow-hidden shadow-[0_64px_128px_-24px_rgba(0,0,0,0.7)] bg-black ring-1 ring-white/10">
 
                         {/* ── Progress Bar ──────────────────────────────────── */}
                         <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/10 z-50">
@@ -227,12 +223,12 @@ export default function PropertyReels() {
                                     alt={reel.title}
                                     className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center gap-3">
+                                <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-3 px-6 text-center">
                                     <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center">
                                         <ImageOff className="w-7 h-7 text-white/60" />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
-                                        Preview Unavailable
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                                        Preview Not Available
                                     </span>
                                 </div>
                             </div>
@@ -264,12 +260,12 @@ export default function PropertyReels() {
                         </AnimatePresence>
 
                         {/* ── Overlay Gradient ──────────────────────────────── */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90 pointer-events-none z-20" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/95 pointer-events-none z-20" />
 
                         {/* ── Top Controls ──────────────────────────────────── */}
                         <div className="absolute top-8 left-8 right-8 flex justify-between items-center z-30 pointer-events-none">
                             {/* Tag badge */}
-                            <div className="bg-[#D4AF37]/90 backdrop-blur-md text-primary px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl">
+                            <div className="bg-[#D4AF37] backdrop-blur-md text-primary px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-xl">
                                 {reel.tag}
                             </div>
                             {/* Mute button */}
@@ -288,7 +284,7 @@ export default function PropertyReels() {
                             {[
                                 {
                                     icon: Heart,
-                                    label: liked[current] ? "Liked" : "Like",
+                                    label: liked[current] ? "Saved" : "Save",
                                     active: liked[current],
                                     action: () => setLiked(prev => ({ ...prev, [current]: !prev[current] })),
                                     activeClass: "bg-red-500 border-red-500",
@@ -311,7 +307,7 @@ export default function PropertyReels() {
                                     <div className={`w-12 h-12 rounded-2xl border backdrop-blur-xl flex items-center justify-center text-white transition-all duration-300 shadow-2xl ${btn.active ? btn.activeClass : 'bg-white/10 border-white/20 hover:bg-white/20'}`}>
                                         <btn.icon className={`w-5 h-5 ${btn.active && btn.icon === Heart ? 'fill-white' : ''}`} />
                                     </div>
-                                    <span className="text-[9px] font-black text-white/60 uppercase tracking-widest">{btn.label}</span>
+                                    <span className="text-[9px] font-bold text-white/60 uppercase tracking-widest">{btn.label}</span>
                                 </motion.button>
                             ))}
                         </div>
@@ -328,26 +324,26 @@ export default function PropertyReels() {
                             >
                                 {/* Location + Price pills */}
                                 <div className="flex flex-wrap gap-2">
-                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#D4AF37]/90 text-primary shadow-lg backdrop-blur-md">
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#D4AF37] text-primary shadow-lg backdrop-blur-md">
                                         <MapPin className="w-3 h-3" />
-                                        <span className="text-[9px] font-black uppercase tracking-wider">{reel.location}</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-wider">{reel.location}</span>
                                     </div>
                                     <div className="flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg">
-                                        <span className="text-[9px] font-black uppercase tracking-wider">{reel.price}</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-wider">{reel.price}</span>
                                     </div>
                                 </div>
 
                                 {/* Property name */}
-                                <h3 className="text-3xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-2xl italic uppercase">
+                                <h3 className="text-3xl font-headline font-bold text-white leading-[0.9] tracking-tighter drop-shadow-2xl italic uppercase">
                                     {reel.title}
                                 </h3>
 
                                 {/* Agent */}
-                                <div className="flex items-center gap-2 text-white/60">
+                                <div className="flex items-center gap-2 text-white/70">
                                     <div className="w-7 h-7 rounded-lg bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center">
                                         <User className="w-3.5 h-3.5 text-white" />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{reel.agent}</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">{reel.agent}</span>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
@@ -367,7 +363,7 @@ export default function PropertyReels() {
                                     </div>
                                 </motion.div>
                             )}
-        </AnimatePresence>
+                        </AnimatePresence>
 
                     </div>{/* end phone frame */}
 
@@ -377,7 +373,7 @@ export default function PropertyReels() {
                             whileHover={{ scale: 1.1, y: -2 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={handlePrev}
-                            className="w-12 h-12 rounded-2xl bg-primary/80 dark:bg-dark-surface backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
+                            className="w-12 h-12 rounded-2xl bg-primary/80 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
                         >
                             <ChevronLeft className="w-6 h-6" />
                         </motion.button>
@@ -385,7 +381,7 @@ export default function PropertyReels() {
                             whileHover={{ scale: 1.1, y: 2 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={handleNext}
-                            className="w-12 h-12 rounded-2xl bg-primary/80 dark:bg-dark-surface backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
+                            className="w-12 h-12 rounded-2xl bg-primary/80 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-[#D4AF37] hover:text-primary transition-all shadow-2xl"
                         >
                             <ChevronRight className="w-6 h-6" />
                         </motion.button>
@@ -397,7 +393,7 @@ export default function PropertyReels() {
                             <button
                                 key={i}
                                 onClick={() => goTo(i)}
-                                className={`transition-all duration-500 rounded-full ${i === current ? 'w-8 h-2.5 bg-[#D4AF37]' : 'w-2.5 h-2.5 bg-primary/20 dark:bg-white/20 hover:bg-primary/40'}`}
+                                className={`transition-all duration-500 rounded-full ${i === current ? 'w-8 h-2.5 bg-[#D4AF37]' : 'w-2.5 h-2.5 bg-white/20 hover:bg-white/40'}`}
                             />
                         ))}
                     </div>
@@ -407,14 +403,14 @@ export default function PropertyReels() {
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={handlePrev}
-                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-white font-black text-[10px] uppercase tracking-widest shadow-xl"
+                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-[10px] uppercase tracking-widest shadow-xl"
                         >
                             <ChevronLeft className="w-5 h-5" /> Prev
                         </motion.button>
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={handleNext}
-                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gold-gradient text-primary font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-[#D4AF37]/30"
+                            className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gold-gradient text-primary font-bold text-[10px] uppercase tracking-widest shadow-2xl shadow-[#D4AF37]/30"
                         >
                             Next <ChevronRight className="w-5 h-5" />
                         </motion.button>
@@ -423,8 +419,8 @@ export default function PropertyReels() {
 
                 {/* ── Desktop Sidebar Thumbnails ────────────────────────────── */}
                 <div className="hidden lg:flex flex-col gap-5">
-                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/30 dark:text-white/20 mb-2 text-center">
-                        Collection
+                    <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 mb-2 text-center">
+                        Discover More
                     </p>
                     {reels.map((r, i) => (
                         <motion.button
@@ -432,7 +428,7 @@ export default function PropertyReels() {
                             whileHover={{ scale: 1.06, x: -6 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={() => goTo(i)}
-                            className={`group relative w-[88px] h-[118px] rounded-[2rem] overflow-hidden border-4 transition-all duration-500 shadow-lg ${
+                            className={`group relative w-[88px] h-[118px] rounded-[1.5rem] overflow-hidden border-4 transition-all duration-500 shadow-lg ${
                                 i === current
                                     ? 'border-[#D4AF37] shadow-[0_0_30px_rgba(212,175,55,0.35)] scale-105 z-10'
                                     : 'border-transparent opacity-40 hover:opacity-90 hover:border-white/30'
@@ -444,7 +440,7 @@ export default function PropertyReels() {
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             />
                             <div className={`absolute inset-0 flex flex-col justify-end p-3 transition-all duration-300 ${i === current ? 'bg-black/20' : 'bg-black/50 group-hover:bg-black/25'}`}>
-                                <p className="text-[8px] font-black text-white leading-tight truncate">{r.title}</p>
+                                <p className="text-[8px] font-bold text-white leading-tight truncate">{r.title}</p>
                                 <p className="text-[7px] font-bold text-[#D4AF37] uppercase tracking-wider">{r.price}</p>
                             </div>
                             {i === current && (

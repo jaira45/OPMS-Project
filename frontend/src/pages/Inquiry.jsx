@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import API_URL from '../config/api';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
+import { Search, Mail, CheckCircle, Zap, Quote, Loader2, Sparkles } from 'lucide-react';
 
 export default function Inquiry() {
     const navigate = useNavigate();
@@ -72,7 +73,7 @@ export default function Inquiry() {
     const getStatusStyle = (status) => {
         switch (status) {
             case 'Responded': return 'bg-secondary/10 text-secondary border-secondary/20';
-            case 'Resolved': return 'bg-surface-variant/20 text-on-surface-variant border-surface-variant/20';
+            case 'Resolved': return 'bg-green-500/10 text-green-500 border-green-500/20';
             case 'Viewed': return 'bg-primary/5 text-primary border-primary/20';
             case 'Sent': 
             default: return 'bg-primary text-white border-primary';
@@ -83,16 +84,20 @@ export default function Inquiry() {
         <div className="bg-background text-on-surface min-h-screen pb-32">
             <Navbar />
 
-            <main className="pt-20 sm:pt-32 container-responsive space-y-12">
-                <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-surface-variant pb-8">
-                    <div className="space-y-1">
-                        <h1 className="font-headline font-black text-4xl text-primary tracking-tight">Inquiry Inbox</h1>
-                        <p className="text-on-surface-variant font-bold text-sm uppercase tracking-widest">Global Communications Manager</p>
+            <main className="pt-24 sm:pt-36 container-responsive space-y-12">
+                <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-surface-variant pb-8 px-4">
+                    <div className="space-y-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary rounded-full text-[10px] font-bold uppercase tracking-widest">
+                            <Sparkles className="w-3 h-3" />
+                            Client Relations
+                        </div>
+                        <h1 className="text-4xl sm:text-5xl font-headline font-bold text-primary tracking-tight uppercase italic">My Inquiries</h1>
+                        <p className="text-on-surface-variant font-medium text-sm">Manage and track your property interactions.</p>
                     </div>
-                    <div className="relative w-full sm:w-64 group">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors">search</span>
+                    <div className="relative w-full sm:w-80 group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40 group-focus-within:text-primary transition-colors" />
                         <input 
-                            className="w-full pl-12 pr-4 py-3 bg-surface border-2 border-surface-variant rounded-2xl focus:border-primary/20 focus:bg-white focus:ring-0 font-bold transition-all text-sm" 
+                            className="w-full pl-12 pr-4 py-3.5 bg-primary/5 border border-transparent rounded-2xl focus:border-primary/10 focus:bg-white outline-none font-bold transition-all text-sm" 
                             placeholder="Filter messages..." 
                             type="text"
                             value={searchTerm}
@@ -101,15 +106,15 @@ export default function Inquiry() {
                     </div>
                 </section>
 
-                <div className="space-y-6">
+                <div className="space-y-6 px-4">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
-                            <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
-                            <span className="text-[10px] font-black uppercase text-primary/40">Accessing secure channel...</span>
+                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40">Loading inquiries...</span>
                         </div>
                     ) : filteredInquiries.length === 0 ? (
-                        <div className="text-center py-32 glass rounded-[3rem] space-y-4">
-                            <span className="material-symbols-outlined text-6xl text-primary/10">mail_outline</span>
+                        <div className="text-center py-32 bg-primary/5 rounded-[3rem] space-y-4 border-2 border-dashed border-primary/10">
+                            <Mail className="w-16 h-16 text-primary/10 mx-auto" />
                             <p className="text-on-surface-variant font-bold text-lg">No active inquiries found.</p>
                         </div>
                     ) : (
@@ -117,34 +122,34 @@ export default function Inquiry() {
                             {filteredInquiries.map((inq) => (
                                 <div 
                                     key={inq._id} 
-                                    className="bg-surface rounded-[2.5rem] p-8 border border-surface-variant hover:border-primary/20 hover:shadow-2xl transition-all group flex flex-col justify-between space-y-6"
+                                    className="bg-white rounded-[2.5rem] p-8 border border-surface-variant hover:border-primary/20 hover:shadow-2xl transition-all group flex flex-col justify-between space-y-6"
                                 >
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-start">
-                                            <div className="space-y-1">
-                                                <h3 className="font-headline font-black text-xl text-primary leading-tight group-hover:text-secondary transition-colors line-clamp-1">{inq.propertyName}</h3>
-                                                <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Inquiry from <span className="text-primary">{inq.buyerName}</span></p>
+                                            <div className="space-y-1 flex-1 min-w-0">
+                                                <h3 className="text-xl font-bold text-primary leading-tight group-hover:text-secondary transition-colors line-clamp-1 truncate">{inq.propertyName}</h3>
+                                                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest truncate">From <span className="text-primary">{inq.buyerName}</span></p>
                                             </div>
-                                            <span className="text-[10px] font-black text-on-surface-variant/40 whitespace-nowrap">
+                                            <span className="text-[10px] font-bold text-on-surface-variant/40 whitespace-nowrap ml-4">
                                                 {inq.createdAt ? new Date(inq.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'Recently'}
                                             </span>
                                         </div>
                                         
-                                        <div className="bg-primary/5 p-6 rounded-3xl border-l-4 border-secondary relative">
-                                            <span className="material-symbols-outlined absolute top-2 right-2 text-primary/10 text-2xl">format_quote</span>
-                                            <p className="text-sm font-bold text-primary/80 leading-relaxed italic line-clamp-3">"{inq.message}"</p>
+                                        <div className="bg-primary/5 p-6 rounded-3xl border-l-4 border-secondary relative group-hover:bg-primary/10 transition-colors">
+                                            <Quote className="absolute top-2 right-2 text-primary/10 w-6 h-6" />
+                                            <p className="text-sm font-medium text-primary/80 leading-relaxed italic line-clamp-3">"{inq.message}"</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between pt-4 border-t border-surface-variant">
+                                    <div className="flex items-center justify-between pt-4 border-t border-surface-variant/50">
                                         <button 
                                             onClick={() => updateStatus(inq._id, inq.status)}
-                                            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 transition-all active:scale-95 ${getStatusStyle(inq.status)}`}
+                                            className={`flex items-center gap-2 px-5 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-all active:scale-95 ${getStatusStyle(inq.status)}`}
                                         >
-                                            <span className="material-symbols-outlined text-sm">{inq.status === 'Resolved' ? 'check_circle' : 'bolt'}</span>
+                                            {inq.status === 'Resolved' ? <CheckCircle className="w-3.5 h-3.5" /> : <Zap className="w-3.5 h-3.5" />}
                                             {inq.status}
                                         </button>
-                                        <span className="font-black text-secondary text-sm">{inq.price || 'Market Rate'}</span>
+                                        <span className="font-bold text-secondary text-sm">{inq.price || 'Market Rate'}</span>
                                     </div>
                                 </div>
                             ))}

@@ -2,24 +2,22 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API_URL from '../config/api';
 import { useAuth } from '../context/AuthContext';
-import { useComparison } from '../context/ComparisonContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Plus, Scale, LayoutGrid, List, SlidersHorizontal, ArrowRight, ChevronLeft, ChevronRight, MapPin, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 import Hero from '../components/Hero';
 import PropertyReels from '../components/PropertyReels';
 import StatsSection from '../components/StatsSection';
+import TrustSection from '../components/TrustSection';
 import NewsSection from '../components/NewsSection';
 import Testimonials from '../components/Testimonials';
 import Footer from '../components/Footer';
 import { SkeletonCard } from '../components/Skeleton';
-
 import PropertyCard from '../components/PropertyCard';
 
 export default function HomeScreen() {
     const navigate = useNavigate();
-    const { user } = useAuth();
     const [featured, setFeatured] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeCollection, setActiveCollection] = useState('ALL PROPERTIES');
@@ -59,69 +57,69 @@ export default function HomeScreen() {
             <Navbar />
 
             <main>
-                {/* ─ Cinematic Hero Terminal ──────────────────────────────── */}
+                {/* Hero Section */}
                 <Hero />
 
-                {/* ─ Viral Property Reels ─────────────────────────────────── */}
+                {/* Featured Property Reels - Uses its own internal spacing */}
                 <PropertyReels />
 
-                {/* ─ The Imperial Gallery ─────────────────────────────────── */}
-                <section className="relative py-48 overflow-hidden">
+                {/* Property Showcase */}
+                <section className="section-padding relative overflow-hidden px-4">
                     {/* Background Decorative */}
-                    <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/[0.03] blur-[180px] rounded-full -mr-96 -mt-96" />
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/[0.02] blur-[120px] rounded-full -mr-48 -mt-48" />
 
-                    <div className="container-responsive space-y-24">
-                        {/* Section Intel */}
-                        <div className="flex flex-col lg:flex-row justify-between items-end gap-12 border-b border-white/10 pb-16">
-                            <div className="space-y-8">
+                    <div className="container-responsive space-y-12 sm:space-y-16">
+                        {/* Section Header */}
+                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b border-white/5 pb-10">
+                            <div className="space-y-6">
                                 <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
-                                    className="inline-flex items-center gap-4 px-8 py-3 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.5em] shadow-3xl"
+                                    className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full"
                                 >
-                                    <Sparkles className="w-5 h-5 text-accent" />
-                                    Elite Acquisitions
+                                    <Sparkles className="w-4 h-4 text-accent" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">Premier Selections</span>
                                 </motion.div>
-                                <h2 className="font-headline font-black text-6xl sm:text-8xl md:text-[9.5rem] text-white tracking-tighter uppercase leading-[0.8] italic">
-                                    Imperial <span className="text-gold-gradient italic font-display lowercase tracking-normal block lg:inline">Gallery</span>
+                                <h2 className="text-4xl sm:text-6xl font-headline font-bold text-white uppercase italic leading-none">
+                                    Featured <span className="text-gold-gradient block lg:inline">Properties</span>
                                 </h2>
                             </div>
 
-                            <div className="flex flex-col md:flex-row items-center gap-10">
-                                <div className="flex bg-white/5 p-2 rounded-[2rem] border border-white/10 shadow-3xl overflow-x-auto no-scrollbar">
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-8 w-full lg:w-auto">
+                                <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 shadow-xl overflow-x-auto no-scrollbar w-full md:w-auto">
                                     {['ALL PROPERTIES', 'BUY', 'RENT', 'LUXURY'].map((cat) => (
                                         <button
                                             key={cat}
                                             onClick={() => setActiveCollection(cat)}
-                                            className={`px-10 py-5 rounded-2xl text-[10px] font-black tracking-[0.3em] uppercase whitespace-nowrap transition-all duration-700 ${activeCollection === cat ? 'bg-gold-gradient text-primary shadow-2xl' : 'text-white/30 hover:text-white'}`}
+                                            className={`px-6 sm:px-8 py-3 rounded-xl text-[10px] font-bold tracking-widest uppercase whitespace-nowrap transition-all duration-500 ${activeCollection === cat ? 'bg-gold-gradient text-primary shadow-lg' : 'text-white/40 hover:text-white'}`}
                                         >
                                             {cat}
                                         </button>
                                     ))}
                                 </div>
 
-                                <button className="flex items-center gap-6 font-black text-white/40 hover:text-white uppercase tracking-[0.5em] text-[11px] group transition-all" onClick={() => navigate('/property')}>
-                                    Full Inventory
-                                    <div className="w-16 h-16 rounded-2xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all duration-700">
-                                        <ArrowRight className="w-6 h-6" />
+                                <button className="flex items-center gap-4 text-white/50 hover:text-white transition-all group" onClick={() => navigate('/property')}>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">View All</span>
+                                    <div className="w-11 h-11 rounded-xl border border-white/10 flex items-center justify-center group-hover:bg-accent group-hover:text-primary transition-all">
+                                        <ArrowRight className="w-5 h-5" />
                                     </div>
                                 </button>
                             </div>
                         </div>
 
-                        {/* Gallery Flux */}
+                        {/* Property Grid */}
                         {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 content-gap">
                                 {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 content-gap">
                                 {featured.map((prop, i) => (
                                     <motion.div
                                         key={prop._id}
-                                        initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1, duration: 1, ease: "circOut" }}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.1, duration: 0.6 }}
                                     >
                                         <PropertyCard property={prop} />
                                     </motion.div>
@@ -131,13 +129,9 @@ export default function HomeScreen() {
                     </div>
                 </section>
 
-                {/* ─ Performance Audit (Stats) ───────────────────────────── */}
                 <StatsSection />
-
-                {/* ─ Global Insights (News) ─────────────────────────────── */}
+                <TrustSection />
                 <NewsSection />
-
-                {/* ─ Vanguard Community (Testimonials) ───────────────────── */}
                 <Testimonials />
             </main>
 

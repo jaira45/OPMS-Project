@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import API_URL from '../config/api';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
+import { Heart, MapPin, Bed, Bath, X, Search, Sparkles, Loader2 } from 'lucide-react';
 
 export default function Favorites() {
     const navigate = useNavigate();
@@ -38,45 +39,50 @@ export default function Favorites() {
         <div className="bg-background text-on-surface min-h-screen pb-32 overflow-x-hidden">
             <Navbar />
 
-            <main className="pt-20 sm:pt-32 container-responsive space-y-10">
-                <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-surface-variant pb-8">
-                    <div className="space-y-1">
-                        <h1 className="font-headline font-black text-3xl sm:text-5xl text-primary tracking-tighter">My Collection</h1>
-                        <p className="text-on-surface-variant font-bold text-xs sm:text-sm uppercase tracking-widest">Saved estates from your exploration</p>
+            <main className="pt-24 sm:pt-36 container-responsive space-y-12">
+                <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-surface-variant pb-8 px-4">
+                    <div className="space-y-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">
+                            <Sparkles className="w-3 h-3" />
+                            Personal Shortlist
+                        </div>
+                        <h1 className="text-4xl sm:text-5xl font-headline font-bold text-primary tracking-tight uppercase italic">Saved Properties</h1>
+                        <p className="text-on-surface-variant font-medium text-sm">Review your favorite picks from our collection.</p>
                     </div>
-                    <div className="flex items-center gap-2 bg-primary/5 px-6 py-3 rounded-2xl">
-                        <span className="material-symbols-outlined text-primary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                        <span className="text-primary font-black text-sm">{savedProperties.length} saved</span>
+                    <div className="flex items-center gap-3 bg-primary text-white px-6 py-3 rounded-2xl shadow-xl shadow-primary/20">
+                        <Heart className="w-4 h-4 fill-white" />
+                        <span className="font-bold text-sm tracking-tight">{savedProperties.length} Saved</span>
                     </div>
                 </section>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-40 gap-6">
-                        <div className="w-14 h-14 border-8 border-primary/5 border-t-primary rounded-full animate-spin" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary/40">Syncing Collection...</span>
+                        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40">Syncing collection...</span>
                     </div>
                 ) : savedProperties.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-32 text-center space-y-8 glass rounded-[3rem] px-8">
-                        <div className="w-24 h-24 bg-primary/5 rounded-[2rem] flex items-center justify-center">
-                            <span className="material-symbols-outlined text-5xl text-primary/20">favorite_border</span>
+                    <div className="flex flex-col items-center justify-center py-32 text-center space-y-8 bg-primary/5 rounded-[3rem] px-8 mx-4 border-2 border-dashed border-primary/10">
+                        <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center">
+                            <Heart className="w-10 h-10 text-primary/20" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="font-headline font-black text-2xl sm:text-3xl text-primary">Gallery is Empty</h3>
-                            <p className="text-on-surface-variant font-bold max-w-xs mx-auto text-sm leading-relaxed">
-                                Tap the heart icon on any property to save it here for quick access.
+                            <h3 className="text-2xl sm:text-3xl font-bold text-primary italic uppercase">No Saved Properties</h3>
+                            <p className="text-on-surface-variant font-medium max-w-xs mx-auto text-sm leading-relaxed">
+                                Save your favorite properties to compare them and make an informed decision.
                             </p>
                         </div>
                         <button
                             onClick={() => navigate('/properties')}
-                            className="bg-primary text-white px-10 py-4 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 active:scale-95 transition-all hover:bg-secondary"
+                            className="bg-primary text-white px-8 py-4 rounded-[2rem] font-bold uppercase tracking-widest text-[10px] shadow-xl hover:bg-secondary transition-all active:scale-95 flex items-center gap-2"
                         >
-                            Start Exploring
+                            <Search className="w-3 h-3" />
+                            Start Browsing
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 px-4">
                         {savedProperties.map((prop) => (
-                            <div key={prop._id} className="group relative bg-white rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden border border-surface-variant hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                            <div key={prop._id} className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-surface-variant hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
                                 <div
                                     className="aspect-[16/10] overflow-hidden cursor-pointer"
                                     onClick={() => navigate(`/property/${prop._id}`)}
@@ -92,34 +98,37 @@ export default function Favorites() {
                                 {/* Remove button */}
                                 <button
                                     onClick={() => toggleFavorite(prop._id)}
-                                    className="absolute top-5 right-5 w-11 h-11 rounded-2xl bg-red-500 text-white flex items-center justify-center shadow-xl active:scale-90 transition-transform tap-target z-10"
+                                    className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center shadow-lg active:scale-90 transition-transform z-10 hover:bg-red-600"
                                     title="Remove from saved"
                                 >
-                                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>close</span>
+                                    <X className="w-5 h-5" />
                                 </button>
 
                                 <div
-                                    className="p-6 sm:p-8 space-y-3 cursor-pointer"
+                                    className="p-6 sm:p-8 space-y-4 cursor-pointer"
                                     onClick={() => navigate(`/property/${prop._id}`)}
                                 >
-                                    <h3 className="font-headline font-black text-xl sm:text-2xl text-primary leading-tight line-clamp-1 group-hover:text-secondary transition-colors">
-                                        {prop.title}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-on-surface-variant font-bold text-xs">
-                                        <span className="material-symbols-outlined text-secondary text-sm">location_on</span>
-                                        <span className="truncate">{prop.location}</span>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-primary leading-tight line-clamp-1 group-hover:text-secondary transition-colors mb-1">
+                                            {prop.title}
+                                        </h3>
+                                        <div className="flex items-center gap-1.5 text-on-surface-variant font-medium text-xs">
+                                            <MapPin className="w-3.5 h-3.5 text-secondary" />
+                                            <span className="truncate">{prop.location}</span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between pt-3 border-t border-surface-variant">
-                                        <span className="font-black text-secondary text-base">
+                                    
+                                    <div className="flex items-center justify-between pt-4 border-t border-surface-variant/50">
+                                        <span className="font-bold text-secondary text-lg">
                                             ₹ {typeof prop.price === 'number' ? prop.price.toLocaleString() : prop.price}
                                         </span>
-                                        <div className="flex gap-4 text-[10px] font-black uppercase text-primary/40">
-                                            <span className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">bed</span>
+                                        <div className="flex gap-4 text-[10px] font-bold uppercase text-primary/40">
+                                            <span className="flex items-center gap-1.5">
+                                                <Bed className="w-4 h-4" />
                                                 {prop.bedrooms || 3}
                                             </span>
-                                            <span className="flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">bathtub</span>
+                                            <span className="flex items-center gap-1.5">
+                                                <Bath className="w-4 h-4" />
                                                 {prop.bathrooms || 2}
                                             </span>
                                         </div>

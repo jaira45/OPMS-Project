@@ -149,10 +149,10 @@ export default function UserDashboard() {
     };
 
     const dashboardCards = [
-        { label: 'Saved Estates', value: user?.favorites?.length || 0, icon: Heart, color: 'text-error', bg: 'bg-error/10', path: '/favorites' },
+        { label: 'Saved Properties', value: user?.favorites?.length || 0, icon: Heart, color: 'text-error', bg: 'bg-error/10', path: '/favorites' },
         { label: 'Recent Inquiries', value: inquiryCount, icon: MessageSquare, color: 'text-secondary', bg: 'bg-secondary/10', path: '/inquiries' },
-        { label: 'Listed Properties', value: listedProperties.length, icon: Building2, color: 'text-primary', bg: 'bg-primary/10', path: '#' },
-        { label: 'Profile Mastery', value: `${calculateProfileCompletion()}%`, icon: Sparkles, color: 'text-accent', bg: 'bg-accent/10', path: '#' },
+        { label: 'Listed Estates', value: listedProperties.length, icon: Building2, color: 'text-primary', bg: 'bg-primary/10', path: '#' },
+        { label: 'Profile Status', value: `${calculateProfileCompletion()}%`, icon: Sparkles, color: 'text-accent', bg: 'bg-accent/10', path: '#' },
     ];
 
     if (!user) return null;
@@ -161,19 +161,19 @@ export default function UserDashboard() {
         <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen overflow-x-hidden">
             <Navbar />
 
-            <main className="pt-32 pb-40 container-responsive space-y-16">
+            <main className="pt-32 pb-40 container-responsive space-y-12">
                 {/* Header Welcome */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-12 border-b border-surface-variant dark:border-dark-surface-variant/20">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-10 border-b border-surface-variant dark:border-dark-surface-variant/20">
                     <div className="space-y-4">
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 text-secondary rounded-full text-[10px] font-black uppercase tracking-widest"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 text-secondary rounded-full text-[10px] font-bold uppercase tracking-widest"
                         >
                             <Sparkles className="w-3 h-3" />
-                            Elite Member Console
+                            User Dashboard
                         </motion.div>
-                        <h1 className="font-headline font-black text-5xl sm:text-7xl text-primary dark:text-white tracking-tighter leading-tight italic">
+                        <h1 className="font-headline font-bold text-5xl sm:text-7xl text-primary dark:text-white tracking-tighter leading-tight italic">
                             Welcome, <span className="text-secondary">{user.name.split(' ')[0]}</span>
                         </h1>
                         <div className="flex items-center gap-4">
@@ -184,7 +184,7 @@ export default function UserDashboard() {
                                     className="h-full bg-accent"
                                 />
                             </div>
-                            <span className="text-[10px] font-black text-primary/40 dark:text-white/40 uppercase tracking-widest">Profile {calculateProfileCompletion()}% Complete</span>
+                            <span className="text-[10px] font-bold text-primary/40 dark:text-white/40 uppercase tracking-widest">Profile {calculateProfileCompletion()}% Complete</span>
                         </div>
                     </div>
                     
@@ -195,7 +195,7 @@ export default function UserDashboard() {
                         <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-primary/10">
                             <img src={profileImage || user.profileImage} className="w-full h-full object-cover" alt="" />
                         </div>
-                        <span className="text-xs font-black uppercase tracking-widest text-primary dark:text-white">Profile Identity</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary dark:text-white">Edit Profile</span>
                         <Settings className="w-4 h-4 text-primary/40 group-hover:rotate-90 transition-transform" />
                     </button>
                 </div>
@@ -213,14 +213,14 @@ export default function UserDashboard() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
                                     onClick={() => card.path !== '#' && navigate(card.path)}
-                                    className="bg-white dark:bg-dark-surface-variant p-8 rounded-[3rem] border border-surface-variant dark:border-dark-surface-variant/20 shadow-xl hover:shadow-2xl transition-all cursor-pointer group"
+                                    className="bg-white dark:bg-dark-surface-variant p-6 sm:p-8 rounded-[2.5rem] border border-surface-variant dark:border-dark-surface-variant/20 shadow-xl hover:shadow-2xl transition-all cursor-pointer group hover:border-accent/20"
                                 >
-                                    <div className={`w-14 h-14 ${card.bg} ${card.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                                        <card.icon className="w-7 h-7" />
+                                    <div className={`w-12 h-12 ${card.bg} ${card.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                                         <card.icon className="w-6 h-6" />
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/40">{card.label}</p>
-                                        <h3 className="text-4xl font-black text-primary dark:text-white tracking-tighter">{card.value}</h3>
+                                    <div className="space-y-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 dark:text-white/30">{card.label}</p>
+                                        <h3 className="text-3xl font-bold text-primary dark:text-white tracking-tight italic">{card.value}</h3>
                                     </div>
                                 </motion.div>
                             ))}
@@ -231,28 +231,28 @@ export default function UserDashboard() {
                                 {/* Favorite Properties */}
                                 <section className="space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <h2 className="font-headline font-black text-2xl text-primary dark:text-white tracking-tight uppercase italic flex items-center gap-3">
+                                        <h2 className="text-2xl font-bold text-primary dark:text-white tracking-tight uppercase italic flex items-center gap-3">
                                             <Heart className="w-6 h-6 text-error" />
-                                            Favorite Properties
+                                            Saved Properties
                                         </h2>
-                                        <Link to="/properties" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">View All</Link>
+                                        <Link to="/favorites" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">View All</Link>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         {savedProperties.slice(0, 4).map((prop) => (
                                             <div key={prop._id} className="flex gap-4 p-4 bg-white dark:bg-dark-surface-variant rounded-3xl border border-surface-variant dark:border-dark-surface-variant/20 group hover:shadow-xl transition-all">
-                                                <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0">
+                                                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
                                                     <img src={prop.images?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                 </div>
                                                 <div className="space-y-1 py-1">
-                                                    <h4 className="font-black text-primary dark:text-white truncate max-w-[150px]">{prop.title}</h4>
-                                                    <p className="text-[10px] font-bold text-on-surface-variant/60">{prop.location}</p>
-                                                    <p className="text-xs font-black text-secondary">₹ {prop.price.toLocaleString()}</p>
+                                                    <h4 className="font-bold text-primary dark:text-white truncate max-w-[150px]">{prop.title}</h4>
+                                                    <p className="text-[10px] font-medium text-on-surface-variant/60">{prop.location}</p>
+                                                    <p className="text-xs font-bold text-secondary">₹ {prop.price.toLocaleString()}</p>
                                                 </div>
                                             </div>
                                         ))}
                                         {savedProperties.length === 0 && (
-                                            <div className="col-span-full py-12 text-center bg-primary/5 rounded-[3rem] border-2 border-dashed border-primary/10">
-                                                <p className="text-xs font-black uppercase tracking-widest text-primary/20">Archive Empty</p>
+                                            <div className="col-span-full py-12 text-center bg-primary/5 rounded-[2.5rem] border-2 border-dashed border-primary/10">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-primary/20">No Saved Properties</p>
                                             </div>
                                         )}
                                     </div>
@@ -261,27 +261,27 @@ export default function UserDashboard() {
                                 {/* My Listed Properties */}
                                 <section className="space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <h2 className="font-headline font-black text-2xl text-primary dark:text-white tracking-tight uppercase italic flex items-center gap-3">
+                                        <h2 className="text-2xl font-bold text-primary dark:text-white tracking-tight uppercase italic flex items-center gap-3">
                                             <Building2 className="w-6 h-6 text-primary" />
-                                            My Listed Properties
+                                            My Listings
                                         </h2>
-                                        <Link to="/add-property" className="text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">Add New</Link>
+                                        <Link to="/add-property" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">Add New</Link>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         {listedProperties.slice(0, 4).map((prop) => (
                                             <div key={prop._id} className="flex gap-4 p-4 bg-white dark:bg-dark-surface-variant rounded-3xl border border-surface-variant dark:border-dark-surface-variant/20 hover:shadow-xl transition-all">
-                                                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+                                                <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0">
                                                     <img src={prop.images?.[0]} className="w-full h-full object-cover" alt="" />
                                                 </div>
                                                 <div className="space-y-1 py-1">
-                                                    <h4 className="font-black text-primary dark:text-white truncate max-w-[120px]">{prop.title}</h4>
-                                                    <div className="inline-flex px-3 py-1 bg-green-500/10 text-green-500 text-[8px] font-black uppercase rounded-full">Approved</div>
+                                                    <h4 className="font-bold text-primary dark:text-white truncate max-w-[120px]">{prop.title}</h4>
+                                                    <div className="inline-flex px-3 py-0.5 bg-green-500/10 text-green-500 text-[8px] font-bold uppercase rounded-full">Active</div>
                                                 </div>
                                             </div>
                                         ))}
                                         {listedProperties.length === 0 && (
-                                            <div className="col-span-full py-12 text-center bg-primary/5 rounded-[3rem] border-2 border-dashed border-primary/10">
-                                                <p className="text-xs font-black uppercase tracking-widest text-primary/20">No Estates Found</p>
+                                            <div className="col-span-full py-12 text-center bg-primary/5 rounded-[2.5rem] border-2 border-dashed border-primary/10">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-primary/20">No Listed Properties</p>
                                             </div>
                                         )}
                                     </div>
@@ -290,34 +290,34 @@ export default function UserDashboard() {
 
                             <div className="lg:col-span-4 space-y-8">
                                 {/* Recent Inquiries */}
-                                <section className="bg-white dark:bg-dark-surface-variant rounded-[4rem] p-10 border border-surface-variant dark:border-dark-surface-variant/20 shadow-xl space-y-8">
+                                <section className="bg-white dark:bg-dark-surface-variant rounded-[2.5rem] p-8 border border-surface-variant dark:border-dark-surface-variant/20 shadow-xl space-y-6">
                                     <div className="flex justify-between items-center">
-                                        <h3 className="font-headline font-black text-xl uppercase italic">Recent Inquiries</h3>
-                                        <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
-                                            <MessageSquare className="w-5 h-5" />
+                                        <h3 className="font-bold text-lg uppercase italic">Recent Inquiries</h3>
+                                        <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+                                            <MessageSquare className="w-4 h-4" />
                                         </div>
                                     </div>
-                                    <div className="space-y-6">
+                                    <div className="space-y-4">
                                         {recentInquiries.map((inq) => (
-                                            <div key={inq._id} className="p-4 bg-primary/5 rounded-2xl space-y-2 border border-primary/5">
-                                                <p className="text-xs font-black text-primary dark:text-white truncate">{inq.propertyTitle || 'Property Inquiry'}</p>
-                                                <p className="text-[10px] font-bold text-on-surface-variant/60 line-clamp-1">{inq.message}</p>
-                                                <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-primary/40">
+                                            <div key={inq._id} className="p-3 bg-primary/5 rounded-xl space-y-1 border border-primary/5">
+                                                <p className="text-xs font-bold text-primary dark:text-white truncate">{inq.propertyTitle || 'Property Inquiry'}</p>
+                                                <p className="text-[9px] font-medium text-on-surface-variant/60 line-clamp-1">{inq.message}</p>
+                                                <div className="flex justify-between items-center text-[7px] font-bold uppercase tracking-widest text-primary/40">
                                                     <span>{new Date(inq.createdAt).toLocaleDateString()}</span>
                                                     <span className="text-accent">Pending Response</span>
                                                 </div>
                                             </div>
                                         ))}
                                         {recentInquiries.length === 0 && (
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-primary/20 text-center py-10">No Communications</p>
+                                            <p className="text-[9px] font-bold uppercase tracking-widest text-primary/20 text-center py-6">No Recent Communications</p>
                                         )}
                                     </div>
-                                    <button onClick={() => navigate('/inquiries')} className="w-full py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg">Inquiry Archive</button>
+                                    <button onClick={() => navigate('/inquiries')} className="w-full py-3 bg-primary text-white rounded-xl font-bold uppercase tracking-widest text-[9px] shadow-lg">View All Inquiries</button>
                                 </section>
 
-                                <button onClick={logout} className="w-full py-6 bg-error/5 text-error border border-error/10 rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] hover:bg-error hover:text-white transition-all flex items-center justify-center gap-4 active:scale-95">
-                                    <LogOut className="w-5 h-5" />
-                                    Secure Logout
+                                <button onClick={logout} className="w-full py-4 bg-error/5 text-error border border-error/10 rounded-2xl font-bold uppercase tracking-widest text-[9px] hover:bg-error hover:text-white transition-all flex items-center justify-center gap-3 active:scale-95">
+                                    <LogOut className="w-4 h-4" />
+                                    Logout
                                 </button>
                             </div>
                         </div>
@@ -328,7 +328,7 @@ export default function UserDashboard() {
             <Footer />
             <BottomNav />
 
-            {/* Premium Identity Modal */}
+            {/* Edit Profile Modal */}
             <AnimatePresence>
                 {isEditModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -337,64 +337,64 @@ export default function UserDashboard() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsEditModalOpen(false)}
-                            className="fixed inset-0 bg-primary/20 dark:bg-black/80 backdrop-blur-xl"
+                            className="fixed inset-0 bg-primary/20 dark:bg-black/80 backdrop-blur-md"
                         />
                         <motion.div 
-                            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-                            className="bg-white dark:bg-dark-surface-variant w-full max-w-2xl rounded-[4rem] shadow-3xl p-10 space-y-10 relative overflow-hidden"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white dark:bg-dark-surface-variant w-full max-w-xl rounded-[3rem] shadow-3xl p-8 space-y-8 relative overflow-hidden"
                         >
                             <div className="flex justify-between items-center">
-                                <h3 className="text-3xl font-black text-primary dark:text-white tracking-tighter uppercase italic">Identity Sync</h3>
-                                <button onClick={() => setIsEditModalOpen(false)} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-primary/5 hover:bg-primary/10 transition-all">
-                                    <X className="w-6 h-6 text-primary dark:text-white" />
+                                <h3 className="text-2xl font-bold text-primary dark:text-white tracking-tight uppercase italic">Edit Profile</h3>
+                                <button onClick={() => setIsEditModalOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/5 hover:bg-primary/10 transition-all">
+                                    <X className="w-5 h-5 text-primary dark:text-white" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleUpdateProfile} className="space-y-8">
+                            <form onSubmit={handleUpdateProfile} className="space-y-6">
                                 <div className="flex justify-center">
                                     <label className="relative group cursor-pointer inline-block">
-                                        <div className="w-32 h-32 rounded-[3.5rem] overflow-hidden border-4 border-primary/10 group-hover:border-secondary transition-all shadow-2xl">
+                                        <div className="w-24 h-24 rounded-[2rem] overflow-hidden border-2 border-primary/10 group-hover:border-secondary transition-all shadow-xl">
                                             <img src={editData.profileImage || profileImage} className="w-full h-full object-cover" alt="Avatar" />
                                             {uploadingAvatar && (
                                                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
-                                                    <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="absolute bottom-0 right-0 bg-secondary text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                                            <Camera className="w-5 h-5" />
+                                        <div className="absolute bottom-0 right-0 bg-secondary text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                            <Camera className="w-4 h-4" />
                                         </div>
                                         <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadAvatarToCloudinary(e.target.files[0])} />
                                     </label>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Identifier</label>
-                                        <input className="w-full px-8 py-5 bg-primary/5 dark:bg-white/5 border-none rounded-3xl outline-none font-bold text-primary dark:text-white" value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} required />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-primary/40 dark:text-white/20 px-3">Full Name</label>
+                                        <input className="w-full px-6 py-3.5 bg-primary/5 dark:bg-white/5 border-none rounded-2xl outline-none font-bold text-primary dark:text-white" value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} required />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Gender Group</label>
-                                        <select className="w-full px-8 py-5 bg-primary/5 dark:bg-white/5 border-none rounded-3xl outline-none font-bold text-primary dark:text-white appearance-none cursor-pointer" value={editData.gender} onChange={(e) => setEditData({ ...editData, gender: e.target.value })} required>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-primary/40 dark:text-white/20 px-3">Gender</label>
+                                        <select className="w-full px-6 py-3.5 bg-primary/5 dark:bg-white/5 border-none rounded-2xl outline-none font-bold text-primary dark:text-white appearance-none cursor-pointer" value={editData.gender} onChange={(e) => setEditData({ ...editData, gender: e.target.value })} required>
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Contact Link</label>
-                                        <input className="w-full px-8 py-5 bg-primary/5 dark:bg-white/5 border-none rounded-3xl outline-none font-bold text-primary dark:text-white" value={editData.phoneNumber} onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })} placeholder="+91 98765 43210" />
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-primary/40 dark:text-white/20 px-3">Phone Number</label>
+                                        <input className="w-full px-6 py-3.5 bg-primary/5 dark:bg-white/5 border-none rounded-2xl outline-none font-bold text-primary dark:text-white" value={editData.phoneNumber} onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })} placeholder="+91 98765 43210" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-white/20 px-4">Professional Dossier</label>
-                                        <textarea rows={1} className="w-full px-8 py-5 bg-primary/5 dark:bg-white/5 border-none rounded-3xl outline-none font-bold text-primary dark:text-white resize-none" value={editData.about} onChange={(e) => setEditData({ ...editData, about: e.target.value })} placeholder="Professional summary..." />
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-primary/40 dark:text-white/20 px-3">About Me</label>
+                                        <textarea rows={1} className="w-full px-6 py-3.5 bg-primary/5 dark:bg-white/5 border-none rounded-2xl outline-none font-bold text-primary dark:text-white resize-none" value={editData.about} onChange={(e) => setEditData({ ...editData, about: e.target.value })} placeholder="Tell us about yourself..." />
                                     </div>
                                 </div>
 
-                                <button type="submit" disabled={updateLoading || uploadingAvatar} className="w-full py-6 bg-primary dark:bg-dark-primary text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-secondary transition-all shadow-xl disabled:opacity-50">
-                                    {updateLoading ? 'Saving...' : 'Sync Identity'}
+                                <button type="submit" disabled={updateLoading || uploadingAvatar} className="w-full py-4 bg-primary dark:bg-dark-primary text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-secondary transition-all shadow-xl disabled:opacity-50">
+                                    {updateLoading ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </form>
                         </motion.div>

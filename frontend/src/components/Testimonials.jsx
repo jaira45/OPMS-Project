@@ -7,24 +7,24 @@ const testimonials = [
     {
         id: 1,
         name: "Vikram Singh",
-        role: "Strategic Asset Investor",
-        text: "OPMS has fundamentally redefined the parameters of luxury property acquisition. Their focus on high-fidelity listings and absolute discretion is unprecedented.",
+        role: "Real Estate Investor",
+        text: "The platform has redefined our property acquisition process. Their attention to detail and professional market insights are truly exceptional. We found our dream villa within weeks.",
         rating: 5,
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop"
     },
     {
         id: 2,
         name: "Ananya Sharma",
-        role: "Private Estate Owner",
-        text: "The digital choreography of the search experience and the quality of global-standard advice provided made my acquisition not just efficient, but truly prestigious.",
+        role: "Luxury Homeowner",
+        text: "From the first search to the final closing, the experience was seamless. The quality of expert advice made my property search stress-free and efficient. Highly recommended for premium listings.",
         rating: 5,
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop"
     },
     {
         id: 3,
         name: "Rahul Mehta",
-        role: "Nexus Development CEO",
-        text: "Operational excellence and a profound understanding of real estate as a multi-generational asset class. OPMS is more than a platform—it's a sovereign intelligence service.",
+        role: "Property Developer",
+        text: "Professional excellence and a deep understanding of the local market. This platform is an essential tool for anyone serious about real estate development in Central India.",
         rating: 5,
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop"
     }
@@ -37,77 +37,84 @@ export default function Testimonials() {
     const prev = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <section className="bg-[#071B3A] py-48 sm:py-64 relative overflow-hidden">
-            {/* ─ Master Decorative Context ──────────────────────────────── */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 blur-[150px] rounded-full -mr-64 -mt-64" />
-            <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-accent/[0.03] blur-[200px] rounded-full -ml-96 -mb-96" />
+        <section className="section-padding bg-[#071B3A] relative overflow-hidden px-4">
+            {/* Background Ambient Light */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-accent/[0.02] blur-[150px] rounded-full pointer-events-none" />
 
-            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-                <div className="space-y-16">
+            <div className="container-responsive relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
+                
+                {/* Text Content */}
+                <div className="lg:col-span-12 xl:col-span-5 space-y-10 text-center lg:text-left">
                     <motion.div 
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        className="inline-flex items-center gap-4 px-8 py-3 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.5em] shadow-3xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 text-accent rounded-full text-[10px] font-bold uppercase tracking-[0.2em]"
                     >
-                        <Sparkles className="w-5 h-5" />
-                        The Vanguard Community
+                        <Sparkles className="w-4 h-4" />
+                        Client Reviews
                     </motion.div>
                     
-                    <h2 className="font-headline font-black text-6xl sm:text-8xl md:text-[9.5rem] text-white tracking-tighter leading-[0.8] uppercase italic">
-                        Voices of <br />
-                        <span className="text-gold-gradient italic font-display normal-case tracking-normal block lg:-mt-4">Succession</span>
-                    </h2>
+                    <div className="space-y-4">
+                        <h2 className="text-5xl sm:text-7xl font-headline font-bold text-white tracking-widest leading-[1] uppercase italic">
+                            Trusted <br />
+                            <span className="text-gold-gradient block">Experiences</span>
+                        </h2>
+                        <p className="text-white/40 text-lg sm:text-xl font-medium max-w-xl mx-auto lg:mx-0">
+                            Our commitment to excellence reflected through the words of our esteemed clients and investors.
+                        </p>
+                    </div>
 
-                    <div className="flex gap-8 pt-8">
-                        <button onClick={prev} className="w-20 h-20 rounded-[2.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all duration-700 shadow-3xl bg-white/5 backdrop-blur-3xl group ring-2 ring-white/0 hover:ring-accent/20">
-                            <ChevronLeft className="w-8 h-8 group-hover:-translate-x-2 transition-transform" />
+                    <div className="flex gap-4 justify-center lg:justify-start">
+                        <button onClick={prev} className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 transition-all shadow-xl">
+                            <ChevronLeft className="w-6 h-6" />
                         </button>
-                        <button onClick={next} className="w-20 h-20 rounded-[2.5rem] border border-white/10 flex items-center justify-center text-white hover:bg-gold-gradient hover:text-primary transition-all duration-700 shadow-3xl bg-white/5 backdrop-blur-3xl group ring-2 ring-white/0 hover:ring-accent/20">
-                            <ChevronRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
+                        <button onClick={next} className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 transition-all shadow-xl">
+                            <ChevronRight className="w-6 h-6" />
                         </button>
                     </div>
                 </div>
 
-                <div className="relative">
+                {/* Testimonial Card */}
+                <div className="lg:col-span-12 xl:col-span-7 relative">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentIndex}
-                            initial={{ opacity: 0, scale: 0.95, y: 40 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 1.05, y: -40 }}
-                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                            className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-12 sm:p-24 rounded-[6rem] shadow-[0_64px_128px_-32px_rgba(0,0,0,0.6)] space-y-16 relative overflow-hidden group/card"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.5 }}
+                            className="bg-[#0A254D] border border-white/5 card-padding rounded-[2.5rem] sm:rounded-[4rem] shadow-3xl relative h-full flex flex-col justify-between group overflow-hidden"
                         >
-                            {/* Card Accent */}
-                            <div className="absolute top-0 right-0 w-full h-1 bg-gold-gradient opacity-40" />
-                            <Quote className="absolute -top-16 -right-16 w-64 h-64 text-white/[0.02] rotate-12" />
+                            <Quote className="absolute top-12 right-12 w-24 h-24 text-white/[0.03] group-hover:text-accent/[0.05] transition-colors duration-700" />
                             
-                            <div className="flex gap-2 text-accent">
-                                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                                    <Star key={i} className="w-8 h-8 fill-current drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]" />
-                                ))}
-                            </div>
-                            
-                            <p className="text-3xl sm:text-5xl font-black text-white leading-[1.1] italic tracking-tighter font-headline uppercase">
-                                "{testimonials[currentIndex].text}"
-                            </p>
-
-                            <div className="flex items-center gap-10 pt-16 border-t border-white/10">
-                                <div className="relative group/avatar">
-                                    <div className="w-24 h-24 rounded-[2.5rem] overflow-hidden shadow-3xl border-2 border-accent/30 group-hover/avatar:border-accent transition-all duration-700">
-                                        <LazyImage 
-                                            src={testimonials[currentIndex].image} 
-                                            className="w-full h-full object-cover scale-110 group-hover/avatar:scale-100 transition-transform duration-1000" 
-                                            alt={testimonials[currentIndex].name} 
-                                        />
-                                    </div>
-                                    <div className="absolute -bottom-3 -right-3 bg-gold-gradient p-2.5 rounded-2xl shadow-3xl ring-4 ring-[#071B3A]">
-                                        <ShieldCheck className="w-5 h-5 text-primary" />
-                                    </div>
+                            <div className="space-y-10 relative z-10">
+                                <div className="flex gap-1.5 text-accent">
+                                    {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                                        <Star key={i} className="w-5 h-5 fill-current" />
+                                    ))}
                                 </div>
-                                <div className="space-y-2">
-                                    <h4 className="font-headline font-black text-white text-3xl tracking-tighter uppercase italic">{testimonials[currentIndex].name}</h4>
-                                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent opacity-60 italic">{testimonials[currentIndex].role}</p>
+                                
+                                <p className="text-xl sm:text-2xl font-headline font-bold text-white leading-relaxed italic tracking-tight uppercase">
+                                    "{testimonials[currentIndex].text}"
+                                </p>
+
+                                <div className="flex items-center gap-6 pt-10 border-t border-white/5">
+                                    <div className="relative">
+                                        <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-accent/20">
+                                            <LazyImage 
+                                                src={testimonials[currentIndex].image} 
+                                                className="w-full h-full object-cover" 
+                                                alt={testimonials[currentIndex].name} 
+                                            />
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 bg-gold-gradient p-1 rounded-lg">
+                                            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="font-headline font-bold text-white text-xl tracking-tight uppercase italic">{testimonials[currentIndex].name}</h4>
+                                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#D4AF37]/60">{testimonials[currentIndex].role}</p>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

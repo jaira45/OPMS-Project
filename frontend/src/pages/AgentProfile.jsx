@@ -50,78 +50,87 @@ export default function AgentProfile() {
         }
     };
 
-    if (loading) return <div className="min-h-screen bg-background dark:bg-dark-bg flex items-center justify-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
+    if (loading) return (
+        <div className="bg-[#071B3A] min-h-screen">
+            <Navbar />
+            <div className="pt-24 sm:pt-32 container-responsive pb-40 px-4">
+                <SkeletonProfile />
+            </div>
+            <BottomNav />
+        </div>
+    );
+    
     if (!agent) return null;
 
     return (
-        <div className="bg-background dark:bg-dark-bg text-on-surface dark:text-dark-on-surface min-h-screen pb-32">
+        <div className="bg-[#071B3A] text-white min-h-screen pb-32">
             <Navbar />
 
-            <main className="pt-24 sm:pt-32 container-responsive">
+            <main className="pt-24 sm:pt-32 container-responsive px-4">
                 {/* Header Section */}
                 <motion.button 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     onClick={() => navigate(-1)} 
-                    className="flex items-center gap-3 font-black uppercase tracking-[0.2em] text-[10px] text-primary/40 dark:text-dark-on-surface-variant mb-12 group"
+                    className="flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] text-white/40 mb-10 group"
                 >
-                    <div className="w-10 h-10 rounded-full border border-surface-variant dark:border-dark-surface-variant flex items-center justify-center group-hover:bg-primary dark:group-hover:bg-dark-primary group-hover:text-white transition-all">
+                    <div className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all">
                         <ArrowLeft className="w-5 h-5" />
                     </div>
-                    Partner Directory
+                    Agent Directory
                 </motion.button>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
                     {/* Left: Identity Card */}
                     <aside className="lg:col-span-4 space-y-8">
                         <motion.div 
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-[4rem] p-12 text-center space-y-8 shadow-2xl relative overflow-hidden"
+                            className="bg-[#0A254D] border border-white/5 rounded-[2.5rem] sm:rounded-[4rem] p-8 sm:p-12 text-center space-y-8 shadow-2xl relative overflow-hidden"
                         >
-                            <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-accent via-primary to-accent" />
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gold-gradient opacity-30" />
                             
                             <div className="relative mx-auto w-fit">
-                                <div className="w-52 h-52 rounded-[3.5rem] border-8 border-primary/5 dark:border-dark-primary/5 p-2 overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700">
-                                    <img src={agent.profileImage || `https://ui-avatars.com/api/?name=${agent.fullName || agent.name}&background=random&size=200`} className="w-full h-full object-cover rounded-[3rem]" alt="" />
+                                <div className="w-36 h-36 sm:w-48 sm:h-48 rounded-[2rem] sm:rounded-[3rem] border-4 sm:border-8 border-white/5 p-2 overflow-hidden shadow-2xl group transition-transform duration-700">
+                                    <img src={agent.profileImage || `https://ui-avatars.com/api/?name=${agent.fullName || agent.name}&background=071B3A&color=D4AF37&size=200`} className="w-full h-full object-cover rounded-[1.5rem] sm:rounded-[2.5rem]" alt="" />
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 bg-accent text-white px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl border-4 border-white dark:border-dark-surface">
-                                    Top 1%
+                                <div className="absolute -bottom-2 -right-2 bg-accent text-primary px-4 py-1.5 rounded-xl text-[8px] sm:text-[10px] font-bold uppercase tracking-widest shadow-xl border-4 border-[#0A254D]">
+                                    Top Rated
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <h1 className="font-headline font-black text-4xl text-primary dark:text-dark-on-surface tracking-tighter">{agent.fullName || agent.name}</h1>
-                                <p className="text-accent font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                                    <Award className="w-4 h-4" />
-                                    Elite Strategy Partner
+                                <h1 className="font-headline font-bold text-3xl sm:text-4xl text-white tracking-tighter uppercase italic">{agent.fullName || agent.name}</h1>
+                                <p className="text-accent font-bold text-[9px] sm:text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                    <ShieldCheck className="w-4 h-4 text-accent/60" />
+                                    Certified Expert
                                 </p>
                             </div>
 
-                            <div className="flex justify-center gap-4">
+                            <div className="flex justify-center gap-3 sm:gap-4">
                                 { [
-                                    { label: 'LI', link: '#', color: 'bg-primary/5 text-primary' },
-                                    { label: 'TW', link: '#', color: 'bg-accent/5 text-accent' },
-                                    { icon: Globe, link: '#', color: 'bg-primary/5 text-primary' }
+                                    { label: 'LI', link: '#', color: 'bg-white/5 text-white/40 shadow-lg' },
+                                    { label: 'TW', link: '#', color: 'bg-white/5 text-white/40 shadow-lg' },
+                                    { icon: Globe, link: '#', color: 'bg-white/5 text-white/40 shadow-lg' }
                                 ].map((social, i) => (
-                                    <a key={i} href={social.link} className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg hover:scale-110 ${social.color}`}>
+                                    <a key={i} href={social.link} className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all hover:bg-gold-gradient hover:text-primary ${social.color}`}>
                                         {social.icon ? (
-                                            <social.icon className="w-6 h-6" />
+                                            <social.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                                         ) : (
-                                            <span className="text-[10px] font-black">{social.label}</span>
+                                            <span className="text-[9px] sm:text-[10px] font-bold">{social.label}</span>
                                         )}
                                     </a>
                                 ))}
                             </div>
 
-                            <div className="pt-8 border-t border-surface-variant/50 dark:border-dark-surface-variant/50 grid grid-cols-2 gap-6">
+                            <div className="pt-8 border-t border-white/5 grid grid-cols-2 gap-6">
                                 <div className="space-y-1">
-                                    <p className="text-3xl font-black text-primary dark:text-dark-on-surface">{agent.experience || 8}+</p>
-                                    <p className="text-[8px] font-black uppercase text-primary/40 dark:text-dark-on-surface-variant/40 tracking-widest">Years Depth</p>
+                                    <p className="text-2xl sm:text-3xl font-headline font-bold text-white italic">{agent.experience || 8}+</p>
+                                    <p className="text-[8px] sm:text-[9px] font-bold uppercase text-white/20 tracking-widest">Experience</p>
                                 </div>
-                                <div className="space-y-1 border-l border-surface-variant/50 dark:border-dark-surface-variant/50">
-                                    <p className="text-3xl font-black text-primary dark:text-dark-on-surface">{properties.length}</p>
-                                    <p className="text-[8px] font-black uppercase text-primary/40 dark:text-dark-on-surface-variant/40 tracking-widest">Active Portfolios</p>
+                                <div className="space-y-1 border-l border-white/5">
+                                    <p className="text-2xl sm:text-3xl font-headline font-bold text-white italic">{properties.length}</p>
+                                    <p className="text-[8px] sm:text-[9px] font-bold uppercase text-white/20 tracking-widest">Listings</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -130,23 +139,23 @@ export default function AgentProfile() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-primary dark:bg-dark-surface p-12 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden group"
+                            className="bg-[#0A254D] p-8 sm:p-10 rounded-[2.5rem] text-white border border-white/5 shadow-2xl relative overflow-hidden"
                         >
                              <div className="relative z-10 space-y-8">
-                                 <h3 className="font-headline font-black text-2xl flex items-center gap-3">
-                                    <ShieldCheck className="w-6 h-6 text-accent" />
-                                    Expertise Hub
+                                 <h3 className="text-lg sm:text-xl font-headline font-bold flex items-center gap-3 uppercase italic">
+                                    <TrendingUp className="w-5 h-5 text-accent" />
+                                    Expertise
                                  </h3>
-                                 <ul className="space-y-6">
+                                 <ul className="space-y-4">
                                      {[
-                                        { label: 'Asset Management', icon: Briefcase },
-                                        { label: 'Market Valuation', icon: TrendingUp },
-                                        { label: 'Heritage Assets', icon: Building2 },
-                                        { label: 'Luxury Leasing', icon: Star }
+                                        { label: 'Management', icon: Briefcase },
+                                        { label: 'Valuation', icon: TrendingUp },
+                                        { label: 'Residential', icon: Building2 },
+                                        { label: 'Leasing', icon: Star }
                                      ].map((skill, i) => (
-                                         <li key={i} className="flex items-center gap-4 text-sm font-bold opacity-80 hover:opacity-100 transition-opacity">
-                                             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                                                <skill.icon className="w-5 h-5 text-accent" />
+                                         <li key={i} className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-white/30 hover:text-white transition-colors cursor-default">
+                                             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                                                <skill.icon className="w-4 h-4 text-accent/60" />
                                              </div>
                                              {skill.label}
                                          </li>
@@ -157,29 +166,35 @@ export default function AgentProfile() {
                     </aside>
 
                     {/* Right: Portfolio Content */}
-                    <div className="lg:col-span-8 space-y-20">
+                    <div className="lg:col-span-8 space-y-12 sm:space-y-20">
                         <motion.section 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}
-                            className="space-y-10"
+                            className="space-y-8"
                         >
-                             <div className="flex items-end gap-6 border-b border-surface-variant dark:border-dark-surface-variant pb-8">
-                                <h2 className="font-headline font-black text-6xl text-primary dark:text-dark-on-surface tracking-tighter uppercase italic">Persona</h2>
-                                <span className="text-accent font-black text-[10px] uppercase tracking-[0.3em] mb-2">Strategy Consultant</span>
+                             <div className="flex items-end gap-6 border-b border-white/5 pb-8">
+                                <h2 className="font-headline font-bold text-4xl sm:text-6xl text-white tracking-tighter uppercase italic leading-none">Profile</h2>
+                                <span className="text-accent font-bold text-[9px] sm:text-[10px] uppercase tracking-widest mb-1 shadow-glow sm:mb-2">Advisory</span>
                              </div>
-                             <p className="text-2xl font-medium text-on-surface-variant dark:text-dark-on-surface-variant leading-relaxed opacity-80 italic">
-                                 {agent.about || `${agent.fullName || agent.name} acts as a cornerstone of the OPMS network, orchestrating high-value residential and commercial acquisitions. With a refined focus on portfolio growth and data-driven insights, they navigate the complexities of Central India's real estate market with surgical precision and absolute transparency.`}
+                             <p className="text-lg sm:text-2xl font-medium text-white/40 leading-relaxed italic border-l-2 border-accent/20 pl-6 sm:pl-10">
+                                 {agent.about || `${agent.fullName || agent.name} acts as a professional advisor within the OPMS network, specializing in high-quality residential and commercial transactions. With a deep understanding of local market trends and property valuations, they ensure every client receives expert guidance.`}
                              </p>
 
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-                                 <button className="flex items-center justify-center gap-4 bg-primary dark:bg-accent text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:bg-secondary dark:hover:bg-white dark:hover:text-primary transition-all shadow-2xl">
-                                    <Phone className="w-5 h-5" />
-                                    Secure Line
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                                 <button 
+                                    onClick={() => window.location.href = `tel:${agent.phoneNumber}`}
+                                    className="flex items-center justify-center gap-3 bg-gold-gradient text-primary h-14 sm:h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                                 >
+                                    <Phone className="w-4 h-4" />
+                                    Speak with Agent
                                  </button>
-                                 <button className="flex items-center justify-center gap-4 bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant text-primary dark:text-dark-on-surface py-6 rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:border-primary transition-all">
-                                    <Mail className="w-5 h-5" />
-                                    Transmission
+                                 <button 
+                                    onClick={() => window.location.href = `mailto:${agent.email}`}
+                                    className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 text-white h-14 sm:h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all"
+                                 >
+                                    <Mail className="w-4 h-4" />
+                                    Email
                                  </button>
                              </div>
                         </motion.section>
@@ -188,42 +203,42 @@ export default function AgentProfile() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.4 }}
-                            className="space-y-12"
+                            className="space-y-10"
                         >
-                            <div className="flex justify-between items-end">
+                            <div className="flex justify-between items-end gap-4 border-b border-white/5 pb-8">
                                 <div className="space-y-2">
-                                    <h2 className="font-headline font-black text-4xl text-primary dark:text-dark-on-surface tracking-tight">Active Portfolio</h2>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-accent flex items-center gap-2">
-                                        <CheckCircle className="w-4 h-4" />
-                                        {properties.length} Exclusive Listings
+                                    <h2 className="text-3xl sm:text-4xl font-headline font-bold text-white tracking-tight uppercase italic">Active Inventory</h2>
+                                    <p className="text-[9px] font-bold uppercase tracking-widest text-accent/60 flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4 text-accent/40" />
+                                        {properties.length} Listings
                                     </p>
                                 </div>
-                                <Link to="/properties" className="flex items-center gap-2 text-primary/40 dark:text-dark-on-surface-variant/40 font-black text-[10px] uppercase tracking-widest hover:text-primary transition-colors">
-                                    Global Collection
+                                <Link to="/properties" className="flex items-center gap-2 text-white/20 font-bold text-[10px] uppercase tracking-widest hover:text-white transition-colors">
+                                    All Listings
                                     <ArrowLeft className="w-4 h-4 rotate-180" />
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
                                 {properties.map((prop, i) => (
                                     <motion.div
                                         key={prop._id}
                                         initial={{ opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1 }}
+                                        transition={{ delay: i * 0.1, duration: 0.8 }}
                                         onClick={() => navigate(`/property/${prop._id}`)}
-                                        className="group cursor-pointer flex flex-col gap-8"
+                                        className="group cursor-pointer flex flex-col gap-6"
                                     >
-                                        <div className="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden shadow-2xl bg-black/5 hover:-translate-y-4 transition-all duration-700">
+                                        <div className="relative aspect-[4/5] rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden shadow-2xl bg-white/5 border border-white/5">
                                             <img src={(prop.images && prop.images[0]) || prop.coverImage} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
-                                            <div className="absolute top-8 left-8 bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 shadow-xl">
-                                                <span className="text-[10px] font-black text-white uppercase tracking-widest">₹ {prop.price.toLocaleString()}</span>
+                                            <div className="absolute top-6 left-6 bg-[#071B3A]/80 backdrop-blur-xl px-5 py-2 rounded-xl border border-white/10 shadow-2xl">
+                                                <span className="text-[9px] font-bold text-accent uppercase tracking-widest italic">₹ {prop.price.toLocaleString()}</span>
                                             </div>
                                         </div>
                                         <div className="px-4 space-y-2">
-                                            <h4 className="font-black text-primary dark:text-dark-on-surface text-2xl truncate group-hover:text-accent transition-colors">{prop.title}</h4>
-                                            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-primary/40 dark:text-dark-on-surface-variant/40">
-                                                <MapPin className="w-4 h-4 text-accent" />
+                                            <h4 className="font-headline font-bold text-white text-xl sm:text-2xl truncate group-hover:text-accent transition-colors uppercase italic">{prop.title}</h4>
+                                            <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/20 truncate">
+                                                <MapPin className="w-4 h-4 text-accent/60" />
                                                 {prop.location}
                                             </div>
                                         </div>

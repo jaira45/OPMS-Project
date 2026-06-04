@@ -71,17 +71,27 @@
 
 @layer base {
   :root {
-    /* Fluid Font Sizes using clamp */
-    --text-xs: clamp(0.7rem, 0.6rem + 0.5vw, 0.75rem);
-    --text-sm: clamp(0.8rem, 0.7rem + 0.5vw, 0.875rem);
-    --text-base: clamp(0.9rem, 0.8rem + 0.5vw, 1rem);
-    --text-lg: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-    --text-xl: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
-    --text-2xl: clamp(1.3rem, 1.2rem + 1vw, 1.5rem);
-    --text-3xl: clamp(1.6rem, 1.4rem + 1.5vw, 2rem);
-    --text-4xl: clamp(2rem, 1.8rem + 2vw, 2.5rem);
-    --text-5xl: clamp(2.5rem, 2rem + 3vw, 3.5rem);
-    --text-6xl: clamp(3rem, 2.5rem + 5vw, 5rem);
+    /* Fluid Typography Scale — Phase 1 */
+    --text-hero: clamp(48px, 6vw, 88px);
+    --text-section: clamp(36px, 4vw, 64px);
+    --text-card: clamp(22px, 3vw, 36px);
+    
+    --text-xs: 0.75rem;     /* 12px */
+    --text-sm: 0.875rem;    /* 14px */
+    --text-base: 1rem;      /* 16px */
+    --text-lg: 1.125rem;    /* 18px */
+    --text-xl: 1.25rem;     /* 20px */
+    --text-2xl: 1.5rem;     /* 24px */
+    --text-3xl: 1.875rem;   /* 30px */
+    --text-4xl: 2.25rem;    /* 36px */
+    --text-5xl: 3rem;       /* 48px */
+    --text-6xl: 3.75rem;    /* 60px */
+
+    /* Standardized Spacing Scale — Phase 9 */
+    --space-section: clamp(80px, 12vw, 120px);
+    --space-content: clamp(40px, 8vw, 60px);
+    --space-card: clamp(24px, 4vw, 40px);
+    --space-gap: clamp(20px, 3vw, 32px);
   }
 
   *, *::before, *::after {
@@ -90,19 +100,61 @@
   }
 
   html {
-    /* Prevent font inflation on mobile */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-on-surface font-body antialiased;
-    scroll-behavior: smooth;
-    /* Prevent horizontal overflow */
-    overflow-x: hidden;
+    font-size: 16px; /* Default body size */
+    font-weight: 400; /* Normal readable weight */
+    line-height: 1.6; /* Phase 1 requirement */
+    word-break: normal;
+    overflow-wrap: break-word; /* Phase 2 requirement */
+    overflow-x: hidden; /* Prevent horizontal overflow */
   }
 
-  /* Remove default button & input tap highlighting on mobile */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+    line-height: 1.1;
+  }
+
+  /* Specific Scale Mappings */
+  .hero-heading {
+    font-size: var(--text-hero);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .section-heading {
+    font-size: var(--text-section);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .card-heading {
+    font-size: var(--text-card);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .body-text {
+    font-size: clamp(16px, 1.1vw, 18px);
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .label-link {
+    font-size: clamp(12px, 0.8vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Remove default button & input tap highlighting */
   button, input, select, textarea {
     -webkit-appearance: none;
     appearance: none;
@@ -110,6 +162,19 @@
 }
 
 @layer utilities {
+  .section-padding {
+    padding-top: var(--space-section);
+    padding-bottom: var(--space-section);
+  }
+
+  .content-gap {
+    gap: var(--space-gap);
+  }
+
+  .card-padding {
+    padding: var(--space-card);
+  }
+
   .glass {
     @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
   }
