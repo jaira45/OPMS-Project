@@ -117,7 +117,7 @@ export default function Chatbot() {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-[0_15px_30px_rgba(6,27,69,0.3)] transition-all relative z-[1001] ${
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-[0_15px_30px_rgba(6,27,69,0.3)] transition-all relative z-[1001] flex-shrink-0 ${
                     isOpen ? 'bg-slate-800' : 'bg-[#061B45]'
                 }`}
             >
