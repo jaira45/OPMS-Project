@@ -223,12 +223,12 @@ export default function PropertyReels() {
                                     alt={reel.title}
                                     className="w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-3 px-6 text-center">
-                                    <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center">
-                                        <ImageOff className="w-7 h-7 text-white/60" />
+                                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-4 px-6 text-center backdrop-blur-sm">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl">
+                                        <ImageOff className="w-8 h-8 text-accent/40" />
                                     </div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
-                                        Preview Not Available
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-gradient">
+                                        Preview Restricted
                                     </span>
                                 </div>
                             </div>
@@ -334,7 +334,7 @@ export default function PropertyReels() {
                                 </div>
 
                                 {/* Property name */}
-                                <h3 className="text-3xl font-headline font-bold text-white leading-[0.9] tracking-tighter drop-shadow-2xl italic uppercase">
+                                <h3 className="text-3xl sm:text-4xl font-headline font-bold text-white leading-tight tracking-tighter drop-shadow-2xl italic uppercase">
                                     {reel.title}
                                 </h3>
 
@@ -418,34 +418,34 @@ export default function PropertyReels() {
                 </div>
 
                 {/* ── Desktop Sidebar Thumbnails ────────────────────────────── */}
-                <div className="hidden lg:flex flex-col gap-5">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 mb-2 text-center">
-                        Discover More
+                <div className="hidden lg:flex flex-col gap-6">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/20 mb-2 pl-2">
+                        Discover more
                     </p>
                     {reels.map((r, i) => (
                         <motion.button
                             key={r.id}
-                            whileHover={{ scale: 1.06, x: -6 }}
-                            whileTap={{ scale: 0.97 }}
+                            whileHover={{ scale: 1.08, x: -8 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => goTo(i)}
-                            className={`group relative w-[88px] h-[118px] rounded-[1.5rem] overflow-hidden border-4 transition-all duration-500 shadow-lg ${
+                            className={`group relative w-[110px] h-[145px] rounded-[2rem] overflow-hidden border-2 transition-all duration-700 shadow-2xl ${
                                 i === current
-                                    ? 'border-[#D4AF37] shadow-[0_0_30px_rgba(212,175,55,0.35)] scale-105 z-10'
-                                    : 'border-transparent opacity-40 hover:opacity-90 hover:border-white/30'
+                                    ? 'border-accent shadow-[0_32px_64px_-16px_rgba(212,175,55,0.4)] scale-110 z-10'
+                                    : 'border-white/5 opacity-40 hover:opacity-100 hover:border-white/20'
                             }`}
                         >
                             <img
                                 src={r.thumbnail}
                                 alt={r.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125"
                             />
-                            <div className={`absolute inset-0 flex flex-col justify-end p-3 transition-all duration-300 ${i === current ? 'bg-black/20' : 'bg-black/50 group-hover:bg-black/25'}`}>
-                                <p className="text-[8px] font-bold text-white leading-tight truncate">{r.title}</p>
-                                <p className="text-[7px] font-bold text-[#D4AF37] uppercase tracking-wider">{r.price}</p>
+                            <div className={`absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-all duration-500 ${i === current ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
+                                <p className="text-[9px] font-headline font-bold text-white leading-tight uppercase tracking-tight italic">{r.title}</p>
+                                <p className="text-[8px] font-bold text-accent uppercase tracking-widest mt-1">{r.price}</p>
                             </div>
                             {i === current && (
-                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-lg">
-                                    <Play className="w-2.5 h-2.5 text-primary fill-primary" />
+                                <div className="absolute top-3 right-3 w-6 h-6 rounded-lg bg-accent flex items-center justify-center shadow-xl ring-4 ring-accent/20">
+                                    <Play className="w-3 h-3 text-primary fill-primary" />
                                 </div>
                             )}
                         </motion.button>

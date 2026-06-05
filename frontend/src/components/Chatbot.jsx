@@ -5,7 +5,7 @@ import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hi! I'm your OPMS AI Assistant. How can I help you find your dream property today?", sender: 'bot' }
+        { id: 1, text: "Welcome to OPMS. How may I assist you with your luxury property search today?", sender: 'bot' }
     ]);
     const [input, setInput] = useState('');
     const chatRef = useRef(null);
@@ -23,7 +23,6 @@ export default function Chatbot() {
         setMessages([...messages, userMsg]);
         setInput('');
 
-        // Simulate AI response
         setTimeout(() => {
             const botMsg = { 
                 id: Date.now() + 1, 
@@ -36,81 +35,99 @@ export default function Chatbot() {
 
     const getBotResponse = (query) => {
         const q = query.toLowerCase();
-        if (q.includes('indore')) return "Indore has some great premium listings in Vijay Nagar and Nipania. Would you like to see them?";
-        if (q.includes('bhopal')) return "Arera Colony in Bhopal is very popular for luxury villas. I can show you 5 available ones.";
-        if (q.includes('price') || q.includes('budget')) return "Our properties range from ₹50L to ₹50Cr+. What is your preferred range?";
-        if (q.includes('contact') || q.includes('agent')) return "You can contact our elite agents directly from the 'Agents' page or click the 'Inquiry' button on any property page.";
-        return "That's interesting! I can help you find properties based on location, budget, or type. What are you looking for exactly?";
+        if (q.includes('indore')) return "We have exclusive penthouse listings in Vijay Nagar and Nipania, Indore. Shall I curate a selection for you?";
+        if (q.includes('bhopal')) return "Arera Colony and Gulmohar are prime locations in Bhopal. I can schedule a private viewing for you.";
+        if (q.includes('price') || q.includes('budget')) return "Our premium portfolio starts from ₹2Cr. We can tailor recommendations to your specific investment profile.";
+        if (q.includes('contact') || q.includes('agent')) return "Our senior advisors are available for consultation. You can reach them at concierge@opms.com.";
+        return "I am here to assist with your high-end real estate requirements. Could you specify your preferred location or property type?";
     };
 
     return (
-        <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end">
+        <div className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-[1000] flex flex-col items-end">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: 20, scale: 0.9, originY: 'bottom', originX: 'right' }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="w-[350px] sm:w-[400px] h-[500px] bg-white dark:bg-dark-surface rounded-[2.5rem] shadow-2xl border border-surface-variant dark:border-dark-surface-variant flex flex-col overflow-hidden mb-6"
+                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        className="w-[320px] sm:w-[400px] h-[500px] bg-white dark:bg-[#0A1120] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 flex flex-col overflow-hidden mb-6"
                     >
                         {/* Header */}
-                        <div className="bg-primary dark:bg-dark-primary p-6 text-white flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <Sparkles className="w-5 h-5 text-accent" />
+                        <div className="bg-[#061B45] p-6 text-white flex justify-between items-center border-b border-white/5">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center border border-accent/30 shadow-inner">
+                                    <Sparkles className="w-6 h-6 text-accent" />
                                 </div>
                                 <div>
-                                    <p className="font-black text-sm tracking-tight">OPMS AI Assistant</p>
-                                    <p className="text-[10px] font-bold opacity-60">Online & Ready to Help</p>
+                                    <p className="font-bold text-sm tracking-wide">Elite Concierge</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                        <p className="text-[10px] font-medium opacity-60">Active Now</p>
+                                    </div>
                                 </div>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform">
-                                <X className="w-6 h-6" />
+                            <button 
+                                onClick={() => setIsOpen(false)} 
+                                className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
+                            >
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         {/* Messages */}
-                        <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                        <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar bg-slate-50 dark:bg-[#0A1120]">
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] p-4 rounded-2xl text-sm font-medium ${msg.sender === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-surface-variant/30 dark:bg-dark-surface-variant/30 text-on-surface dark:text-dark-on-surface rounded-tl-none'}`}>
+                                    <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
+                                        msg.sender === 'user' 
+                                            ? 'bg-[#061B45] text-white rounded-tr-none' 
+                                            : 'bg-white dark:bg-[#16213E] text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-white/5'
+                                    }`}>
                                         {msg.text}
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Input */}
-                        <div className="p-4 bg-surface-variant/10 dark:bg-dark-surface-variant/10 border-t border-surface-variant dark:border-dark-surface-variant">
-                            <div className="relative">
+                        {/* Input Area */}
+                        <div className="p-4 bg-white dark:bg-[#0A1120] border-t border-slate-100 dark:border-white/5 pt-6">
+                            <div className="relative flex items-center">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                    placeholder="Type your message..."
-                                    className="w-full bg-white dark:bg-dark-surface border border-surface-variant dark:border-dark-surface-variant rounded-full px-6 py-3 text-sm focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary outline-none"
+                                    placeholder="Inquire about properties..."
+                                    className="w-full bg-slate-50 dark:bg-[#16213E] border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-accent/50 outline-none transition-all pr-14 dark:text-white"
                                 />
                                 <button 
                                     onClick={handleSend}
-                                    className="absolute right-2 top-1.5 w-9 h-9 bg-primary dark:bg-dark-primary text-white rounded-full flex items-center justify-center hover:bg-secondary transition-all"
+                                    className="absolute right-2 w-10 h-10 bg-accent text-[#061B45] rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg"
                                 >
-                                    <Send className="w-4 h-4" />
+                                    <Send className="w-5 h-5" />
                                 </button>
                             </div>
+                            <p className="text-[10px] text-center mt-4 opacity-30 font-medium">Powered by OPMS Intelligence</p>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-16 h-16 bg-primary dark:bg-dark-primary rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-primary/40 relative group"
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-[0_15px_30px_rgba(6,27,69,0.3)] transition-all relative z-[1001] ${
+                    isOpen ? 'bg-slate-800' : 'bg-[#061B45]'
+                }`}
             >
-                {isOpen ? <X className="w-8 h-8" /> : <MessageCircle className="w-8 h-8" />}
-                {!isOpen && <span className="absolute -top-2 -right-2 bg-accent w-5 h-5 rounded-full border-4 border-background dark:border-dark-bg animate-bounce" />}
+                {isOpen ? <X className="w-7 h-7" /> : <MessageCircle className="w-7 h-7" />}
+                {!isOpen && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-accent"></span>
+                    </span>
+                )}
             </motion.button>
         </div>
     );

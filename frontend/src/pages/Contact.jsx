@@ -15,207 +15,212 @@ export default function Contact() {
         setTimeout(() => setSent(false), 3000);
     };
 
-    const contactInfo = [
-        { label: 'Private Line', val: '+91 98765 43210', icon: Phone, path: 'tel:+919876543210' },
-        { label: 'Secure Mail', val: 'concierge@opms.com', icon: Mail, path: 'mailto:concierge@opms.com' },
-        { label: 'Nexus H.Q.', val: 'Arera Hills, Bhopal, India', icon: MapPin, path: '#' },
+    const contactMethods = [
+        { 
+            label: 'Private Consultation', 
+            val: '+91 98765 43210', 
+            desc: 'Direct line to our senior acquisition team.',
+            icon: Phone, 
+            path: 'tel:+919876543210' 
+        },
+        { 
+            label: 'Official Correspondence', 
+            val: 'concierge@opms.com', 
+            desc: 'Average response time: 2 business hours.',
+            icon: Mail, 
+            path: 'mailto:concierge@opms.com' 
+        },
+        { 
+            label: 'Global Headquarters', 
+            val: 'Arera Hills, Bhopal', 
+            desc: 'Strategic operations center, Central India.',
+            icon: MapPin, 
+            path: '#' 
+        },
     ];
 
     return (
-        <div className="bg-[#071B3A] text-white min-h-screen">
+        <div className="bg-[#fcfcfc] dark:bg-[#061B45] min-h-screen font-body transition-colors duration-500">
             <Navbar />
 
-            <main className="pt-32 pb-40">
-                {/* ─ Header ─────────────────────────────────────── */}
-                <section className="container-responsive py-16 sm:py-32 space-y-10 sm:space-y-16 section-padding">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-3 px-6 sm:px-10 py-3 sm:py-4 bg-white/5 backdrop-blur-3xl border border-white/10 text-accent rounded-full text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] shadow-2xl"
-                    >
-                        <Sparkles className="w-4 h-4" />
-                        Professional Advisory
-                    </motion.div>
+            <main className="pt-24 lg:pt-32 pb-20">
+                {/* ─ Hero Section ─────────────────────────────────────── */}
+                <section className="relative overflow-hidden py-16 lg:py-24">
+                    <div className="absolute top-0 right-0 w-[50%] h-full bg-[#061B45]/5 dark:bg-white/5 skew-x-[-12deg] translate-x-20 rounded-l-[5rem] pointer-events-none" />
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-                        <div className="space-y-8">
-                            <h1 className="hero-heading text-white tracking-widest leading-none">
-                                Get In <br />
-                                <span className="font-display italic text-gold-gradient normal-case tracking-normal block -mt-2">Touch</span>
+                    <div className="container-responsive relative z-10">
+                        <div className="max-w-4xl space-y-6">
+                            <motion.div 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 border border-accent/20 rounded-full text-accent text-[11px] font-bold uppercase tracking-widest"
+                            >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Elite Advisory Service
+                            </motion.div>
+                            
+                            <h1 className="text-5xl lg:text-7xl font-display font-medium text-[#061B45] dark:text-white leading-[1.1] tracking-tight">
+                                Delivering Excellence through <br/>
+                                <span className="text-gold-gradient italic">Personalized Service</span>
                             </h1>
-                        </div>
-                        <div className="max-w-2xl lg:border-l border-white/10 lg:pl-16">
-                            <p className="body-text text-xl sm:text-2xl font-medium leading-relaxed italic opacity-60">
-                                Our expert real estate advisors are available to handle your enquiries and facilitate your next property acquisition in Central India.
+                            
+                            <p className="text-lg lg:text-xl text-slate-600 dark:text-white/60 max-w-2xl leading-relaxed">
+                                Our bespoke real estate consultancy is designed for discerning clients seeking exclusive property acquisitions in Central India.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <div className="container-responsive grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start section-padding">
-                    {/* Information Cluster */}
-                    <div className="lg:col-span-5 space-y-12 sm:space-y-20">
-                        <section className="space-y-8 sm:space-y-12">
-                            {contactInfo.map((item, i) => (
+                {/* ─ Main Content Grid ─────────────────────────────────── */}
+                <section className="container-responsive grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-8">
+                    
+                    {/* Left: Contact Info & Hours */}
+                    <div className="lg:col-span-5 space-y-10">
+                        <div className="grid grid-cols-1 gap-6">
+                            {contactMethods.map((item, i) => (
                                 <motion.a 
                                     key={i}
                                     href={item.path}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.1, duration: 0.8 }}
-                                    className="flex items-center gap-6 sm:gap-10 group"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="group flex items-start gap-6 p-6 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-3xl shadow-sm hover:shadow-xl hover:border-accent/30 transition-all duration-500"
                                 >
-                                    <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/[0.02] border border-white/10 rounded-2xl sm:rounded-[2.5rem] flex items-center justify-center text-accent shadow-2xl group-hover:bg-accent group-hover:text-primary transition-all duration-700">
-                                        <item.icon className="w-6 h-6 sm:w-10 sm:h-10" />
+                                    <div className="w-14 h-14 bg-accent/10 dark:bg-accent/5 rounded-2xl flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-[#061B45] transition-all duration-500 shrink-0">
+                                        <item.icon className="w-6 h-6" />
                                     </div>
-                                    <div className="space-y-1 sm:space-y-2">
-                                        <p className="label-link text-white/30">{item.label}</p>
-                                        <p className="text-xl sm:text-2xl font-bold text-white tracking-tight italic">{item.val}</p>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/30">{item.label}</p>
+                                        <p className="text-xl font-bold text-[#061B45] dark:text-white tracking-tight">{item.val}</p>
+                                        <p className="text-sm text-slate-500 dark:text-white/40">{item.desc}</p>
                                     </div>
                                 </motion.a>
                             ))}
-                        </section>
+                        </div>
 
-                        {/* Operational Readiness Node */}
-                        <section className="bg-gold-gradient p-10 sm:p-20 rounded-[3rem] sm:rounded-[4rem] text-primary shadow-[0_64px_128px_-32px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-                           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-white/20 transition-all duration-1000" />
-                           <div className="relative z-10 space-y-8 sm:space-y-12">
-                               <div className="flex items-center gap-4 text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-primary/60">
-                                   <Clock className="w-5 h-5" />
-                                   Service Availability
-                               </div>
-                               <h3 className="text-3xl sm:text-5xl font-bold uppercase tracking-tight leading-[0.9] italic">Mon - Sat <br/> 09:00 - 21:00 <span className="text-xl not-italic opacity-40">IST</span></h3>
-                               <p className="border-t border-primary/20 pt-10 mt-10 text-primary/60 font-bold text-[12px] uppercase tracking-widest italic leading-relaxed">Our concierge team is active during these hours to assist your search.</p>
-                           </div>
-                        </section>
+                        {/* Business Hours: Compact & Elegant */}
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            className="bg-[#061B45] dark:bg-accent/5 p-8 rounded-[2.5rem] text-white border border-white/5 shadow-2xl relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 text-accent">
+                                        <Clock className="w-5 h-5" />
+                                        <span className="text-[12px] font-bold uppercase tracking-widest">Operational Hours</span>
+                                    </div>
+                                    <h3 className="text-2xl font-bold italic tracking-tight">Mon - Sat, 09:00 - 21:00</h3>
+                                    <p className="text-sm text-white/40 max-w-xs">All timings are in Indian Standard Time (IST).</p>
+                                </div>
+                                <div className="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-2xl border border-white/10">
+                                    <Globe className="w-4 h-4 text-accent" />
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">Global Support</span>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
 
-                    {/* Inquiry Terminal */}
+                    {/* Right: Inquiry Form */}
                     <div className="lg:col-span-7">
                         <motion.div 
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="bg-white/[0.02] backdrop-blur-3xl p-8 sm:p-24 rounded-[3rem] sm:rounded-[4rem] border border-white/5 shadow-3xl relative overflow-hidden"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-white/[0.03] p-8 lg:p-14 rounded-[3rem] border border-slate-100 dark:border-white/10 shadow-xl dark:shadow-3xl relative"
                         >
-                            <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent/5 rounded-full blur-[120px]" />
-                            <div className="absolute bottom-0 left-0 w-full h-1.5 bg-gold-gradient" />
+                            <div className="mb-10">
+                                <h2 className="text-3xl font-display font-medium text-[#061B45] dark:text-white mb-3">Send a Professional Inquiry</h2>
+                                <p className="text-slate-500 dark:text-white/40">Our senior portfolio managers will review your requirements.</p>
+                            </div>
 
                             <AnimatePresence mode="wait">
                                 {sent ? (
                                     <motion.div 
-                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        className="py-16 sm:py-32 text-center space-y-10"
+                                        className="py-20 text-center space-y-6"
                                     >
-                                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-accent/20 rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-center mx-auto text-accent shadow-2xl">
-                                            <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16" />
+                                        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto text-green-500 border border-green-500/20">
+                                            <CheckCircle2 className="w-10 h-10" />
                                         </div>
-                                        <div className="space-y-6">
-                                            <h3 className="text-3xl sm:text-5xl font-bold text-white italic">Message Received</h3>
-                                            <p className="text-base sm:text-xl max-w-sm mx-auto opacity-60">Thank you for contacting us. Our senior advisor will reach out to you within 24 business hours.</p>
-                                        </div>
+                                        <h3 className="text-2xl font-bold text-[#061B45] dark:text-white italic">Inquiry Received</h3>
+                                        <p className="text-slate-500 dark:text-white/60 max-w-xs mx-auto">We have received your message and will contact you within 24 business hours.</p>
                                     </motion.div>
                                 ) : (
-                                    <form onSubmit={handleSubmit} className="space-y-10 sm:space-y-16">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
-                                            <div className="space-y-3 sm:space-y-4">
-                                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent px-6">Full Identity</label>
-                                                <input
-                                                    type="text"
-                                                    required
-                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-8 py-5 sm:py-8 font-bold text-white outline-none focus:border-accent transition-all text-[11px] sm:text-[12px] tracking-widest placeholder:text-white/5 italic"
-                                                    placeholder="e.g. Alexander Pierce"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                                />
-                                            </div>
-                                            <div className="space-y-3 sm:space-y-4">
-                                                <label className="text-[10px] font-bold uppercase tracking-widest text-accent px-6">Secure Email</label>
-                                                <input
-                                                    type="email"
-                                                    required
-                                                    className="w-full bg-white/5 border border-white/10 rounded-full px-8 py-5 sm:py-8 font-bold text-white outline-none focus:border-accent transition-all text-[11px] sm:text-[12px] tracking-widest placeholder:text-white/5 italic"
-                                                    placeholder="office@concierge.com"
-                                                    value={formData.email}
-                                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-3 sm:space-y-4">
-                                            <label className="text-[10px] font-bold uppercase tracking-widest text-accent px-6">Inquiry Subject</label>
+                                    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-accent ml-2">Full Name</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-white/5 border border-white/10 rounded-full px-8 py-5 sm:py-8 font-bold text-white outline-none focus:border-accent transition-all text-[11px] sm:text-[12px] tracking-widest placeholder:text-white/5 italic"
-                                                placeholder="Elite Property Acquisition | Strategic Consultation"
+                                                required
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm outline-none focus:border-accent dark:text-white transition-all"
+                                                placeholder="e.g. Julian Vane"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-accent ml-2">Email Address</label>
+                                            <input
+                                                type="email"
+                                                required
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm outline-none focus:border-accent dark:text-white transition-all"
+                                                placeholder="vane@luxury.com"
+                                                value={formData.email}
+                                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            />
+                                        </div>
+                                        <div className="sm:col-span-2 space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-accent ml-2">Subject of Consultation</label>
+                                            <input
+                                                type="text"
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-4 text-sm outline-none focus:border-accent dark:text-white transition-all"
+                                                placeholder="Elite Acquisition Strategy"
                                                 value={formData.subject}
                                                 onChange={(e) => setFormData({...formData, subject: e.target.value})}
                                             />
                                         </div>
-                                        <div className="space-y-3 sm:space-y-4">
-                                            <label className="text-[10px] font-bold uppercase tracking-widest text-accent px-6">Consultation Brief</label>
+                                        <div className="sm:col-span-2 space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-accent ml-2">Consultation Brief</label>
                                             <textarea
-                                                rows={6}
-                                                className="w-full bg-white/5 border border-white/10 rounded-[2rem] sm:rounded-[3rem] px-8 py-8 sm:px-10 sm:py-10 font-bold text-white outline-none focus:border-accent transition-all text-[11px] sm:text-[12px] tracking-widest placeholder:text-white/5 resize-none italic"
-                                                placeholder="Please define your requirements..."
+                                                rows={5}
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-6 text-sm outline-none focus:border-accent dark:text-white transition-all resize-none"
+                                                placeholder="Briefly describe your property requirements..."
                                                 value={formData.message}
                                                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                                             />
                                         </div>
                                         <button
                                             type="submit"
-                                            className="w-full bg-gold-gradient text-primary py-6 sm:py-10 rounded-full font-bold uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[11px] sm:text-[12px] shadow-3xl hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-6 sm:gap-8 group"
+                                            className="sm:col-span-2 bg-accent text-[#061B45] py-5 rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-xl hover:shadow-accent/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 mt-4"
                                         >
-                                            Submit Enquiry
-                                            <Send className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-3 transition-transform duration-500" />
+                                            Deliver Inquiry
+                                            <Send className="w-4 h-4" />
                                         </button>
                                     </form>
                                 )}
                             </AnimatePresence>
                         </motion.div>
                     </div>
-                </div>
+                </section>
 
-                {/* Master Intelligence Grid (Map) */}
-                <section className="container-responsive pt-24 sm:pt-48">
-                     <motion.div 
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1 }}
-                        className="bg-white/5 p-5 rounded-[7rem] border border-white/10 shadow-3xl overflow-hidden group"
-                    >
-                         <div className="w-full h-[400px] sm:h-[700px] rounded-[3rem] sm:rounded-[6rem] overflow-hidden relative border border-white/10">
-                            <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3666.216654763198!2d77.42875137532057!3d23.235171779024095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c4268e31ba061%3A0xe2125712f6a73c1c!2sDB%20City%20Mall!5e0!3m2!1sen!2sin!4v1717430000000!5m2!1sen!2sin" 
-                                className="w-full h-full grayscale invert opacity-40 contrast-125 saturate-0 brightness-75 transition-all duration-[3s] group-hover:scale-110"
-                                style={{ border: 0 }} 
-                                allowFullScreen="" 
-                                loading="lazy" 
-                                referrerPolicy="no-referrer-when-downgrade"
-                            ></iframe>
-                            
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#071B3A] via-transparent to-[#071B3A]/40 pointer-events-none" />
-
-                            <div className="absolute bottom-6 left-6 right-6 sm:bottom-12 sm:left-12 sm:right-12 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 pointer-events-none">
-                                <div className="md:col-span-2 bg-[#0A254D]/90 backdrop-blur-3xl p-6 sm:p-8 rounded-[2rem] border border-white/10 shadow-2xl flex items-center gap-4 sm:gap-6">
-                                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gold-gradient rounded-full flex items-center justify-center text-primary shadow-xl ring-4 ring-white/10 shrink-0">
-                                         <MapPin className="w-6 h-6 sm:w-8 sm:h-8" />
-                                     </div>
-                                     <div className="space-y-1">
-                                         <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-accent italic">Bhopal Headquarters</p>
-                                         <p className="text-lg sm:text-2xl font-bold text-white tracking-tight uppercase italic leading-tight">Arera Hills, Bhopal, India 462011</p>
-                                     </div>
-                                 </div>
-                                 <div className="bg-gold-gradient p-8 rounded-3xl shadow-xl flex items-center justify-center text-primary border border-white/20">
-                                     <div className="text-center space-y-0.5">
-                                         <p className="label-link !text-[10px] opacity-60">Support Status</p>
-                                         <p className="text-2xl font-bold uppercase tracking-widest italic leading-none">Active</p>
-                                     </div>
-                                 </div>
-                            </div>
+                {/* ─ Map Section ───────────────────────────────────────── */}
+                <section className="container-responsive pt-24">
+                     <div className="rounded-[4rem] overflow-hidden border border-slate-100 dark:border-white/10 shadow-3xl h-[450px] lg:h-[600px] relative group">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3666.216654763198!2d77.42875137532057!3d23.235171779024095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c4268e31ba061%3A0xe2125712f6a73c1c!2sDB%20City%20Mall!5e0!3m2!1sen!2sin!4v1717430000000!5m2!1sen!2sin" 
+                            className="w-full h-full grayscale invert-[0.1] dark:invert dark:opacity-50 transition-all duration-1000 group-hover:scale-105"
+                            style={{ border: 0 }} 
+                            allowFullScreen="" 
+                            loading="lazy" 
+                        ></iframe>
+                        <div className="absolute top-8 left-8 bg-[#061B45]/90 backdrop-blur-xl p-6 rounded-3xl border border-white/10 text-white space-y-1 shadow-2xl">
+                            <p className="text-[10px] font-bold text-accent uppercase tracking-widest leading-none mb-1">Corporate Nexus</p>
+                            <h4 className="text-xl font-bold tracking-tight">Arera Hills, Bhopal</h4>
+                            <p className="text-xs text-white/40">Madhya Pradesh, India 462011</p>
                         </div>
-                    </motion.div>
+                     </div>
                 </section>
             </main>
 
